@@ -6,6 +6,18 @@ capabilities:
   technical_program_leadership:
     strength: 5
     category: core
+
+    match_keywords:
+    - program management
+    - program manager
+    - technical program
+    - program lead
+    - global program
+    - cross-functional
+    - milestone
+    - delivery
+    - risk management
+
     evidence:
       - 20+ years of experience in complex automotive and technology programs
       - program leadership across Germany, Europe and China
@@ -55,6 +67,14 @@ capabilities:
   adas_autonomous_driving:
     strength: 5
     category: domain
+
+    match_keywords:
+    - ADAS
+    - automated driving
+    - autonomous driving
+    - autonomous vehicle
+    - automated parking
+
     evidence:
       - ADAS and automated-driving programs
       - automated parking
@@ -87,6 +107,18 @@ capabilities:
   international_cross_border:
     strength: 5
     category: differentiator
+
+    match_keywords:
+    - Germany
+    - China
+    - Europe
+    - global
+    - international
+    - cross-border
+    - APAC
+    - Chinese
+    - Mandarin
+
     evidence:
       - professional experience in Germany and China
       - work across European and Chinese organizations
@@ -136,6 +168,15 @@ capabilities:
   product_delivery:
     strength: 4
     category: transferable
+    match_keywords:
+      - product
+      - product delivery
+      - requirements
+      - prioritization
+      - backlog
+      - agile
+      - product development
+      - product requirements
     evidence:
       - proof-of-concept delivery
       - Scrum Master experience
@@ -167,6 +208,14 @@ capabilities:
   ai_data_transformation:
     strength: 3
     category: emerging
+    match_keywords:
+    - data
+    - analytics
+    - AI
+    - machine learning
+    - data-driven
+    - data product
+    - customer analytics  
     evidence:
       - AI and machine-learning upskilling
       - MLOps projects
@@ -214,6 +263,13 @@ capabilities:
   product_owner:
     strength: 2
     category: adjacent
+    match_keywords:
+    - product owner
+    - product requirements
+    - priorities
+    - backlog
+    - use cases
+    - customer analytics
     evidence:
       - experience working in agile and product environments
       - Scrum Master experience

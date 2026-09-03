@@ -138,6 +138,11 @@ constraints:
       severity: positive
       default_action: BOOST
       reason: Can leverage cross-company stakeholder and international experience.
+      
+    commercial_business_development:
+      severity: high
+      default_action: REVIEW
+      reason: Role may be substantially more commercially oriented than the candidate's core program and operations background.
 
 
   people_management:

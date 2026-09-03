@@ -7,6 +7,7 @@ CONFIG_FILES = [
     "config/career_profile.yaml",
     "config/capability_profile.yaml",
     "config/constraints.yaml",
+    "config/network_profile.yaml",
 ]
 
 

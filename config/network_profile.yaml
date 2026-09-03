@@ -1,0 +1,166 @@
+candidate:
+  profile_name: lingjia_gardner
+
+network_model:
+
+  relationship_levels:
+
+    none:
+      score: 0
+      description: No known contact or relationship.
+
+    observed:
+      score: 15
+      description: Person or company is known, but there has been no direct interaction.
+
+    cold_connection:
+      score: 30
+      description: LinkedIn connection or weak contact without meaningful conversation.
+
+    warm_contact:
+      score: 50
+      description: Some direct interaction, exchange or prior conversation exists.
+
+    active_conversation:
+      score: 70
+      description: Ongoing direct conversation about company, role, technology or collaboration.
+
+    inbound_contact:
+      score: 85
+      description: The company or relevant person proactively approached the candidate.
+
+    internal_advocate:
+      score: 95
+      description: A trusted person inside the company is actively supporting or referring the candidate.
+
+
+  contact_relevance:
+
+    recruiter:
+      weight: 0.7
+
+    hiring_manager:
+      weight: 1.0
+
+    team_member:
+      weight: 0.8
+
+    senior_leader:
+      weight: 0.9
+
+    technical_lead:
+      weight: 0.9
+
+    former_colleague:
+      weight: 0.8
+
+    mutual_connection:
+      weight: 0.6
+
+    unknown:
+      weight: 0.5
+
+
+  interaction_recency:
+
+    within_7_days:
+      multiplier: 1.0
+
+    within_30_days:
+      multiplier: 0.9
+
+    within_90_days:
+      multiplier: 0.75
+
+    older_than_90_days:
+      multiplier: 0.5
+
+    unknown:
+      multiplier: 0.6
+
+
+  strategic_company_relevance:
+
+    high:
+      bonus: 15
+
+    medium:
+      bonus: 8
+
+    low:
+      bonus: 0
+
+
+companies:
+
+  moia:
+    company_name: MOIA
+    strategic_relevance: high
+    relationship_level: inbound_contact
+
+    contacts:
+      - name: null
+        role_type: technical_lead
+        relationship_level: inbound_contact
+        last_interaction: recent
+        notes:
+          - Proactive outreach after MIA registration.
+          - Relevant to autonomous mobility, simulation and deployment.
+
+  motor_ai:
+    company_name: MOTOR Ai
+    strategic_relevance: high
+    relationship_level: observed
+
+    contacts: []
+
+  waymo:
+    company_name: Waymo
+    strategic_relevance: high
+    relationship_level: observed
+
+    contacts: []
+
+  freenow:
+    company_name: FREENOW
+    strategic_relevance: medium
+    relationship_level: warm_contact
+
+    contacts:
+      - name: null
+        role_type: recruiter
+        relationship_level: warm_contact
+        last_interaction: recent
+        notes:
+          - Previous recruiting process and follow-up exchange.
+
+  uber:
+    company_name: Uber
+    strategic_relevance: medium
+    relationship_level: warm_contact
+
+    contacts:
+      - name: null
+        role_type: recruiter
+        relationship_level: warm_contact
+        last_interaction: recent
+        notes:
+          - Previous recruiting interaction and follow-up.
+
+network_scoring_rules:
+
+  unknown_company_default:
+    relationship_level: none
+    base_score: 0
+
+  maximum_score: 100
+
+  principles:
+    - Network access must be based on documented interaction, not assumed familiarity.
+    - A LinkedIn connection alone is weaker than an active conversation.
+    - Inbound outreach is a strong positive signal.
+    - Hiring-manager or technical-lead access is more valuable than generic recruiter access.
+    - Recent interaction is more valuable than an old dormant contact.
+    - Strategic company relevance can modestly increase network opportunity quality.
+    - Network strength should influence recommended action but must not override hard capability or location constraints.
+    - A strong network can support NETWORK_FIRST or APPLY_NOW, but cannot convert a poor role fit into a strong opportunity.
