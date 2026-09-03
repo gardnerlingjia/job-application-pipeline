@@ -1,0 +1,398 @@
+constraints:
+
+  location:
+
+    relocation_required:
+      severity: high
+      default_action: SKIP
+      reason: Candidate does not currently want to relocate.
+
+    china_based_role:
+      severity: high
+      default_action: SKIP
+      reason: China-based relocation is currently not preferred.
+
+    munich_only:
+      severity: high
+      default_action: SKIP
+      reason: Berlin is the preferred base and Munich relocation is not desired.
+
+    berlin_or_remote_germany:
+      severity: positive
+      default_action: BOOST
+      reason: Strong location fit.
+
+    germany_hybrid_with_limited_travel:
+      severity: positive
+      default_action: BOOST
+      reason: Acceptable working model if travel remains reasonable.
+
+    frequent_travel_required:
+      severity: medium
+      default_action: REVIEW
+      reason: Travel intensity should be reviewed before application.
+
+
+  seniority:
+
+    junior_role:
+      severity: high
+      default_action: SKIP
+      reason: Role is likely below the candidate's experience level.
+
+    clearly_mid_level_execution_only:
+      severity: medium
+      default_action: REVIEW
+      reason: May underuse senior program and stakeholder-management experience.
+
+    senior_program_or_operations_role:
+      severity: positive
+      default_action: BOOST
+      reason: Strong alignment with experience level.
+
+    principal_engineering_role:
+      severity: high
+      default_action: REVIEW
+      reason: Principal-level engineering roles may require deeper hands-on technical depth than documented.
+
+
+  engineering_depth:
+
+    deep_cloud_architecture:
+      severity: high
+      default_action: HIGH_RISK
+      reason: No strong evidence of deep hands-on AWS, Azure or GCP architecture experience.
+
+    senior_software_engineering:
+      severity: high
+      default_action: HIGH_RISK
+      reason: Candidate is not positioned as a senior software engineer.
+
+    production_ml_engineering:
+      severity: high
+      default_action: HIGH_RISK
+      reason: AI and ML experience is credible but not equivalent to several years of production ML engineering.
+
+    deep_data_engineering:
+      severity: high
+      default_action: HIGH_RISK
+      reason: Limited evidence of large-scale production data-platform ownership.
+
+    spark_kafka_platform_engineering:
+      severity: high
+      default_action: HIGH_RISK
+      reason: Roles centered on large-scale data infrastructure are not a core match.
+
+    coding_heavy_role:
+      severity: high
+      default_action: REVIEW
+      reason: Coding-heavy delivery should not be inferred from technical program experience.
+
+    architecture_plus_program_role:
+      severity: medium
+      default_action: REVIEW
+      reason: Can be relevant if architecture responsibility is coordination-oriented rather than hands-on ownership.
+
+
+  product:
+
+    several_years_formal_product_owner_required:
+      severity: high
+      default_action: HIGH_RISK
+      reason: Candidate has product-adjacent experience but not a long formal PO track record.
+
+    product_operations:
+      severity: positive
+      default_action: BOOST
+      reason: Stronger match than pure Product Owner roles.
+
+    technical_product_program:
+      severity: positive
+      default_action: BOOST
+      reason: Strong alignment with program leadership and technical-business translation.
+
+
+  commercial:
+
+    quota_carrying_sales:
+      severity: high
+      default_action: SKIP
+      reason: No evidence of quota-carrying sales ownership.
+
+    enterprise_sales:
+      severity: high
+      default_action: HIGH_RISK
+      reason: Stakeholder management should not be confused with enterprise sales.
+
+    revenue_target_ownership:
+      severity: high
+      default_action: HIGH_RISK
+      reason: Direct commercial ownership is not a core capability.
+
+    partnerships_without_sales_quota:
+      severity: medium
+      default_action: REVIEW
+      reason: Partnership roles can fit when focused on ecosystem coordination rather than pure sales.
+
+    strategic_partnerships:
+      severity: positive
+      default_action: BOOST
+      reason: Can leverage cross-company stakeholder and international experience.
+
+
+  people_management:
+
+    large_direct_report_organization:
+      severity: high
+      default_action: REVIEW
+      reason: Program leadership should not automatically be treated as large-scale disciplinary people management.
+
+    team_lead_without_large_org_requirement:
+      severity: medium
+      default_action: REVIEW
+      reason: May fit depending on whether leadership is functional, program-based or disciplinary.
+
+    matrix_leadership:
+      severity: positive
+      default_action: BOOST
+      reason: Strong match with cross-functional program leadership.
+
+
+  autonomy_robotics:
+
+    autonomous_mobility:
+      severity: positive
+      default_action: BOOST
+      reason: Strong domain and transferable capability fit.
+
+    adas_automated_driving:
+      severity: positive
+      default_action: BOOST
+      reason: Direct professional experience.
+
+    robotics_program_management:
+      severity: positive
+      default_action: BOOST
+      reason: Relevant when the role emphasizes program, deployment, operations or ecosystem execution.
+
+    robotics_research_engineer:
+      severity: high
+      default_action: HIGH_RISK
+      reason: Deep robotics research engineering is not a core match.
+
+    perception_engineer:
+      severity: high
+      default_action: HIGH_RISK
+      reason: Perception engineering requires specialist hands-on technical depth.
+
+    robotics_deployment_operations:
+      severity: positive
+      default_action: BOOST
+      reason: Strong adjacency to autonomous mobility deployment and technical operations.
+
+    physical_ai_program_role:
+      severity: positive
+      default_action: BOOST
+      reason: Good fit when focused on program leadership, operations, adoption or deployment rather than model research.
+
+
+  ai_data:
+
+    ai_program_management:
+      severity: positive
+      default_action: BOOST
+      reason: Strong fit when AI delivery is managed rather than deeply engineered.
+
+    ai_transformation:
+      severity: positive
+      default_action: BOOST
+      reason: Strong match with transformation and program execution.
+
+    ai_product_operations:
+      severity: positive
+      default_action: BOOST
+      reason: Good combination of AI exposure and operational leadership.
+
+    ml_research_scientist:
+      severity: high
+      default_action: SKIP
+      reason: Research-scientist roles are outside the target profile.
+
+    senior_ml_engineer:
+      severity: high
+      default_action: HIGH_RISK
+      reason: Candidate should not be positioned as a senior production ML engineer.
+
+    data_science_manager_with_heavy_model_ownership:
+      severity: high
+      default_action: REVIEW
+      reason: Requires careful review of technical ownership expectations.
+
+
+  strategy_operations:
+
+    chief_of_staff_technical:
+      severity: positive
+      default_action: BOOST
+      reason: Strong potential fit when connected to technology, transformation or engineering organizations.
+
+    executive_operations:
+      severity: positive
+      default_action: BOOST
+      reason: Strong alignment with executive steering and decision support.
+
+    pure_corporate_strategy:
+      severity: medium
+      default_action: REVIEW
+      reason: Fit depends on whether execution and technology context are substantial.
+
+    transformation_program:
+      severity: positive
+      default_action: BOOST
+      reason: Strong alignment with governance and execution experience.
+
+
+  international:
+
+    germany_china_interface:
+      severity: positive
+      default_action: BOOST
+      reason: Strong differentiator based on direct cross-border experience.
+
+    europe_china_program:
+      severity: positive
+      default_action: BOOST
+      reason: Strong match with international program background.
+
+    apac_expansion:
+      severity: positive
+      default_action: BOOST
+      reason: Potentially valuable when China or European-Asian collaboration is relevant.
+
+    chinese_language_required:
+      severity: positive
+      default_action: BOOST
+      reason: Strong language and cultural fit.
+
+    international_program:
+      severity: positive
+      default_action: BOOST
+      reason: Strong alignment with cross-border execution experience.
+
+
+  industry:
+
+    automotive:
+      severity: neutral
+      default_action: NO_CHANGE
+      reason: Strong domain fit but should not automatically dominate broader opportunities.
+
+    mobility:
+      severity: positive
+      default_action: BOOST
+      reason: Strong direct and transferable fit.
+
+    robotics:
+      severity: positive
+      default_action: BOOST
+      reason: Strategic target industry when role content matches transferable capabilities.
+
+    enterprise_technology:
+      severity: positive
+      default_action: BOOST
+      reason: Good broader-tech target for technical program and operations roles.
+
+    saas:
+      severity: neutral
+      default_action: REVIEW
+      reason: Relevant for program and operations roles but direct SaaS track record should not be assumed.
+
+    logistics_technology:
+      severity: positive
+      default_action: BOOST
+      reason: Good adjacency for automation, robotics and operations.
+
+    industrial_automation:
+      severity: positive
+      default_action: BOOST
+      reason: Relevant broader target for autonomy and robotics experience.
+
+    fintech:
+      severity: neutral
+      default_action: REVIEW
+      reason: Domain is new, so capability transfer must be strong.
+
+    healthcare_technology:
+      severity: neutral
+      default_action: REVIEW
+      reason: Domain transfer is possible but requires strong role-level fit.
+
+
+decision_rules:
+
+  hard_skip:
+    conditions:
+      - relocation_required
+      - china_based_role
+      - munich_only
+      - quota_carrying_sales
+      - ml_research_scientist
+      - junior_role
+
+  high_risk:
+    conditions:
+      - deep_cloud_architecture
+      - senior_software_engineering
+      - production_ml_engineering
+      - deep_data_engineering
+      - spark_kafka_platform_engineering
+      - several_years_formal_product_owner_required
+      - enterprise_sales
+      - revenue_target_ownership
+      - robotics_research_engineer
+      - perception_engineer
+      - senior_ml_engineer
+
+  positive_boosters:
+    conditions:
+      - berlin_or_remote_germany
+      - senior_program_or_operations_role
+      - product_operations
+      - technical_product_program
+      - matrix_leadership
+      - autonomous_mobility
+      - adas_automated_driving
+      - robotics_program_management
+      - robotics_deployment_operations
+      - physical_ai_program_role
+      - ai_program_management
+      - ai_transformation
+      - ai_product_operations
+      - chief_of_staff_technical
+      - executive_operations
+      - transformation_program
+      - germany_china_interface
+      - europe_china_program
+      - apac_expansion
+      - chinese_language_required
+      - international_program
+      - mobility
+      - robotics
+      - enterprise_technology
+      - logistics_technology
+      - industrial_automation
+
+
+constraint_principles:
+
+  - Hard constraints are evaluated before opportunity scoring.
+  - A high semantic or domain match must not override a hard skip.
+  - High-risk flags do not always mean automatic rejection.
+  - REVIEW means the job description requires human inspection before a decision.
+  - BOOST means the factor can improve opportunity quality but should not guarantee a high score.
+  - Automotive familiarity should be treated as an advantage, not as a requirement.
+  - Broader technology roles are valid when transferable capabilities match strongly.
+  - Robotics roles should be differentiated between program/deployment roles and deep engineering/research roles.
+  - AI roles should be differentiated between transformation/program roles and production engineering/research roles.
+  - Germany-China experience should be treated as a strategic differentiator when relevant, not as a universal requirement.
+  - Location preference should be enforced independently from role attractiveness.

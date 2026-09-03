@@ -1,0 +1,366 @@
+candidate:
+  profile_name: lingjia_gardner
+
+capabilities:
+
+  technical_program_leadership:
+    strength: 5
+    category: core
+    evidence:
+      - 20+ years of experience in complex automotive and technology programs
+      - program leadership across Germany, Europe and China
+      - coordination of engineering, suppliers, brands and corporate functions
+      - milestone, risk, action and delivery management
+      - executive steering and decision preparation
+    transferable_to:
+      - mobility
+      - robotics
+      - AI
+      - software platforms
+      - enterprise technology
+      - digital transformation
+
+  executive_stakeholder_management:
+    strength: 5
+    category: core
+    evidence:
+      - senior management communication
+      - executive briefings and decision-ready reporting
+      - cross-functional stakeholder alignment
+      - collaboration across engineering, suppliers and corporate functions
+      - management of complex organizational interfaces
+    transferable_to:
+      - strategy operations
+      - transformation
+      - product operations
+      - technical program management
+      - international programs
+
+  program_governance:
+    strength: 5
+    category: core
+    evidence:
+      - governance of risks, milestones and actions
+      - management reporting
+      - committee and workshop preparation
+      - technical maturity and delivery-readiness tracking
+      - structured follow-up of management decisions
+    transferable_to:
+      - portfolio management
+      - transformation programs
+      - technical operations
+      - executive operations
+      - PMO and governance roles
+
+  adas_autonomous_driving:
+    strength: 5
+    category: domain
+    evidence:
+      - ADAS and automated-driving programs
+      - automated parking
+      - vehicle software
+      - autonomous-driving proof-of-concept work
+      - coordination across architecture, engineering, testing and suppliers
+    transferable_to:
+      - autonomous mobility
+      - robotics
+      - autonomous systems
+      - physical AI
+      - simulation
+      - intelligent mobility
+
+  automotive_mobility:
+    strength: 5
+    category: domain
+    evidence:
+      - more than 20 years in automotive and mobility
+      - experience across Germany, Europe and China
+      - vehicle software and mobility programs
+      - experience with OEM, supplier and brand interfaces
+    transferable_to:
+      - autonomous mobility
+      - smart mobility
+      - fleet operations
+      - transport technology
+      - mobility platforms
+
+  international_cross_border:
+    strength: 5
+    category: differentiator
+    evidence:
+      - professional experience in Germany and China
+      - work across European and Chinese organizations
+      - Germany-China stakeholder coordination
+      - cross-cultural communication
+      - international program execution
+    transferable_to:
+      - global programs
+      - international expansion
+      - China-Europe business interfaces
+      - APAC operations
+      - global partnerships
+      - market-entry programs
+
+  technical_business_translation:
+    strength: 5
+    category: core
+    evidence:
+      - translating technical topics into management-ready decisions
+      - executive presentations
+      - structuring complex information
+      - aligning business and engineering stakeholders
+      - decision and action tracking
+    transferable_to:
+      - technical strategy
+      - customer-facing technology roles
+      - product operations
+      - transformation
+      - solutions programs
+
+  transformation_execution:
+    strength: 4
+    category: core
+    evidence:
+      - organizational transformation
+      - process improvement
+      - governance design
+      - cross-functional implementation
+      - driving actions from decision to execution
+    transferable_to:
+      - AI transformation
+      - digital transformation
+      - operating-model change
+      - business transformation
+      - technology adoption
+
+  product_delivery:
+    strength: 4
+    category: transferable
+    evidence:
+      - proof-of-concept delivery
+      - Scrum Master experience
+      - technical program execution
+      - cross-functional delivery
+      - coordination of product and engineering stakeholders
+    transferable_to:
+      - product operations
+      - implementation
+      - platform delivery
+      - technical product programs
+      - solution delivery
+
+  mobility_service_deployment:
+    strength: 4
+    category: transferable
+    evidence:
+      - mobility and autonomous-driving program experience
+      - interest in deployment and operationalization
+      - understanding of service and system readiness
+      - experience connecting technical maturity with operational decisions
+    transferable_to:
+      - autonomous fleet deployment
+      - mobility operations
+      - launch programs
+      - service rollout
+      - field operations
+
+  ai_data_transformation:
+    strength: 3
+    category: emerging
+    evidence:
+      - AI and machine-learning upskilling
+      - MLOps projects
+      - data-science pipeline projects
+      - AI transformation projects
+      - generative-AI experimentation
+    transferable_to:
+      - AI program management
+      - AI adoption
+      - AI product operations
+      - AI transformation
+      - data programs
+    caution:
+      - should not be presented as deep production AI engineering experience
+
+  machine_learning:
+    strength: 3
+    category: emerging
+    evidence:
+      - applied machine-learning projects
+      - classification projects
+      - MLOps learning
+      - model pipeline experience
+    transferable_to:
+      - AI program management
+      - data product operations
+      - AI delivery
+    caution:
+      - not equivalent to several years of professional ML engineering
+
+  mlops:
+    strength: 3
+    category: emerging
+    evidence:
+      - MLOps coursework and projects
+      - model-pipeline experience
+      - production-oriented ML learning
+    transferable_to:
+      - AI delivery
+      - AI operations
+      - AI transformation
+    caution:
+      - not deep platform-engineering experience
+
+  product_owner:
+    strength: 2
+    category: adjacent
+    evidence:
+      - experience working in agile and product environments
+      - Scrum Master experience
+      - cross-functional product delivery
+    transferable_to:
+      - product operations
+      - technical product programs
+    caution:
+      - do not assume extensive formal Product Owner track record
+      - roles demanding several years of direct PO ownership should receive a risk flag
+
+  cloud_architecture:
+    strength: 1
+    category: gap
+    evidence: []
+    caution:
+      - no strong evidence of deep hands-on cloud architecture
+      - roles centered on AWS, Azure or GCP architecture should receive a high-risk flag
+      - conceptual cloud exposure must not be treated as production architecture experience
+
+  hands_on_software_engineering:
+    strength: 2
+    category: adjacent
+    evidence:
+      - technical project work
+      - Python-based learning projects
+      - AI and data-science implementation projects
+    caution:
+      - not equivalent to a senior software-engineering career
+      - coding-heavy engineering roles should receive a high-risk flag
+
+  deep_data_engineering:
+    strength: 2
+    category: adjacent
+    evidence:
+      - data pipeline projects
+      - data-science coursework
+    caution:
+      - do not infer extensive production data-platform ownership
+      - roles requiring several years of Spark, Kafka or large-scale platform engineering should be treated cautiously
+
+  quota_carrying_sales:
+    strength: 1
+    category: gap
+    evidence: []
+    caution:
+      - no evidence of quota-carrying sales ownership
+      - commercial roles centered on revenue targets should receive a high-risk flag
+
+  enterprise_sales:
+    strength: 1
+    category: gap
+    evidence: []
+    caution:
+      - relationship and stakeholder management should not be confused with enterprise sales
+      - sales-led roles require manual review
+
+  people_management:
+    strength: 3
+    category: transferable
+    evidence:
+      - leadership through complex programs
+      - coordination of cross-functional teams
+      - stakeholder leadership
+    caution:
+      - distinguish program leadership from formal disciplinary people management
+      - roles requiring large direct-report organizations need evidence review
+
+  strategy:
+    strength: 4
+    category: transferable
+    evidence:
+      - executive decision preparation
+      - strategic program governance
+      - management communication
+      - transformation work
+    transferable_to:
+      - strategy and operations
+      - chief of staff
+      - transformation
+      - strategic initiatives
+
+  partnerships:
+    strength: 3
+    category: transferable
+    evidence:
+      - supplier collaboration
+      - cross-company coordination
+      - stakeholder alignment
+      - international interfaces
+    caution:
+      - partnership management should not automatically imply commercial deal ownership
+
+strength_scale:
+  5:
+    label: expert_core
+    meaning: strong direct professional evidence
+
+  4:
+    label: strong
+    meaning: substantial direct or highly transferable experience
+
+  3:
+    label: credible_adjacent
+    meaning: relevant experience exists but may not be the primary career track
+
+  2:
+    label: limited
+    meaning: some exposure or project evidence, but not sufficient for roles requiring deep experience
+
+  1:
+    label: gap
+    meaning: no meaningful direct professional evidence
+
+matching_rules:
+
+  direct_experience:
+    description: experience explicitly supported by documented professional history
+    score_multiplier: 1.0
+
+  transferable_experience:
+    description: credible capability that can be applied in another industry or context
+    score_multiplier: 0.8
+
+  emerging_experience:
+    description: recent learning or project-based evidence without extensive professional history
+    score_multiplier: 0.6
+
+  adjacent_experience:
+    description: partial overlap but not a primary professional track
+    score_multiplier: 0.4
+
+  gap:
+    description: insufficient documented evidence
+    score_multiplier: 0.1
+
+assessment_principles:
+
+  - Never infer a capability that is not supported by evidence.
+  - Distinguish direct professional experience from transferable experience.
+  - Distinguish professional experience from coursework and portfolio projects.
+  - Do not treat domain familiarity as proof of role-specific capability.
+  - Do not treat stakeholder management as sales experience.
+  - Do not treat program leadership as formal people management.
+  - Do not treat AI upskilling as senior AI engineering experience.
+  - Do not treat software projects as equivalent to a senior software-engineering career.
+  - Strong ADAS and automotive experience should increase fit for autonomy and robotics roles when the underlying capabilities transfer.
+  - Germany-China experience should increase fit when the role includes international, cross-border or APAC responsibilities.
+  - High domain fit must not override a major capability gap.
+  - Roles with high-risk gaps should be flagged even if overall semantic similarity is high.

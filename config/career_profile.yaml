@@ -1,0 +1,373 @@
+candidate:
+  profile_name: lingjia_gardner
+
+location:
+  preferred:
+    - Berlin
+    - Remote Germany
+
+  acceptable:
+    - Potsdam
+    - Hybrid Germany
+    - Germany-wide roles with limited travel
+
+  relocation:
+    allowed: false
+
+  location_notes:
+    - Berlin is preferred.
+    - Remote roles based in Germany are attractive.
+    - Frequent relocation requirements should reduce fit.
+    - China-based roles should not be treated as preferred unless explicitly reviewed.
+
+career_lanes:
+
+  autonomy_robotics:
+    label: Autonomy, Robotics & Intelligent Systems
+    priority: high
+
+    role_keywords:
+      - technical program manager
+      - program manager
+      - senior program manager
+      - deployment
+      - deployment manager
+      - operations
+      - technical operations
+      - autonomous mobility
+      - autonomous vehicles
+      - autonomous driving
+      - ADAS
+      - automated driving
+      - autonomous systems
+      - robotics
+      - robotics deployment
+      - robot operations
+      - fleet operations
+      - fleet management
+      - field operations
+      - physical AI
+      - embodied AI
+      - intelligent systems
+      - perception
+      - simulation
+      - mobility service
+      - launch
+      - rollout
+      - implementation
+
+    domain_keywords:
+      - autonomous vehicles
+      - autonomous mobility
+      - ADAS
+      - automated driving
+      - robotics
+      - humanoid robotics
+      - industrial robotics
+      - warehouse robotics
+      - logistics robotics
+      - autonomous systems
+      - physical AI
+      - embodied AI
+      - simulation
+      - perception
+      - fleet
+      - mobility
+
+  technology_programs:
+    label: Technology Program, Product & Operations
+    priority: high
+
+    role_keywords:
+      - technical program manager
+      - senior technical program manager
+      - program manager
+      - senior program manager
+      - program lead
+      - product operations
+      - technical operations
+      - business operations
+      - delivery lead
+      - delivery manager
+      - transformation lead
+      - portfolio manager
+      - portfolio lead
+      - platform operations
+      - technology operations
+      - implementation lead
+      - implementation manager
+      - customer solutions
+      - solutions program manager
+      - solution delivery
+      - product delivery
+      - operational excellence
+      - program governance
+
+    domain_keywords:
+      - software
+      - technology
+      - SaaS
+      - platform
+      - digital product
+      - enterprise technology
+      - cloud
+      - AI
+      - data
+      - digital transformation
+      - software platform
+      - technology services
+
+  ai_data_transformation:
+    label: AI, Data Transformation & Delivery
+    priority: medium_high
+
+    role_keywords:
+      - AI program manager
+      - AI transformation
+      - AI transformation lead
+      - AI product operations
+      - AI program lead
+      - AI delivery lead
+      - data program manager
+      - data transformation
+      - AI solutions
+      - AI adoption
+      - AI enablement
+      - AI operations
+      - AI governance
+      - AI product manager
+      - AI portfolio manager
+      - data product operations
+      - machine learning program manager
+      - digital transformation manager
+
+    domain_keywords:
+      - artificial intelligence
+      - machine learning
+      - generative AI
+      - LLM
+      - data
+      - MLOps
+      - analytics
+      - AI platform
+      - AI transformation
+      - AI adoption
+      - AI governance
+      - enterprise AI
+
+  strategy_operations:
+    label: Strategy, Executive & Transformation Operations
+    priority: medium_high
+
+    role_keywords:
+      - strategy and operations
+      - strategy operations
+      - chief of staff
+      - executive operations
+      - executive program manager
+      - transformation
+      - transformation manager
+      - transformation lead
+      - governance
+      - program governance
+      - strategic program
+      - strategic program manager
+      - business transformation
+      - organizational transformation
+      - portfolio governance
+      - management office
+      - executive office
+      - strategic initiatives
+      - operating model
+
+    domain_keywords:
+      - strategy
+      - transformation
+      - governance
+      - executive operations
+      - organizational change
+      - operating model
+      - portfolio management
+      - business transformation
+
+  mobility_ecosystem:
+    label: Mobility Ecosystem, Smart Mobility & Transport Technology
+    priority: medium_high
+
+    role_keywords:
+      - smart mobility
+      - mobility planning
+      - transport technology
+      - mobility simulation
+      - transport modeling
+      - autonomous mobility service
+      - mobility operations
+      - mobility program manager
+      - mobility strategy
+      - deployment manager
+      - service design
+      - fleet operations
+      - urban mobility
+      - transport operations
+      - mobility platform
+      - partnerships
+      - mobility partnerships
+
+    domain_keywords:
+      - mobility
+      - autonomous mobility
+      - public transport
+      - urban mobility
+      - smart city
+      - transport technology
+      - mobility simulation
+      - mobility service
+      - fleet
+      - ride hailing
+      - shared mobility
+      - multimodal transport
+      - smart infrastructure
+
+international_profile:
+
+  languages:
+    chinese:
+      level: native_or_bilingual
+
+    german:
+      level: professional
+
+    english:
+      level: professional
+
+  regions:
+    - Germany
+    - Europe
+    - China
+
+  cross_border_strengths:
+    - Germany-China business interface
+    - European-China technology collaboration
+    - cross-cultural stakeholder management
+    - international program coordination
+    - communication across engineering and management cultures
+    - experience working across German, European and Chinese organizations
+    - understanding of European and Chinese automotive and mobility ecosystems
+
+  strategic_context_keywords:
+    - China
+    - Germany
+    - Europe
+    - APAC
+    - Asia
+    - international expansion
+    - market entry
+    - global operations
+    - cross-border
+    - global program
+    - China-Europe
+    - Europe-China
+    - international partnerships
+
+transferable_strengths:
+
+  program_leadership:
+    importance: high
+    keywords:
+      - complex programs
+      - cross-functional programs
+      - technical programs
+      - program governance
+      - program execution
+      - milestone management
+      - risk management
+      - action tracking
+      - delivery management
+
+  stakeholder_management:
+    importance: high
+    keywords:
+      - senior management
+      - executive stakeholders
+      - engineering
+      - suppliers
+      - partners
+      - brands
+      - corporate functions
+      - cross-functional alignment
+      - stakeholder management
+
+  technical_business_translation:
+    importance: high
+    keywords:
+      - executive briefing
+      - decision preparation
+      - management reporting
+      - technical communication
+      - business translation
+      - technical strategy
+      - decision support
+
+  transformation_execution:
+    importance: high
+    keywords:
+      - transformation
+      - organizational change
+      - process improvement
+      - operating model
+      - governance
+      - implementation
+      - adoption
+
+  mobility_domain:
+    importance: high
+    keywords:
+      - ADAS
+      - automated driving
+      - autonomous driving
+      - automated parking
+      - vehicle software
+      - mobility
+      - automotive
+      - fleet
+      - deployment
+
+  ai_data_capability:
+    importance: medium
+    keywords:
+      - AI
+      - machine learning
+      - MLOps
+      - data pipelines
+      - AI transformation
+      - AI adoption
+      - generative AI
+      - LLM
+
+search_strategy:
+
+  objective:
+    - identify high-probability opportunities
+    - broaden beyond automotive without losing mobility and autonomy strengths
+    - identify roles where transferable program leadership matters
+    - identify companies worth networking with even when no suitable vacancy exists
+    - avoid low-probability applications caused by hidden technical or commercial requirements
+
+  preferred_actions:
+    - APPLY_NOW
+    - NETWORK_FIRST
+    - EXPLORE
+    - WATCH
+    - SKIP
+
+  principles:
+    - Do not rely only on job-title similarity.
+    - Evaluate actual task content and required experience.
+    - Treat transferable experience separately from direct experience.
+    - Do not invent or assume missing candidate experience.
+    - Strong automotive experience should be treated as an asset, not as a boundary.
+    - Germany-China experience should increase relevance when international or cross-border context matters.
+    - Roles requiring deep hands-on engineering should not receive high scores solely because the domain matches.
+    - Roles requiring quota-carrying sales should be treated cautiously.
+    - Networking potential is part of opportunity quality.
+    - Companies can be strategically relevant even when there is no current suitable vacancy.
