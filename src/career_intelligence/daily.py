@@ -15,6 +15,13 @@ from typing import Any, Callable
 
 from src.career_intelligence.batch import RECOMMENDATION_GROUPS
 from src.career_intelligence.ingest_silver import process_silver, positive_integer
+from src.career_intelligence.operator_state import (
+    DEFAULT_STATE_PATH,
+    DISPLAY_STATES,
+    load_state_payload,
+    operator_state_counts,
+    write_operator_radar,
+)
 
 
 DEFAULT_RUNTIME_DIR = Path(".runtime/career_intelligence")
@@ -126,12 +133,18 @@ def recommendation_counts(opportunities: list[dict[str, Any]]) -> dict[str, int]
     return {group: counts.get(group, 0) for group in RECOMMENDATION_GROUPS}
 
 
-def summary_lines(summary: dict[str, Any], *, exit_status: int) -> list[str]:
+def summary_lines(
+    summary: dict[str, Any],
+    *,
+    exit_status: int,
+    state_path: Path = DEFAULT_STATE_PATH,
+) -> list[str]:
     errors = summary.get("errors", [])
     opportunities = summary.get("opportunities", [])
-    rec_counts = recommendation_counts(
-        opportunities if isinstance(opportunities, list) else []
-    )
+    opportunity_rows = opportunities if isinstance(opportunities, list) else []
+    state_payload = load_state_payload(state_path)
+    rec_counts = recommendation_counts(opportunity_rows)
+    state_counts = operator_state_counts(opportunity_rows, state_payload)
     lines = [
         "Career Intelligence daily refresh",
         f"Silver jobs loaded: {int(summary.get('loaded', 0))}",
@@ -141,6 +154,7 @@ def summary_lines(summary: dict[str, Any], *, exit_status: int) -> list[str]:
         f"Errors: {len(errors) if isinstance(errors, list) else 0}",
     ]
     lines.extend(f"{group}: {rec_counts[group]}" for group in RECOMMENDATION_GROUPS)
+    lines.extend(f"{state}: {state_counts[state]}" for state in DISPLAY_STATES)
     lines.append(f"Exit status: {exit_status}")
     return lines
 
@@ -179,6 +193,7 @@ def run_daily(
     *,
     results: Path = Path("jobs/results"),
     runtime_dir: Path = DEFAULT_RUNTIME_DIR,
+    state_path: Path = DEFAULT_STATE_PATH,
     limit: int = 100,
     source: str | None = None,
     ingestion: Callable[..., dict[str, Any]] | None = None,
@@ -192,10 +207,23 @@ def run_daily(
 
     try:
         with DailyRunLock(lock_file, stale_seconds=stale_lock_seconds):
+            load_state_payload(state_path)
             summary = ingestion(results=results, limit=limit, source=source)
+            opportunities = summary.get("opportunities", [])
+            if not isinstance(opportunities, list):
+                raise ValueError("Silver ingestion did not return opportunities")
+            write_operator_radar(
+                opportunities=opportunities,
+                results=results,
+                state_path=state_path,
+            )
             errors = summary.get("errors", [])
             exit_status = 1 if isinstance(errors, list) and errors else 0
-            lines = summary_lines(summary, exit_status=exit_status)
+            lines = summary_lines(
+                summary,
+                exit_status=exit_status,
+                state_path=state_path,
+            )
             _log_summary(
                 current_log,
                 started_at=started_at,
@@ -250,6 +278,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--limit", type=positive_integer, default=100)
     parser.add_argument("--results", type=Path, default=Path("jobs/results"))
     parser.add_argument("--runtime-dir", type=Path, default=DEFAULT_RUNTIME_DIR)
+    parser.add_argument("--state-file", type=Path, default=DEFAULT_STATE_PATH)
     return parser.parse_args(argv)
 
 
@@ -258,6 +287,7 @@ def main(argv: list[str] | None = None) -> int:
     exit_status, lines, path = run_daily(
         results=args.results,
         runtime_dir=args.runtime_dir,
+        state_path=args.state_file,
         limit=args.limit,
         source=args.source,
     )

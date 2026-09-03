@@ -3,7 +3,8 @@
 Career Intelligence assesses job descriptions against a versioned candidate profile. V1.1 adds
 local batch automation. V1.2 adds Silver-layer ingestion; it does not apply to jobs, scrape new
 sources, alter upstream ingestion, or modify the Silver schema. V1.3 adds a local daily runner for
-unattended macOS refreshes from the existing Silver layer.
+unattended macOS refreshes from the existing Silver layer. V1.4-lite adds persistent local operator
+review state for the daily radar.
 
 ## Architecture
 
@@ -15,9 +16,11 @@ normalized `silver_jobs` representation plus linked `raw_jobs.raw_data`, convert
 fields into the Career Intelligence input shape, and keeps source provenance separate from the
 public result schema. `ingest_silver.py` assesses converted Silver rows through the same V1.1
 cumulative result lifecycle. `daily.py` wraps Silver ingestion with a local runtime lock, concise
-logs, and operator-friendly terminal output for once-per-day execution. A bad file or bad Silver
-record is reported; other records continue processing. Hard-stop decisions come unchanged from the
-existing constraint and recommendation modules.
+logs, operator state counts, and operator-friendly terminal output for once-per-day execution.
+`operator_state.py` stores human review state outside `opportunities.json` and renders the daily
+radar by operator state, recommendation, and score. A bad file or bad Silver record is reported;
+other records continue processing. Hard-stop decisions come unchanged from the existing constraint
+and recommendation modules.
 
 ## Configuration
 
@@ -155,8 +158,78 @@ Runtime files live under `.runtime/career_intelligence/`, which is gitignored.
 - `.runtime/career_intelligence/daily.lock`: local exclusive lock that prevents overlapping daily
   runs. Normal locks are removed at the end of the process. Stale or dead-process locks are cleaned
   before retrying.
+- `.runtime/career_intelligence/operator_state.json`: persistent local operator review state keyed
+  by `source_file`.
 
 Logs intentionally avoid full job descriptions and raw Silver payloads.
+
+## Operator Workflow
+
+Every opportunity has one operator state:
+
+- `NEW`: default for any current opportunity without stored state.
+- `INTERESTED`: marked for follow-up and kept prominent.
+- `REVIEWED`: seen by the operator but still visible at lower priority.
+- `DISMISSED`: hidden from the default actionable radar.
+
+State is stored separately from `jobs/results/opportunities.json`, keyed by stable `source_file`.
+Daily reruns, Silver refreshes, and rescoring do not reset stored state. If an opportunity
+temporarily disappears from source data, its stored state remains in
+`.runtime/career_intelligence/operator_state.json`.
+
+List current actionable opportunities:
+
+```bash
+python -m src.career_intelligence.operator_state list
+```
+
+Include dismissed opportunities:
+
+```bash
+python -m src.career_intelligence.operator_state list --include-dismissed
+```
+
+Set state:
+
+```bash
+python -m src.career_intelligence.operator_state set \
+  --source-file "silver-personio-example-1234567890abcdef.json" \
+  --state INTERESTED
+```
+
+Valid states are `NEW`, `INTERESTED`, `REVIEWED`, and `DISMISSED`. Invalid states are rejected and
+malformed state files are not silently overwritten.
+
+The daily command rewrites `jobs/results/opportunity_radar.md` as:
+
+```text
+# Career Opportunity Radar
+
+## NEW
+### APPLY_NOW
+...
+
+## INTERESTED
+...
+
+## REVIEWED
+...
+```
+
+`python -m src.career_intelligence.daily` is the canonical operator workflow; direct
+`ingest_silver` runs produce the lower-level V1.2 recommendation radar.
+
+Within each operator state, opportunities remain grouped by recommendation and sorted by score,
+company, title, and `source_file`. The default radar omits `DISMISSED`. To render a full radar that
+includes dismissed opportunities:
+
+```bash
+python -m src.career_intelligence.operator_state radar --include-dismissed
+```
+
+To intentionally reset operator state, stop any scheduled daily run and remove
+`.runtime/career_intelligence/operator_state.json`. The next daily run treats all current
+opportunities as `NEW`.
 
 ## macOS Scheduling
 
@@ -200,6 +273,9 @@ Then delete the copied plist from `~/Library/LaunchAgents/`.
   `StandardOutPath`/`StandardErrorPath` directories.
 - If no new opportunities appear, confirm Silver rows already exist and include strong description
   evidence. Already-known Silver identities are skipped by design.
+- If operator state looks wrong, inspect `.runtime/career_intelligence/operator_state.json`.
+  Replace or remove it only intentionally; malformed files cause the state commands and daily
+  runner to fail closed.
 
 ## Limitations
 

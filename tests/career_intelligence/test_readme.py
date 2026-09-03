@@ -24,3 +24,17 @@ def test_readme_documents_v13_daily_runner_contract():
     assert ".runtime/career_intelligence/logs/daily_*.log" in text
     assert "macos-launchd.example.plist" in text
     assert "launchctl unload" in text
+
+
+def test_readme_documents_v14_operator_workflow_contract():
+    text = README.read_text(encoding="utf-8")
+    normalized = " ".join(text.split())
+
+    assert "V1.4-lite adds persistent local operator" in text
+    assert "python -m src.career_intelligence.operator_state list" in text
+    assert "--state INTERESTED" in text
+    assert ".runtime/career_intelligence/operator_state.json" in text
+    assert "The default radar omits `DISMISSED`" in text
+    assert "canonical operator workflow" in text
+    assert "lower-level V1.2 recommendation radar" in text
+    assert "remove `.runtime/career_intelligence/operator_state.json`" in normalized

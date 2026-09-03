@@ -18,13 +18,29 @@ def successful_summary():
         "skipped_existing": 1,
         "errors": [],
         "opportunities": [
-            {"recommendation": "APPLY_NOW"},
-            {"recommendation": "NETWORK_FIRST"},
-            {"recommendation": "EXPLORE"},
-            {"recommendation": "EXPLORE"},
-            {"recommendation": "WATCH"},
-            {"recommendation": "SKIP"},
+            opportunity("apply.json", "APPLY_NOW", 95),
+            opportunity("network.json", "NETWORK_FIRST", 85),
+            opportunity("explore-a.json", "EXPLORE", 75),
+            opportunity("explore-b.json", "EXPLORE", 70),
+            opportunity("watch.json", "WATCH", 55),
+            opportunity("skip.json", "SKIP", 20),
         ],
+    }
+
+
+def opportunity(source_file, recommendation, score, company="Example", title="Role"):
+    return {
+        "schema_version": 1,
+        "source_file": source_file,
+        "company": company,
+        "title": title,
+        "career_lane": "data",
+        "career_lane_label": "Data",
+        "opportunity_score": score,
+        "recommendation": recommendation,
+        "constraint_action": "CLEAR",
+        "risks": [],
+        "key_matched_capabilities": [],
     }
 
 
@@ -40,6 +56,8 @@ def test_successful_daily_run_prints_operator_summary(tmp_path, capsys, monkeypa
             str(tmp_path / "results"),
             "--runtime-dir",
             str(tmp_path / "runtime"),
+            "--state-file",
+            str(tmp_path / "state.json"),
             "--limit",
             "5",
         ]
@@ -56,6 +74,10 @@ def test_successful_daily_run_prints_operator_summary(tmp_path, capsys, monkeypa
     assert "EXPLORE: 2" in output
     assert "WATCH: 1" in output
     assert "SKIP: 1" in output
+    assert "NEW: 6" in output
+    assert "INTERESTED: 0" in output
+    assert "REVIEWED: 0" in output
+    assert "DISMISSED: 0" in output
     assert "Exit status: 0" in output
     assert "Log:" in output
 
@@ -77,6 +99,27 @@ def test_ingestion_failure_returns_nonzero_and_writes_log(tmp_path):
     assert payload["errors"] == [
         {"record": "daily", "error": "database unavailable"}
     ]
+
+
+def test_malformed_operator_state_prevents_ingestion(tmp_path):
+    calls = []
+    state_file = tmp_path / "operator_state.json"
+    state_file.write_text("{broken", encoding="utf-8")
+
+    def ingest(**kwargs):
+        calls.append(kwargs)
+        return successful_summary()
+
+    exit_status, lines, _path = run_daily(
+        results=tmp_path / "results",
+        runtime_dir=tmp_path / "runtime",
+        state_path=state_file,
+        ingestion=ingest,
+    )
+
+    assert exit_status == 1
+    assert calls == []
+    assert any("ERROR" in line for line in lines)
 
 
 def test_lock_prevents_concurrent_daily_run(tmp_path):
@@ -185,6 +228,8 @@ def test_main_forwards_arguments_to_ingestion(tmp_path, monkeypatch):
             str(tmp_path / "results"),
             "--runtime-dir",
             str(tmp_path / "runtime"),
+            "--state-file",
+            str(tmp_path / "state.json"),
             "--source",
             "personio",
             "--limit",
@@ -200,3 +245,40 @@ def test_main_forwards_arguments_to_ingestion(tmp_path, monkeypatch):
             "source": "personio",
         }
     ]
+
+
+def test_daily_rerun_preserves_operator_state_and_default_radar_omits_dismissed(
+    tmp_path,
+    monkeypatch,
+):
+    from src.career_intelligence.operator_state import set_operator_state
+
+    state_file = tmp_path / "operator_state.json"
+    set_operator_state(
+        source_file="apply.json",
+        state="INTERESTED",
+        path=state_file,
+    )
+    set_operator_state(
+        source_file="skip.json",
+        state="DISMISSED",
+        path=state_file,
+    )
+    monkeypatch.setattr(
+        "src.career_intelligence.daily.process_silver",
+        lambda **kwargs: successful_summary(),
+    )
+
+    for _index in range(2):
+        exit_status, lines, _path = run_daily(
+            results=tmp_path / "results",
+            runtime_dir=tmp_path / "runtime",
+            state_path=state_file,
+        )
+
+    radar = (tmp_path / "results" / "opportunity_radar.md").read_text(encoding="utf-8")
+    assert exit_status == 0
+    assert "INTERESTED: 1" in lines
+    assert "DISMISSED: 1" in lines
+    assert r"apply\.json" in radar
+    assert r"skip\.json" not in radar
