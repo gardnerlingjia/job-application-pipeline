@@ -17,6 +17,7 @@ def test_doc001l_current_repository_uses_target_docs_top_level_structure() -> No
     assert report.status == "pass"
     assert report.top_level_dirs == [
         "archive",
+        "career-intelligence",
         "current",
         "decisions",
         "guides",

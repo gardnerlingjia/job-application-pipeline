@@ -14,3 +14,6 @@ private_candidate_facts/
 private_application_sources/
 *.candidate-facts.private.json
 candidate_fact_profile.private.json
+jobs/inbox/
+jobs/processed/
+jobs/results/

@@ -15,6 +15,7 @@ from pathlib import Path
 
 ALLOWED_TOP_LEVEL_DIRS = {
     "archive",
+    "career-intelligence",
     "current",
     "decisions",
     "guides",

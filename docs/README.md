@@ -43,6 +43,7 @@ collection.
 
 | Area | Purpose | Rule |
 |---|---|---|
+| `career-intelligence/` | Usage documentation for the isolated Career Intelligence subsystem. | Keep aligned with the shipped assessment interfaces. |
 | `current/` | Short, maintained truth about the current product and architecture. | Keep small; promote only stable facts. |
 | `guides/` | How-to documentation for development, operation and testing. | Practical commands live here, not in the root README. |
 | `reference/` | Detailed product contracts and lookup material: database, agents, governance, sources, security, scoring and glossary. | Precise detail is welcome; story duplication is not. |
