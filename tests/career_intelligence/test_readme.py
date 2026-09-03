@@ -14,3 +14,13 @@ def test_readme_documents_v12_silver_ingestion_contract():
     assert "silver_ingestion_provenance.json" in text
     assert "does not define a description column" in text
     assert "never trigger applications" in normalized
+
+
+def test_readme_documents_v13_daily_runner_contract():
+    text = README.read_text(encoding="utf-8")
+
+    assert "V1.3 adds a local daily runner" in text
+    assert "python -m src.career_intelligence.daily" in text
+    assert ".runtime/career_intelligence/logs/daily_*.log" in text
+    assert "macos-launchd.example.plist" in text
+    assert "launchctl unload" in text

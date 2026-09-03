@@ -2,7 +2,8 @@
 
 Career Intelligence assesses job descriptions against a versioned candidate profile. V1.1 adds
 local batch automation. V1.2 adds Silver-layer ingestion; it does not apply to jobs, scrape new
-sources, alter upstream ingestion, or modify the Silver schema.
+sources, alter upstream ingestion, or modify the Silver schema. V1.3 adds a local daily runner for
+unattended macOS refreshes from the existing Silver layer.
 
 ## Architecture
 
@@ -13,9 +14,10 @@ function, and maintains machine- and human-readable outputs. `silver_adapter.py`
 normalized `silver_jobs` representation plus linked `raw_jobs.raw_data`, converts available source
 fields into the Career Intelligence input shape, and keeps source provenance separate from the
 public result schema. `ingest_silver.py` assesses converted Silver rows through the same V1.1
-cumulative result lifecycle. A bad file or bad Silver record is reported; other records continue
-processing. Hard-stop decisions come unchanged from the existing constraint and recommendation
-modules.
+cumulative result lifecycle. `daily.py` wraps Silver ingestion with a local runtime lock, concise
+logs, and operator-friendly terminal output for once-per-day execution. A bad file or bad Silver
+record is reported; other records continue processing. Hard-stop decisions come unchanged from the
+existing constraint and recommendation modules.
 
 ## Configuration
 
@@ -112,6 +114,92 @@ are used in that order.
 If a generated `source_file` is already present in `opportunities.json`, the record is skipped and
 not reassessed. Duplicate Silver records within one run are reported without stopping the rest of
 the run.
+
+## Daily Command
+
+Run from the repository root:
+
+```bash
+python -m src.career_intelligence.daily
+```
+
+Optional arguments mirror Silver ingestion:
+
+```bash
+python -m src.career_intelligence.daily \
+  --source personio \
+  --limit 100 \
+  --results jobs/results \
+  --runtime-dir .runtime/career_intelligence
+```
+
+The daily runner does not run connectors, scrape, alter Silver, or apply to jobs. It only reads
+existing Silver records through V1.2 and refreshes Career Intelligence outputs. It prints:
+
+- Silver jobs loaded
+- converted
+- newly assessed
+- already known/skipped
+- errors
+- counts for `APPLY_NOW`, `NETWORK_FIRST`, `EXPLORE`, `WATCH`, and `SKIP`
+
+The command exits `0` when ingestion completes without record errors, `1` for ingestion or
+processing failures, and `2` when another daily run is already active.
+
+## Daily Logs And Lock
+
+Runtime files live under `.runtime/career_intelligence/`, which is gitignored.
+
+- `.runtime/career_intelligence/logs/daily_*.log`: JSON run logs with start time, finish time,
+  counts, sanitized errors, and exit status.
+- `.runtime/career_intelligence/daily.lock`: local exclusive lock that prevents overlapping daily
+  runs. Normal locks are removed at the end of the process. Stale or dead-process locks are cleaned
+  before retrying.
+
+Logs intentionally avoid full job descriptions and raw Silver payloads.
+
+## macOS Scheduling
+
+A launchd template is available at `docs/career-intelligence/macos-launchd.example.plist`.
+Copy it to `~/Library/LaunchAgents/`, then replace all placeholders:
+
+- `/ABSOLUTE/PATH/TO/REPO` with this repository's absolute path.
+- `/ABSOLUTE/PATH/TO/REPO/.venv/bin/python` with the Python interpreter that has the repository
+  dependencies installed.
+- The `Label` value with a local identifier if desired.
+- `Hour` and `Minute` with the preferred daily run time.
+
+Load the schedule:
+
+```bash
+launchctl load ~/Library/LaunchAgents/com.example.career-intelligence-daily.plist
+```
+
+Run it manually for a smoke test:
+
+```bash
+launchctl start com.example.career-intelligence-daily
+```
+
+Disable and remove the schedule:
+
+```bash
+launchctl unload ~/Library/LaunchAgents/com.example.career-intelligence-daily.plist
+```
+
+Then delete the copied plist from `~/Library/LaunchAgents/`.
+
+## Troubleshooting
+
+- If the command exits `2`, another run is active or a valid lock exists. Check
+  `.runtime/career_intelligence/daily.lock` and the latest daily log.
+- If the command exits `1`, read the latest `.runtime/career_intelligence/logs/daily_*.log` and
+  the terminal output. Record-level errors usually mean missing strong description evidence or
+  invalid existing result/provenance files.
+- If launchd does not run, verify `WorkingDirectory`, the Python path, file permissions, and the
+  `StandardOutPath`/`StandardErrorPath` directories.
+- If no new opportunities appear, confirm Silver rows already exist and include strong description
+  evidence. Already-known Silver identities are skipped by design.
 
 ## Limitations
 
