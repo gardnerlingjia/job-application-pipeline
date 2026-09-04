@@ -29,6 +29,12 @@ operator-state changes to `.runtime/career_intelligence/operator_state.json`.
 Those writes are intentionally separate from Product V1 ranking, connector
 operation, application drafting and application submission.
 
+Lingjia's source strategy lives in `config/career_source_strategy.yaml` and is
+safe to review as configuration. It may surface connector gaps and target-source
+priorities in the Control Center, but it is not an activation queue. Any source
+candidate creation, connector implementation, final approval, active profile or
+ingestion remains governed by the existing bounded source lifecycle.
+
 Merge blocks must derive the PR number automatically from the current feature
 branch; they must not require manual `<PR_NUMBER>` replacement.
 

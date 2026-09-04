@@ -107,6 +107,23 @@ type SourceConnector = {
   };
   last_ingestion: { status: string; total_loaded: number; inserted_count: number };
   layers: { bronze_count: number; silver_count: number };
+  career_source_strategy?: {
+    configured: boolean;
+    company_name?: string;
+    tier?: string;
+    tier_label?: string;
+    strategic_priority?: number;
+    relevant_career_lanes?: string[];
+    preferred_evidence_type?: string;
+    source_role?: string;
+    is_employer_origin?: boolean;
+    is_discovery?: boolean;
+    location_relevance?: string[];
+    status?: string;
+    source_status?: string;
+    strategy_group?: string;
+    career_relevance?: string;
+  };
 };
 
 type ProductPayload = {
@@ -166,7 +183,7 @@ type JobSort =
   | "gate_asc"
   | "gate_desc";
 type SortColumn = "fit" | "review" | "job" | "location" | "published" | "gate";
-type SourceGroup = "Needs attention" | "Active" | "Pending" | "Not implemented";
+type SourceGroup = "Strategic employers" | "Adjacent employers" | "Discovery sources" | "Existing generic/demo sources";
 
 const normalize = (value: string | undefined | null) => (value || "").trim().toLocaleLowerCase();
 const label = (value: string | undefined | null) => (value || "unknown").replaceAll("_", " ");
@@ -763,38 +780,45 @@ function Applications({ payload, onPrepare }: { payload: ProductPayload; onPrepa
 }
 
 function sourceGroup(source: SourceConnector): SourceGroup {
-  if (source.current_blocker) return "Needs attention";
-  if (source.activation.active === true) return "Active";
-  if (normalize(source.connector.implementation_status).includes("not implemented")) return "Not implemented";
-  return "Pending";
+  const strategy = source.career_source_strategy;
+  if (strategy?.tier === "A") return "Strategic employers";
+  if (strategy?.tier === "B") return "Adjacent employers";
+  if (strategy?.source_role === "discovery" || strategy?.tier === "C") return "Discovery sources";
+  return "Existing generic/demo sources";
 }
 
 function Sources({ payload }: { payload: ProductPayload }) {
   const sources = payload.source_connector_overview.sources;
-  const [selectedName, setSelectedName] = useState(sources.find((source) => source.current_blocker)?.source_name || sources.find((source) => source.activation.active === true)?.source_name || sources[0]?.source_name || "");
+  const [selectedName, setSelectedName] = useState(sources.find((source) => source.career_source_strategy?.tier === "A")?.source_name || sources.find((source) => source.current_blocker)?.source_name || sources.find((source) => source.activation.active === true)?.source_name || sources[0]?.source_name || "");
   const [showAll, setShowAll] = useState(false);
-  const groups: SourceGroup[] = ["Needs attention", "Active", "Pending", "Not implemented"];
+  const lifecycleGroups = ["Needs attention", "Active", "Pending", "Not implemented"];
+  const groups: SourceGroup[] = ["Strategic employers", "Adjacent employers", "Discovery sources", "Existing generic/demo sources"];
   const groupCounts = Object.fromEntries(groups.map((group) => [group, sources.filter((source) => sourceGroup(source) === group).length])) as Record<SourceGroup, number>;
   const visibleGroups = groups
     .map((group) => ({
       group,
       sources: sources
         .filter((source) => sourceGroup(source) === group)
-        .filter((source) => showAll || group === "Needs attention" || group === "Active")
-        .sort((left, right) => compareText(left.source_label, right.source_label)),
+        .filter((source) => showAll || group !== "Existing generic/demo sources")
+        .sort((left, right) => {
+          const priorityDelta = (right.career_source_strategy?.strategic_priority || 0) - (left.career_source_strategy?.strategic_priority || 0);
+          if (priorityDelta !== 0) return priorityDelta;
+          return compareText(left.source_label, right.source_label);
+        }),
     }))
     .filter((entry) => entry.sources.length > 0);
   const visible = visibleGroups.flatMap((entry) => entry.sources);
   const selected = sources.find((source) => source.source_name === selectedName) || visible[0] || null;
+  const strategy = selected?.career_source_strategy;
 
   return <div className="ow-stack">
-    <header className="ow-page-header"><div><span>Source control</span><h1>Sources</h1><p>Status-clustered connector truth. Active and attention sources stay prominent; the long tail remains available on demand.</p></div><button type="button" className="ow-secondary" onClick={() => setShowAll((value) => !value)}>{showAll ? "Show active/attention" : `Show all ${sources.length}`}</button></header>
+    <header className="ow-page-header"><div><span>Source control</span><h1>Sources</h1><p>Lingjia strategy sources are grouped above existing generic/demo sources. Lifecycle gates still own activation truth.</p></div><button type="button" className="ow-secondary" title={`Lifecycle vocabulary: ${lifecycleGroups.join(", ")}`} onClick={() => setShowAll((value) => !value)}>{showAll ? "Hide generic/demo" : `Show all ${sources.length}`}</button></header>
     <section className="ow-source-summary-strip">
       {groups.map((group) => <div key={group}><span>{group}</span><b>{groupCounts[group]}</b></div>)}
     </section>
     <section className="ow-source-workspace">
-      <div className="ow-source-list">{visibleGroups.map(({ group, sources: groupedSources }) => <div key={group}><div className="ow-source-group-title"><span>{group}</span><b>{groupedSources.length}</b></div>{groupedSources.map((source) => <button type="button" key={source.source_name} className={selected?.source_name === source.source_name ? "selected" : ""} onClick={() => setSelectedName(source.source_name)}><span><b>{source.source_label}</b><small>{source.source_name}</small></span><Status value={source.current_blocker || source.activation.status} /></button>)}</div>)}</div>
-      {selected && <article className="ow-card ow-source-detail"><span className="ow-kicker">{sourceGroup(selected)} · {selected.source_type}</span><h2>{selected.source_label}</h2><code>{selected.source_name}</code><div className="ow-source-facts"><div><span>Implementation</span><b>{label(selected.connector.implementation_status)}</b></div><div><span>Validation</span><b>{label(selected.gates.connector_validation_gate.status)}</b></div><div><span>Approval</span><b>{label(selected.gates.final_approval_gate.status)}</b></div><div><span>Activation</span><b>{label(selected.activation.status)}</b></div><div><span>Profiles</span><b>{selected.search_profiles.active_profile_count}/{selected.search_profiles.profile_count} active</b></div><div><span>Layers</span><b>Bronze {selected.layers.bronze_count} · Silver {selected.layers.silver_count}</b></div></div>{selected.current_blocker ? <div className="ow-callout warn"><b>{label(selected.current_blocker)}</b><span>{selected.next_action}</span></div> : <div className="ow-callout good"><b>No current blocker</b><span>{selected.next_action}</span></div>}</article>}
+      <div className="ow-source-list">{visibleGroups.map(({ group, sources: groupedSources }) => <div key={group}><div className="ow-source-group-title"><span>{group}</span><b>{groupedSources.length}</b></div>{groupedSources.map((source) => <button type="button" key={source.source_name} className={selected?.source_name === source.source_name ? "selected" : ""} onClick={() => setSelectedName(source.source_name)}><span><b>{source.source_label}</b><small>{source.source_name}</small></span><span className="ow-source-mini"><Status value={source.career_source_strategy?.source_status || source.current_blocker || source.activation.status} /><small>{source.career_source_strategy?.source_role || "generic"}</small></span></button>)}</div>)}</div>
+      {selected && <article className="ow-card ow-source-detail"><span className="ow-kicker">{sourceGroup(selected)} · {selected.source_type}</span><h2>{selected.source_label}</h2><code>{selected.source_name}</code>{strategy?.configured ? <div className="ow-strategy-band"><div><span>Tier</span><b>{strategy.tier} · {strategy.tier_label}</b></div><div><span>Priority</span><b>{strategy.strategic_priority}</b></div><div><span>Role</span><b>{label(strategy.source_role)}</b></div><div><span>Status</span><b>{label(strategy.source_status)}</b></div></div> : <div className="ow-callout warn"><b>Existing generic/demo source</b><span>This source remains available but is not part of Lingjia's target-source strategy.</span></div>}<div className="ow-source-facts"><div><span>Implementation</span><b>{label(selected.connector.implementation_status)}</b></div><div><span>Validation</span><b>{label(selected.gates.connector_validation_gate.status)}</b></div><div><span>Approval</span><b>{label(selected.gates.final_approval_gate.status)}</b></div><div><span>Activation</span><b>{label(selected.activation.status)}</b></div><div><span>Profiles</span><b>{selected.search_profiles.active_profile_count}/{selected.search_profiles.profile_count} active</b></div><div><span>Layers</span><b>Bronze {selected.layers.bronze_count} · Silver {selected.layers.silver_count}</b></div></div>{strategy?.configured && <section className="ow-evidence"><div><span>Career lanes</span>{strategy.relevant_career_lanes?.length ? <ul>{strategy.relevant_career_lanes.map((lane) => <li key={lane}>{label(lane)}</li>)}</ul> : <p>No configured lanes.</p>}</div><div><span>Location relevance</span>{strategy.location_relevance?.length ? <ul>{strategy.location_relevance.map((item) => <li key={item}>{item}</li>)}</ul> : <p>No location relevance configured.</p>}</div></section>}{selected.current_blocker ? <div className="ow-callout warn"><b>{label(selected.current_blocker)}</b><span>{selected.next_action}</span></div> : <div className="ow-callout good"><b>No current blocker</b><span>{selected.next_action}</span></div>}</article>}
     </section>
   </div>;
 }

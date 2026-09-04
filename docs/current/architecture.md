@@ -88,6 +88,15 @@ Application Workspace for human review. It does not create application authority
 does not bypass document or evidence gates, and does not automate submission.
 Product V1 ranking and Top-5 remain owned by the Gold/Product V1 read models.
 
+Lingjia's Career Intelligence source strategy is a configuration-backed
+prioritization layer over the existing connector/source architecture. The config
+defines target employers and discovery channels with tier, priority, role,
+career-lane relevance, preferred evidence type, location relevance and
+active/watch status. The read model decorates `source_connector_overview` and
+adds explicit gap rows for configured targets that do not yet have an existing
+candidate, connector support, active profile or ingestion evidence. It never
+changes connector readiness, validation, approval, activation or scoring logic.
+
 ## Current maturity note
 
 The documentation structure is now stable enough for product work again, but the

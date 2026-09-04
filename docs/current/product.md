@@ -51,6 +51,13 @@ existing Application Workspace when they join to a Product V1 `silver_job_id`.
 The workspace still owns the source-grounded `draft_for_review` flow and all
 approval gates. The product still does not submit applications automatically.
 
+Lingjia's V2.1 source strategy is configuration-backed in
+`config/career_source_strategy.yaml`. It makes strategic employers, adjacent
+employers, discovery sources and generic/demo sources distinct in the existing
+Control Center. It prioritizes employer-origin evidence for career decisions but
+does not register, activate, crawl, score, rank or apply to sources/jobs by
+itself.
+
 Deep Ocean is the visual language: sonar for sensing, depth for evidence,
 pressure for gates, calm control surfaces for decisions and repair loops for
 learning.

@@ -42,11 +42,13 @@ from scripts.product_v1_job_review_actions import (
     parse_job_review_label_action_payload,
 )
 from scripts.run_employer_origin_candidate_queue_agent import DatabaseConfig
+from src.connectors.registry import build_default_connector_registry
 from src.career_intelligence.control_center import (
     load_career_intelligence_control_center,
     merge_career_intelligence_payload,
 )
 from src.career_intelligence.operator_state import set_operator_state, validate_state
+from src.career_intelligence.source_strategy import enrich_source_overview_with_strategy
 from src.search_intelligence.product_v1_demo_origin_projection import (
     project_demo_origin_truth,
 )
@@ -54,12 +56,20 @@ from src.search_intelligence.product_v1_downstream_preview import DownstreamPrev
 
 
 build_parser = _base.build_parser
-load_source_connector_overview_payload = _base.load_source_connector_overview_payload
 build_source_connector_overview = _base.build_source_connector_overview
 rank_product_jobs = _base.rank_product_jobs
 _HARD_FILTER_POLICY_RELATION = "product_v1_hard_filter_policy"
 _MAX_ACTION_BODY_BYTES = 4096
 CAREER_OPERATOR_STATE_ACTION_PATH = "/api/v1/career-intelligence/operator-state"
+
+
+def load_source_connector_overview_payload() -> dict[str, object]:
+    """Load source lifecycle truth decorated with Lingjia's Career strategy."""
+
+    return enrich_source_overview_with_strategy(
+        _base.load_source_connector_overview_payload(),
+        registry=build_default_connector_registry(),
+    )
 
 
 def _merge_structured_job_locations(
@@ -370,6 +380,10 @@ def load_product_v1_payload() -> dict[str, object]:
                 )
                 label_rows = [dict(row) for row in cur.fetchall()]
 
+    payload["source_connector_overview"] = enrich_source_overview_with_strategy(
+        dict(payload.get("source_connector_overview") or {}),
+        registry=build_default_connector_registry(),
+    )
     enriched = _merge_structured_job_locations(payload, location_rows)
     enriched = _merge_observed_opportunities(enriched, opportunity_rows)
     enriched = _merge_job_review_labels(
@@ -403,7 +417,7 @@ class ProductV1Handler(_base.ProductV1Handler):
                 )
             return
         if parsed.path == "/api/v1/source-connectors":
-            super().do_GET()
+            self._send_json(load_source_connector_overview_payload())
             return
         if parsed.path != "/api/v1/product-v1/evidence-preview":
             super().do_GET()

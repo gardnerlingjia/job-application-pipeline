@@ -1,0 +1,278 @@
+schema_version: career_intelligence.source_strategy.v1
+owner: lingjia_gardner
+source_strategy:
+  - company_name: MOIA
+    source_name: personio:moia
+    tier: A
+    strategic_priority: 100
+    relevant_career_lanes:
+      - autonomous_mobility
+      - technical_program_leadership
+      - mobility_ecosystems
+    preferred_evidence_type: employer_origin_vacancy
+    source_role: employer_origin
+    location_relevance:
+      - Berlin preferred
+      - remote Germany acceptable
+    status: active
+  - company_name: Waymo
+    source_name: greenhouse:waymo
+    tier: A
+    strategic_priority: 98
+    relevant_career_lanes:
+      - autonomous_mobility
+      - robotics
+      - technical_product_leadership
+    preferred_evidence_type: employer_origin_vacancy
+    source_role: employer_origin
+    location_relevance:
+      - Germany-wide with limited travel acceptable
+      - no relocation to Munich
+      - no relocation to China
+    status: watch
+  - company_name: MOTOR Ai
+    source_name: motor_ai:careers
+    tier: A
+    strategic_priority: 96
+    relevant_career_lanes:
+      - autonomous_mobility
+      - robotics
+      - technical_program_leadership
+    preferred_evidence_type: employer_origin_vacancy
+    source_role: employer_origin
+    location_relevance:
+      - Berlin preferred
+      - Potsdam/hybrid acceptable
+    status: active
+  - company_name: Uber
+    source_name: greenhouse:uber
+    tier: A
+    strategic_priority: 94
+    relevant_career_lanes:
+      - mobility_ecosystems
+      - technical_product_leadership
+      - strategy_operations
+    preferred_evidence_type: employer_origin_vacancy
+    source_role: employer_origin
+    location_relevance:
+      - Berlin preferred
+      - remote Germany acceptable
+    status: watch
+  - company_name: FREENOW
+    source_name: personio:freenow
+    tier: A
+    strategic_priority: 92
+    relevant_career_lanes:
+      - mobility_ecosystems
+      - technical_program_leadership
+      - strategy_operations
+    preferred_evidence_type: employer_origin_vacancy
+    source_role: employer_origin
+    location_relevance:
+      - Berlin preferred
+      - remote Germany acceptable
+    status: active
+  - company_name: HERE Technologies
+    source_name: here_technologies:careers
+    tier: A
+    strategic_priority: 90
+    relevant_career_lanes:
+      - mobility_ecosystems
+      - ai_data_transformation
+      - technical_product_leadership
+    preferred_evidence_type: employer_origin_vacancy
+    source_role: employer_origin
+    location_relevance:
+      - Berlin preferred
+      - Germany-wide with limited travel acceptable
+    status: active
+  - company_name: NVIDIA
+    source_name: nvidia:careers
+    tier: A
+    strategic_priority: 88
+    relevant_career_lanes:
+      - ai_data_transformation
+      - robotics
+      - autonomous_mobility
+    preferred_evidence_type: employer_origin_vacancy
+    source_role: employer_origin
+    location_relevance:
+      - remote Germany acceptable
+      - Germany-wide with limited travel acceptable
+    status: watch
+  - company_name: Siemens Mobility
+    source_name: successfactors:siemens_mobility
+    tier: A
+    strategic_priority: 86
+    relevant_career_lanes:
+      - mobility_ecosystems
+      - technical_program_leadership
+      - strategy_operations
+    preferred_evidence_type: employer_origin_vacancy
+    source_role: employer_origin
+    location_relevance:
+      - Berlin preferred
+      - Germany-wide with limited travel acceptable
+    status: active
+  - company_name: DB Systel
+    source_name: db_systel:careers
+    tier: A
+    strategic_priority: 84
+    relevant_career_lanes:
+      - ai_data_transformation
+      - technical_program_leadership
+      - mobility_ecosystems
+    preferred_evidence_type: employer_origin_vacancy
+    source_role: employer_origin
+    location_relevance:
+      - Berlin preferred
+      - remote Germany acceptable
+    status: active
+  - company_name: Bosch
+    source_name: bosch:careers
+    tier: B
+    strategic_priority: 78
+    relevant_career_lanes:
+      - robotics
+      - ai_data_transformation
+      - technical_program_leadership
+    preferred_evidence_type: employer_origin_vacancy
+    source_role: employer_origin
+    location_relevance:
+      - remote Germany acceptable
+      - Germany-wide with limited travel acceptable
+    status: watch
+  - company_name: ABB
+    source_name: successfactors:abb
+    tier: B
+    strategic_priority: 76
+    relevant_career_lanes:
+      - robotics
+      - ai_data_transformation
+      - technical_product_leadership
+    preferred_evidence_type: employer_origin_vacancy
+    source_role: employer_origin
+    location_relevance:
+      - remote Germany acceptable
+      - Germany-wide with limited travel acceptable
+    status: watch
+  - company_name: SAP
+    source_name: successfactors:sap
+    tier: B
+    strategic_priority: 74
+    relevant_career_lanes:
+      - ai_data_transformation
+      - technical_product_leadership
+      - strategy_operations
+    preferred_evidence_type: employer_origin_vacancy
+    source_role: employer_origin
+    location_relevance:
+      - Berlin preferred
+      - remote Germany acceptable
+      - no relocation to Munich
+    status: watch
+  - company_name: Amazon / AWS
+    source_name: amazon:aws
+    tier: B
+    strategic_priority: 72
+    relevant_career_lanes:
+      - ai_data_transformation
+      - technical_program_leadership
+      - strategy_operations
+    preferred_evidence_type: employer_origin_vacancy
+    source_role: employer_origin
+    location_relevance:
+      - Berlin preferred
+      - remote Germany acceptable
+    status: watch
+  - company_name: Microsoft
+    source_name: microsoft:careers
+    tier: B
+    strategic_priority: 70
+    relevant_career_lanes:
+      - ai_data_transformation
+      - technical_product_leadership
+      - strategy_operations
+    preferred_evidence_type: employer_origin_vacancy
+    source_role: employer_origin
+    location_relevance:
+      - Berlin preferred
+      - remote Germany acceptable
+    status: watch
+  - company_name: AUTO1
+    source_name: auto1:careers
+    tier: B
+    strategic_priority: 68
+    relevant_career_lanes:
+      - mobility_ecosystems
+      - ai_data_transformation
+      - technical_program_leadership
+    preferred_evidence_type: employer_origin_vacancy
+    source_role: employer_origin
+    location_relevance:
+      - Berlin preferred
+      - Potsdam/hybrid acceptable
+    status: watch
+  - company_name: Delivery Hero
+    source_name: greenhouse:deliveryhero
+    tier: B
+    strategic_priority: 66
+    relevant_career_lanes:
+      - ai_data_transformation
+      - technical_product_leadership
+      - strategy_operations
+    preferred_evidence_type: employer_origin_vacancy
+    source_role: employer_origin
+    location_relevance:
+      - Berlin preferred
+      - remote Germany acceptable
+    status: watch
+  - company_name: Zalando
+    source_name: zalando:careers
+    tier: B
+    strategic_priority: 64
+    relevant_career_lanes:
+      - ai_data_transformation
+      - technical_product_leadership
+      - strategy_operations
+    preferred_evidence_type: employer_origin_vacancy
+    source_role: employer_origin
+    location_relevance:
+      - Berlin preferred
+      - remote Germany acceptable
+    status: watch
+  - company_name: Stepstone
+    source_name: stepstone
+    tier: C
+    strategic_priority: 50
+    relevant_career_lanes:
+      - autonomous_mobility
+      - technical_program_leadership
+      - ai_data_transformation
+      - strategy_operations
+      - mobility_ecosystems
+    preferred_evidence_type: discovery_signal
+    source_role: discovery
+    location_relevance:
+      - Berlin preferred
+      - remote Germany acceptable
+      - Germany-wide with limited travel acceptable
+    status: active
+  - company_name: Bundesagentur fuer Arbeit
+    source_name: bundesagentur_fuer_arbeit
+    tier: C
+    strategic_priority: 48
+    relevant_career_lanes:
+      - autonomous_mobility
+      - technical_program_leadership
+      - ai_data_transformation
+      - strategy_operations
+      - mobility_ecosystems
+    preferred_evidence_type: discovery_signal
+    source_role: discovery
+    location_relevance:
+      - Berlin preferred
+      - remote Germany acceptable
+      - Potsdam/hybrid acceptable
+      - Germany-wide with limited travel acceptable
+    status: active

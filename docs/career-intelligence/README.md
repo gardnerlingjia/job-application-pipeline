@@ -5,7 +5,8 @@ local batch automation. V1.2 adds Silver-layer ingestion; it does not apply to j
 sources, alter upstream ingestion, or modify the Silver schema. V1.3 adds a local daily runner for
 unattended macOS refreshes from the existing Silver layer. V1.4-lite adds persistent local operator
 review state for the daily radar. V2.0 projects Career Intelligence into the existing Product V1
-Control Center as an additional decision lens.
+Control Center as an additional decision lens. V2.1 adds Lingjia Gardner's source strategy as a
+configuration-backed prioritization layer over the existing source architecture.
 
 ## Architecture
 
@@ -21,8 +22,10 @@ logs, operator state counts, and operator-friendly terminal output for once-per-
 `operator_state.py` stores human review state outside `opportunities.json` and renders the daily
 radar by operator state, recommendation, and score. `control_center.py` reads those runtime files
 and joins them to Product V1 jobs through Silver provenance without changing scoring or the V1.1
-result schema. A bad file or bad Silver record is reported; other records continue processing.
-Hard-stop decisions come unchanged from the existing constraint and recommendation modules.
+result schema. `source_strategy.py` reads `config/career_source_strategy.yaml` and decorates the
+existing source overview with Lingjia-specific source tiers, roles, priorities, and gaps. A bad file
+or bad Silver record is reported; other records continue processing. Hard-stop decisions come
+unchanged from the existing constraint and recommendation modules.
 
 ## Configuration
 
@@ -301,6 +304,37 @@ document checks, provider boundaries, and no-submission guarantees.
 If Career Intelligence has never run, or a runtime file is missing or malformed, the Control Center
 fails closed for the Career tab while leaving Product V1 available. Scores are never fabricated.
 
+## Lingjia Source Strategy
+
+V2.1 stores source strategy in `config/career_source_strategy.yaml`. This is configuration, not
+connector registration or activation. Each source record includes:
+
+- company/source name
+- tier: `A`, `B`, or `C`
+- strategic priority from `0` to `100`
+- relevant career lanes
+- preferred evidence type
+- source role: `employer_origin` or `discovery`
+- optional location relevance
+- active/watch status
+
+Tier A contains strategic employer sources for autonomous mobility, robotics, technical
+program/product leadership, AI/data transformation, strategy/executive operations, and mobility
+ecosystems. Tier B contains adjacent employers. Tier C contains discovery sources such as Stepstone
+and Bundesagentur fuer Arbeit.
+
+The source strategy decorates the existing Control Center source overview. It does not replace
+connector readiness, validation, final approval, activation, Bronze/Silver ingestion, or Product V1
+ranking. Employer-origin sources remain preferred evidence for Career Intelligence. Discovery
+sources may identify opportunities, but they do not become stronger evidence than an employer-origin
+vacancy when both exist.
+
+Configured employers without implemented, validated, approved, active ingestion are shown as source
+gaps or candidate sources. Supported connector families such as `personio:*`, `greenhouse:*`, and
+`successfactors:*` can be shown as connector-supported but unconfigured. Unknown source families are
+shown as connector gaps. Existing generic/demo sources remain visible under "Existing generic/demo
+sources" and are not deleted or reclassified as Lingjia strategy targets.
+
 ## Troubleshooting
 
 - If the command exits `2`, another run is active or a valid lock exists. Check
@@ -320,6 +354,9 @@ fails closed for the Career tab while leaving Product V1 available. Scores are n
   is reported in the tab instead of breaking the whole Control Center.
 - If a Career Intelligence opportunity cannot open the Application Workspace, confirm it is joined
   to a Product V1 `silver_job_id` and is either `INTERESTED`, `APPLY_NOW`, or `NETWORK_FIRST`.
+- If the Sources tab shows a target employer as a gap, inspect the existing connector lifecycle:
+  source candidate, connector implementation, validation gate, final approval gate, active search
+  profile, and Bronze/Silver presence. V2.1 does not activate or crawl sources automatically.
 
 ## Limitations
 

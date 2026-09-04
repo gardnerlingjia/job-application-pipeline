@@ -52,3 +52,17 @@ def test_readme_documents_v20_control_center_contract():
     assert "operator_state.py` persistence logic" in text
     assert "Application Workspace with that job selected" in text
     assert "Scores are never fabricated" in normalized
+
+
+def test_readme_documents_v21_source_strategy_contract():
+    text = README.read_text(encoding="utf-8")
+    normalized = " ".join(text.split())
+
+    assert "V2.1 adds Lingjia Gardner's source strategy" in text
+    assert "config/career_source_strategy.yaml" in text
+    assert "Tier A contains strategic employer sources" in text
+    assert "source role: `employer_origin` or `discovery`" in text
+    assert "Employer-origin sources remain preferred evidence" in text
+    assert "discovery sources may identify opportunities" in normalized.casefold()
+    assert "Existing generic/demo sources remain visible" in text
+    assert "does not activate or crawl sources automatically" in normalized

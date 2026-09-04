@@ -51,6 +51,22 @@ def test_product_payload_merges_career_intelligence_read_model(monkeypatch) -> N
         lambda payload, rows, capture_available: payload,
     )
     monkeypatch.setattr(server, "_merge_demo_origin_projection", lambda payload: payload)
+    monkeypatch.setattr(
+        server,
+        "enrich_source_overview_with_strategy",
+        lambda overview, registry: {
+            **overview,
+            "summary": {
+                **overview.get("summary", {}),
+                "career_strategy_source_count": 1,
+            },
+            "sources": [],
+            "boundaries": {
+                **overview.get("boundaries", {}),
+                "career_source_strategy_does_not_activate_connectors": True,
+            },
+        },
+    )
 
     def load_career(payload):
         calls.append(payload)
@@ -77,8 +93,16 @@ def test_product_payload_merges_career_intelligence_read_model(monkeypatch) -> N
 
     assert calls and calls[0]["job_readiness"][0]["silver_job_id"] == 42
     assert payload["career_intelligence"]["available"] is True
+    assert payload["source_connector_overview"]["summary"]["career_strategy_source_count"] == 1
+    assert (
+        payload["source_connector_overview"]["boundaries"][
+            "career_source_strategy_does_not_activate_connectors"
+        ]
+        is True
+    )
     assert payload["summary"]["career_intelligence_opportunity_count"] == 0
     assert payload["boundaries"]["career_intelligence_does_not_automate_applications"] is True
+    assert payload["boundaries"]["career_intelligence_is_not_product_v1_ranking_authority"] is True
 
 
 def test_career_operator_state_post_route_calls_existing_persistence(monkeypatch) -> None:
@@ -146,6 +170,19 @@ def test_frontend_workspace_bridge_accepts_career_selected_job() -> None:
     assert "application-workspace?silver_job_id=${selectedId}" in workspace
     assert "generate_review_draft" in workspace
     assert "if (customEvent.detail?.silverJobId != null) return;" in bridge
+
+
+def test_frontend_sources_section_groups_lingjia_strategy_sources() -> None:
+    text = FRONTEND.read_text(encoding="utf-8")
+
+    assert "career_source_strategy" in text
+    assert '"Strategic employers"' in text
+    assert '"Adjacent employers"' in text
+    assert '"Discovery sources"' in text
+    assert '"Existing generic/demo sources"' in text
+    assert "source_status" in text
+    assert "relevant_career_lanes" in text
+    assert "preferred_evidence_type" in text
 
 
 class _EmptyCursor:
