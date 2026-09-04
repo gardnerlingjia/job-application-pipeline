@@ -50,6 +50,9 @@ def test_valid_silver_record_conversion_preserves_required_fields_and_source_ide
     assert result.provenance["description_quality"] == "strong"
     assert result.provenance["ingestion_status"] == "assessed"
     assert result.provenance["stable_identity_type"] == "source_name_external_job_id"
+    assert result.provenance["freshness_bucket"] == "UNKNOWN"
+    assert result.provenance["publication_date"] is None
+    assert result.provenance["job_age_date_source"] is None
 
 
 @pytest.mark.parametrize(
@@ -151,6 +154,41 @@ def test_strong_detail_description_record_is_scorable():
     assert result.description == "Permanent data platform role with Python and SQL."
     assert result.description_quality == "strong"
     assert result.provenance["description_source"] == "detail_evidence.text"
+
+
+def test_greenhouse_job_content_is_strong_description_evidence_for_live_moia():
+    result = adapt_silver_row(
+        silver_row(
+            source_name="greenhouse:moia",
+            company_name="MOIA",
+            title="Technical Program Lead",
+            raw_data={
+                "job": {
+                    "content": "Lead autonomous mobility programs across Berlin teams.",
+                }
+            },
+        )
+    )
+
+    assert result.description == "Lead autonomous mobility programs across Berlin teams."
+    assert result.description_quality == "strong"
+    assert result.provenance["description_source"] == "job.content"
+    assert result.provenance["source_name"] == "greenhouse:moia"
+
+
+def test_publication_date_is_preserved_separately_from_first_and_last_seen():
+    result = adapt_silver_row(
+        silver_row(
+            publication_date="2026-09-01",
+            first_seen_at="2026-09-03T08:00:00+00:00",
+            last_seen_at="2026-09-04T08:00:00+00:00",
+        )
+    )
+
+    assert result.provenance["publication_date"] == "2026-09-01"
+    assert result.provenance["first_seen_at"] == "2026-09-03T08:00:00+00:00"
+    assert result.provenance["last_seen_at"] == "2026-09-04T08:00:00+00:00"
+    assert result.provenance["job_age_date_source"] == "publication_date"
 
 
 def test_stable_identity_prefers_source_name_and_external_job_id():

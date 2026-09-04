@@ -38,6 +38,13 @@ def _provenance(source_file: str, *, silver_job_id: int | None = 42):
         "source_name": "personio:target",
         "external_job_id": "abc-123",
         "source_url": "https://jobs.example.test/abc-123",
+        "publication_date": "2026-09-01",
+        "first_seen_at": "2026-09-02T10:00:00+00:00",
+        "last_seen_at": "2026-09-04T10:00:00+00:00",
+        "freshness_bucket": "NEW",
+        "job_age_days": 3,
+        "job_age_date_source": "publication_date",
+        "freshness_ranking_penalty": 0,
     }
 
 
@@ -80,6 +87,12 @@ def test_control_center_read_model_joins_by_silver_provenance(tmp_path):
     assert record["operator_state"] == "NEW"
     assert record["network_access"] is None
     assert record["network_status"] == "not_available_in_v1_1_result_schema"
+    assert record["freshness_bucket"] == "NEW"
+    assert record["job_age_days"] == 3
+    assert record["job_age_date_source"] == "publication_date"
+    assert record["publication_date"] == "2026-09-01"
+    assert record["first_seen_at"] == "2026-09-02T10:00:00+00:00"
+    assert record["last_seen_at"] == "2026-09-04T10:00:00+00:00"
     assert payload["by_silver_job_id"]["42"]["source_file"] == "silver-a.json"
 
 

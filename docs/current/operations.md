@@ -28,6 +28,9 @@ Control Center reads those files as an additional lens and writes only
 operator-state changes to `.runtime/career_intelligence/operator_state.json`.
 Those writes are intentionally separate from Product V1 ranking, connector
 operation, application drafting and application submission.
+Freshness shown in the Control Center prefers employer `publication_date`, uses
+`first_seen_at` only as a labelled fallback, keeps `last_seen_at` separate, and
+applies any age penalty only to the Career Intelligence lens.
 
 Lingjia's source strategy lives in `config/career_source_strategy.yaml` and is
 safe to review as configuration. It may surface connector gaps and target-source

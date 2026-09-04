@@ -23,7 +23,7 @@ def _rules():
 def _strategy(**overrides):
     record = {
         "company_name": "MOIA",
-        "source_name": "personio:moia",
+        "source_name": "greenhouse:moia",
         "tier": "A",
         "strategic_priority": 100,
         "relevant_career_lanes": ["autonomy_robotics"],
@@ -123,7 +123,7 @@ def test_repeated_opportunities_aggregate_and_suggest_tier_a():
 def test_existing_configured_sources_are_not_duplicated_as_candidates():
     candidates = derive_adaptive_source_candidates(
         [_opportunity("moia.json", company="MOIA")],
-        [_provenance("moia.json", source_name="personio:moia")],
+        [_provenance("moia.json", source_name="greenhouse:moia")],
         strategies=[_strategy()],
         rules=_rules(),
     )
@@ -205,12 +205,12 @@ def test_malformed_state_fails_closed_without_product_authority(tmp_path):
 def test_source_advisories_are_advisory_only():
     advisories = derive_source_advisories(
         [_opportunity("moia.json", company="MOIA", score=40)],
-        [_provenance("moia.json", source_name="personio:moia")],
+        [_provenance("moia.json", source_name="greenhouse:moia")],
         strategies=[_strategy()],
     )
 
-    assert advisories["personio:moia"]["status"] == "LOW_RELEVANCE"
-    assert advisories["personio:moia"]["automatic_downgrade"] is False
+    assert advisories["greenhouse:moia"]["status"] == "LOW_RELEVANCE"
+    assert advisories["greenhouse:moia"]["automatic_downgrade"] is False
 
 
 def test_candidates_sort_deterministically():

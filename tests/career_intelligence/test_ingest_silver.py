@@ -81,6 +81,50 @@ def test_integration_assesses_silver_rows_with_existing_result_schema(tmp_path, 
     assert set(persisted[0]) == RESULT_FIELDS
 
 
+def test_old_silver_job_receives_freshness_ranking_penalty(tmp_path, monkeypatch):
+    def assess(company, title, description):
+        result = fake_assessment(company, title, description)
+        result["opportunity_score"] = 80
+        result["recommendation"] = "APPLY_NOW"
+        result["constraint_action"] = "CLEAR"
+        result["network_access"] = 70
+        return result
+
+    monkeypatch.setattr("src.career_intelligence.ingest_silver.assess_opportunity", assess)
+
+    summary = process_silver(
+        repository=FakeRepository([silver_row(publication_date="2000-01-01")]),
+        results=tmp_path,
+    )
+
+    result = summary["opportunities"][0]
+    provenance = json.loads((tmp_path / PROVENANCE_FILE).read_text())[0]
+    assert result["opportunity_score"] == 65
+    assert provenance["base_opportunity_score"] == 80
+    assert provenance["freshness_adjusted_opportunity_score"] == 65
+    assert provenance["freshness_bucket"] == "OLD"
+    assert provenance["freshness_ranking_penalty"] == 15
+
+
+def test_missing_dates_are_not_fabricated_or_penalized(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        "src.career_intelligence.ingest_silver.assess_opportunity",
+        fake_assessment,
+    )
+
+    summary = process_silver(repository=FakeRepository([silver_row()]), results=tmp_path)
+
+    result = summary["opportunities"][0]
+    provenance = json.loads((tmp_path / PROVENANCE_FILE).read_text())[0]
+    assert result["opportunity_score"] == 80
+    assert provenance["publication_date"] is None
+    assert provenance["first_seen_at"] is None
+    assert provenance["last_seen_at"] is None
+    assert provenance["job_age_days"] is None
+    assert provenance["freshness_bucket"] == "UNKNOWN"
+    assert provenance["freshness_ranking_penalty"] == 0
+
+
 def test_provenance_is_preserved_in_sidecar_without_changing_public_results(
     tmp_path,
     monkeypatch,
@@ -292,6 +336,39 @@ def test_stable_rerun_skips_existing_silver_identity(tmp_path, monkeypatch):
     persisted = json.loads((tmp_path / "opportunities.json").read_text())
     assert len(persisted) == 1
     assert persisted[0]["title"] == "Senior Data Engineer"
+
+
+def test_stable_rerun_refreshes_freshness_penalty_without_reassessing(
+    tmp_path,
+    monkeypatch,
+):
+    calls = []
+
+    def assess(company, title, description):
+        calls.append(company)
+        return fake_assessment(company, title, description)
+
+    monkeypatch.setattr("src.career_intelligence.ingest_silver.assess_opportunity", assess)
+
+    first_summary = process_silver(
+        repository=FakeRepository([silver_row(publication_date="2999-01-01")]),
+        results=tmp_path,
+    )
+    second_summary = process_silver(
+        repository=FakeRepository([silver_row(publication_date="2000-01-01")]),
+        results=tmp_path,
+    )
+
+    persisted = json.loads((tmp_path / "opportunities.json").read_text())
+    provenance = json.loads((tmp_path / PROVENANCE_FILE).read_text())
+    assert first_summary["processed"] == 1
+    assert second_summary["processed"] == 0
+    assert second_summary["skipped_existing"] == 1
+    assert calls == ["Example GmbH"]
+    assert persisted[0]["opportunity_score"] == 65
+    assert provenance[0]["base_opportunity_score"] == 80
+    assert provenance[0]["freshness_bucket"] == "OLD"
+    assert provenance[0]["freshness_adjusted_opportunity_score"] == 65
 
 
 def test_bad_silver_record_does_not_stop_valid_assessment(tmp_path, monkeypatch):

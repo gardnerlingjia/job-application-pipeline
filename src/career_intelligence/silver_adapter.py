@@ -10,6 +10,11 @@ from typing import Any, Iterable, Mapping
 import psycopg
 from psycopg.rows import dict_row
 
+from src.career_intelligence.freshness import (
+    JobFreshness,
+    calculate_job_freshness,
+    freshness_provenance,
+)
 from src.config import get_database_config
 
 
@@ -24,6 +29,7 @@ class SilverCareerInput:
     title: str
     description: str
     description_quality: str
+    freshness: JobFreshness
     source_file: str
     provenance: dict[str, Any]
 
@@ -85,12 +91,19 @@ class SilverJobReadRepository:
                         s.city,
                         s.postal_code,
                         s.country,
+                        s.publication_date,
+                        COALESCE(l.first_seen_at, r.created_at) AS first_seen_at,
+                        COALESCE(l.last_seen_at, r.fetched_at) AS last_seen_at,
                         s.canonical_source_type,
                         s.canonical_key_candidate,
                         r.raw_data
                     FROM silver_jobs s
                     JOIN raw_jobs r
                       ON r.id = s.raw_job_id
+                    LEFT JOIN job_lifecycle l
+                      ON l.source_name = s.source_name
+                     AND l.external_job_id = s.external_job_id
+                     AND s.external_job_id IS NOT NULL
                     {filter_sql}
                     ORDER BY s.id
                     LIMIT %s;
@@ -131,6 +144,7 @@ STRONG_DESCRIPTION_PATHS: tuple[tuple[str, ...], ...] = (
     ("job", "description"),
     ("job", "jobdescription"),
     ("job", "text"),
+    ("job", "content"),
     ("detail_evidence", "description"),
     ("detail_evidence", "text"),
     ("source_specific", "description"),
@@ -207,6 +221,11 @@ def silver_provenance(
 ) -> dict[str, Any]:
     identity_type, identity_value = stable_identity(row)
     source_file = source_file_for_row(row)
+    freshness = calculate_job_freshness(
+        publication_date=row.get("publication_date"),
+        first_seen_at=row.get("first_seen_at"),
+        last_seen_at=row.get("last_seen_at"),
+    )
     return {
         "schema_version": PROVENANCE_SCHEMA_VERSION,
         "source_file": source_file,
@@ -222,6 +241,7 @@ def silver_provenance(
         "source_url": row.get("source_url"),
         "canonical_source_type": row.get("canonical_source_type"),
         "canonical_key_candidate": row.get("canonical_key_candidate"),
+        **freshness_provenance(freshness),
     }
 
 
@@ -229,6 +249,11 @@ def adapt_silver_row(row: Mapping[str, Any]) -> SilverCareerInput:
     company = _clean_text(row.get("company_name"))
     title = _clean_text(row.get("title"))
     description, description_source, description_quality = extract_description(row.get("raw_data"))
+    freshness = calculate_job_freshness(
+        publication_date=row.get("publication_date"),
+        first_seen_at=row.get("first_seen_at"),
+        last_seen_at=row.get("last_seen_at"),
+    )
     base_provenance = silver_provenance(
         row,
         description_source=description_source,
@@ -268,6 +293,7 @@ def adapt_silver_row(row: Mapping[str, Any]) -> SilverCareerInput:
         title=title,
         description=description,
         description_quality=description_quality,
+        freshness=freshness,
         source_file=source_file,
         provenance=provenance,
     )

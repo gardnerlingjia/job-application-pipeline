@@ -66,6 +66,17 @@ runtime state. These suggestions do not mutate the curated source strategy,
 Product V1 ranking, source activation, connector registration, ingestion or
 application submission.
 
+Career Intelligence V2.3 makes MOIA the first live employer-origin proof flow
+through `greenhouse:moia`. MOIA still follows the existing source lifecycle:
+candidate state, connector validation, final approval, explicit active profile,
+canonical ingestion, Silver transformation, Career Intelligence assessment, and
+Control Center display. The flow does not change Product V1 ranking authority or
+submit applications.
+Career Intelligence freshness is a local decision lens: employer publication
+dates are preferred, first seen is only a labelled fallback, and jobs older than
+seven days receive a Career Intelligence score penalty without changing Product
+V1 ranking or Top-5 semantics.
+
 Deep Ocean is the visual language: sonar for sensing, depth for evidence,
 pressure for gates, calm control surfaces for decisions and repair loops for
 learning.

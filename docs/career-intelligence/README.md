@@ -8,7 +8,8 @@ review state for the daily radar. V2.0 projects Career Intelligence into the exi
 Control Center as an additional decision lens. V2.1 adds Lingjia Gardner's source strategy as a
 configuration-backed prioritization layer over the existing source architecture. V2.2 adds
 adaptive source discovery and promotion suggestions from observed opportunities; those suggestions
-remain local candidates until an operator reviews them.
+remain local candidates until an operator reviews them. V2.3 adds the first bounded live employer
+flow for MOIA through the existing Greenhouse connector and source lifecycle.
 
 ## Architecture
 
@@ -28,9 +29,11 @@ result schema. `source_strategy.py` reads `config/career_source_strategy.yaml` a
 existing source overview with Lingjia-specific source tiers, roles, priorities, and gaps.
 `adaptive_sources.py` reads the same Career Intelligence results and Silver provenance, aggregates
 unknown employers into adaptive source candidates, adds source-health advisory signals, and stores
-operator promotion decisions in local runtime state only. A bad file or bad Silver record is
-reported; other records continue processing. Hard-stop decisions come unchanged from the existing
-constraint and recommendation modules.
+operator promotion decisions in local runtime state only. `moia_live_source.py` provides the
+MOIA-only activation preflight and daily live-source flow while delegating ingestion, Silver
+transformation, and Career Intelligence refresh to existing commands. A bad file or bad Silver
+record is reported; other records continue processing. Hard-stop decisions come unchanged from the
+existing constraint and recommendation modules.
 
 ## Configuration
 
@@ -115,6 +118,15 @@ keeping traceability to `silver_job_id`, `raw_job_id`, `source_name`, `external_
 `source_url`, canonical fields, the description source path, description quality, and whether the
 record was assessed or skipped.
 
+Freshness is recorded in the same sidecar without changing `opportunities.json`.
+Employer-provided `publication_date` is preferred when available. `first_seen_at` and `last_seen_at`
+remain separate observation timestamps; `first_seen_at` is used for job age only as a clearly
+labelled `first_seen_fallback` when no reliable publication date exists. Dates are never fabricated.
+Career Intelligence freshness buckets are `NEW` for 0-3 days, `FRESH` for 4-7 days, `AGING` for
+8-14 days, `OLD` for more than 14 days, and `UNKNOWN` when no reliable date exists. `AGING` and
+`OLD` jobs receive a local Career Intelligence ranking penalty; Product V1 ranking authority and
+Top-5 semantics are unchanged.
+
 ## Silver Deduplication
 
 Silver ingestion reuses the V1.1 cumulative result identity by generating a deterministic
@@ -123,6 +135,59 @@ Silver ingestion reuses the V1.1 cumulative result identity by generating a dete
 `raw_jobs`. If no external job id exists, the deterministic fallback is `raw_job_id`; if that is
 unavailable, `silver_job_id`, `canonical_key_candidate`, and finally company/title/location content
 are used in that order.
+
+## MOIA Live Source Flow
+
+V2.3 corrects MOIA to the existing Greenhouse source family:
+
+```yaml
+source_name: greenhouse:moia
+source_role: employer_origin
+```
+
+`greenhouse:moia` maps to the Greenhouse board token `moia` and the canonical connector request
+`https://boards-api.greenhouse.io/v1/boards/moia/jobs`. The Greenhouse connector supports
+full-board fetch, so the source-level profile uses broad Lingjia theme terms and lets the existing
+local post-fetch filter plus Career Intelligence scoring perform the relevance work.
+
+MOIA activation is explicit and gate-bound:
+
+```bash
+python -m src.career_intelligence.moia_live_source preflight
+python -m src.career_intelligence.moia_live_source activate --apply
+```
+
+The seed migration `db/migrations/107_register_moia_greenhouse_source_candidate.sql` creates only a
+MOIA source candidate. It does not approve gates, create a search profile, run ingestion, write
+Bronze/Silver rows, rank jobs, schedule work, or touch applications. Activation refuses to write the
+active profile unless `connector_validation_gate` is passed with `ready_for_final_approval` and
+`final_approval_gate` is passed with `approve_connector_registration`.
+
+After activation, daily MOIA execution uses one local command:
+
+```bash
+python -m src.career_intelligence.moia_live_source run-daily
+```
+
+That command composes the canonical pipeline:
+
+1. `python -m src.ingest_jobs --profile moia_greenhouse_lingjia_daily`
+2. `python -m src.run_silver_jobs --source greenhouse:moia --limit 25`
+3. `python -m src.career_intelligence.daily --source greenhouse:moia --limit 25`
+
+Start the local database first with the repository Docker setup, for example:
+
+```bash
+docker compose up -d postgres
+```
+
+Then open the existing Product V1 Control Center with the repository launcher. The Sources view
+should show MOIA as active after activation, with last ingestion result, Bronze count and Silver
+count coming from existing lifecycle read models. The Career Intel view should show actual scored
+opportunities after Silver rows with strong Greenhouse `job.content` evidence are available.
+
+V2.3 does not activate any other employer. Other strategic sources remain candidates or gaps until
+their actual provider is verified and their lifecycle gates pass.
 
 If a generated `source_file` is already present in `opportunities.json`, the record is skipped and
 not reassessed. Duplicate Silver records within one run are reported without stopping the rest of
@@ -292,7 +357,8 @@ ranking, Top-5 semantics, hard-filter decisions, Silver schema, and the public
 The UI adds a dedicated Career Intelligence tab inside the existing Operator Workspace because the
 filters and state actions are specific to the career radar. The tab shows score, recommendation,
 career lane, constraints, risks, matched capabilities, network fields when available, provenance,
-and operator state. Because V1.1 public results do not store `network_access` or
+operator state, freshness bucket, job age, publication date, first seen and last seen. Because V1.1
+public results do not store `network_access` or
 `relationship_level`, the Control Center shows those fields as unavailable instead of recomputing or
 fabricating them.
 

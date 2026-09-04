@@ -296,7 +296,7 @@ button, input { font: inherit; }
 .ow-career-list-head,
 .ow-career-list > button {
   display: grid;
-  grid-template-columns: 64px 92px 116px minmax(260px, 1fr) 138px;
+  grid-template-columns: 64px 92px 116px minmax(260px, 1fr) 126px 138px;
   gap: 8px;
   align-items: center;
 }
@@ -336,7 +336,7 @@ button, input { font: inherit; }
   }
   .ow-career-list-head,
   .ow-career-list > button {
-    grid-template-columns: 54px 82px minmax(230px, 1fr) 120px;
+    grid-template-columns: 54px 82px minmax(230px, 1fr) 126px 120px;
   }
 
   .ow-job-list-head span:last-child,

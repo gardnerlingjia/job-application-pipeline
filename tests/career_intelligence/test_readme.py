@@ -78,3 +78,16 @@ def test_readme_documents_v22_adaptive_source_contract():
     assert "Employers already present in the curated strategy are not duplicated" in normalized
     assert "Candidate action buttons write only adaptive source state" in normalized
     assert "never downgrade a configured source automatically" in normalized
+
+
+def test_readme_documents_v23_moia_and_freshness_contract():
+    text = README.read_text(encoding="utf-8")
+    normalized = " ".join(text.split())
+
+    assert "V2.3 adds the first bounded live employer" in text
+    assert "greenhouse:moia" in text
+    assert "moia_greenhouse_lingjia_daily" in text
+    assert "first_seen_fallback" in text
+    assert "Dates are never fabricated" in text
+    assert "jobs receive a local Career Intelligence ranking penalty" in normalized
+    assert "Product V1 ranking authority and Top-5 semantics are unchanged" in normalized

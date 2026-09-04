@@ -201,6 +201,10 @@ def test_frontend_renders_career_intelligence_controls_and_fields() -> None:
     assert "key_matched_capabilities" in text
     assert "network_access" in text
     assert "relationship_level" in text
+    assert "freshness_bucket" in text
+    assert "jobAgeText" in text
+    assert "First seen" in text
+    assert "Last seen" in text
     assert "minimumScore" in text
     assert "setOperatorState" in text
     assert "careerSort" in text

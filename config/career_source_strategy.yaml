@@ -2,7 +2,7 @@ schema_version: career_intelligence.source_strategy.v1
 owner: lingjia_gardner
 source_strategy:
   - company_name: MOIA
-    source_name: personio:moia
+    source_name: greenhouse:moia
     tier: A
     strategic_priority: 100
     relevant_career_lanes:

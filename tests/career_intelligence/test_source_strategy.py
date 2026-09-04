@@ -10,7 +10,7 @@ from src.career_intelligence.source_strategy import (
 def strategy_record(**overrides):
     record = {
         "company_name": "MOIA",
-        "source_name": "personio:moia",
+        "source_name": "greenhouse:moia",
         "tier": "A",
         "strategic_priority": 100,
         "relevant_career_lanes": ["autonomous_mobility"],
@@ -23,7 +23,7 @@ def strategy_record(**overrides):
     return record
 
 
-def source_row(source_name="personio:moia", **overrides):
+def source_row(source_name="greenhouse:moia", **overrides):
     row = {
         "candidate_id": 1,
         "source_name": source_name,
@@ -35,7 +35,7 @@ def source_row(source_name="personio:moia", **overrides):
             "implementation_status": "implemented",
             "code_backed_registered": True,
             "registration_status": "registered",
-            "connector_class": "src.connectors.personio.PersonioConnector",
+            "connector_class": "src.connectors.greenhouse.GreenhouseConnector",
         },
         "gates": {
             "connector_validation_gate": {"status": "unknown", "passed": False},
@@ -69,11 +69,11 @@ def test_source_strategy_config_loads_lingjia_tiers():
     strategies = load_source_strategy()
 
     by_source = {item.source_name: item for item in strategies}
-    assert by_source["personio:moia"].tier == "A"
-    assert by_source["personio:moia"].source_role == "employer_origin"
+    assert by_source["greenhouse:moia"].tier == "A"
+    assert by_source["greenhouse:moia"].source_role == "employer_origin"
     assert by_source["stepstone"].tier == "C"
     assert by_source["stepstone"].source_role == "discovery"
-    assert "autonomous_mobility" in by_source["personio:moia"].relevant_career_lanes
+    assert "autonomous_mobility" in by_source["greenhouse:moia"].relevant_career_lanes
 
 
 def test_source_strategy_validation_rejects_bad_tier_role_pairing():
@@ -109,7 +109,7 @@ def test_source_strategy_read_model_enriches_existing_source_deterministically()
             "available": True,
             "candidates": [],
             "source_advisories": {
-                "personio:moia": {
+                "greenhouse:moia": {
                     "status": "LOW_ACTIVITY",
                     "reasons": ["1 observed opportunity"],
                     "automatic_downgrade": False,
@@ -120,7 +120,7 @@ def test_source_strategy_read_model_enriches_existing_source_deterministically()
     )
 
     names = [source["source_name"] for source in result["sources"]]
-    assert names == ["personio:moia", "legacy:demo"]
+    assert names == ["greenhouse:moia", "legacy:demo"]
     strategy = result["sources"][0]["career_source_strategy"]
     assert strategy["configured"] is True
     assert strategy["tier"] == "A"
@@ -150,8 +150,8 @@ def test_source_strategy_adds_missing_configured_source_as_gap():
 def test_source_strategy_marks_supported_but_unconfigured_without_activation():
     result = enrich_source_overview_with_strategy(
         overview(),
-        strategies=[strategy_from_mapping(strategy_record(source_name="personio:moia"))],
-        registry=FakeRegistry(supported={"personio:moia"}),
+        strategies=[strategy_from_mapping(strategy_record(source_name="greenhouse:moia"))],
+        registry=FakeRegistry(supported={"greenhouse:moia"}),
     )
 
     source = result["sources"][0]
@@ -168,7 +168,7 @@ def test_source_strategy_summary_preserves_generic_demo_sources():
     result = enrich_source_overview_with_strategy(
         overview(source_row("legacy:demo", source_label="Legacy Demo")),
         strategies=[
-            strategy_from_mapping(strategy_record(source_name="personio:moia")),
+            strategy_from_mapping(strategy_record(source_name="greenhouse:moia")),
             strategy_from_mapping(
                 strategy_record(
                     company_name="Stepstone",
@@ -180,7 +180,7 @@ def test_source_strategy_summary_preserves_generic_demo_sources():
                 )
             ),
         ],
-        registry=FakeRegistry(supported={"personio:moia", "stepstone"}),
+        registry=FakeRegistry(supported={"greenhouse:moia", "stepstone"}),
         adaptive_read_model={
             "available": True,
             "candidates": [{"normalized_company_key": "new mobility"}],

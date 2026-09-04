@@ -55,6 +55,13 @@ type CareerIntelligenceRecord = {
   network_access?: number | null;
   relationship_level?: string | null;
   network_status?: string | null;
+  publication_date?: string | null;
+  first_seen_at?: string | null;
+  last_seen_at?: string | null;
+  job_age_days?: number | null;
+  freshness_bucket?: string | null;
+  job_age_date_source?: string | null;
+  freshness_ranking_penalty?: number | null;
   operator_state: CareerOperatorState;
   workspace_available?: boolean;
   provenance?: {
@@ -69,6 +76,13 @@ type CareerIntelligenceRecord = {
     description_source?: string | null;
     description_quality?: string | null;
     ingestion_status?: string | null;
+    publication_date?: string | null;
+    first_seen_at?: string | null;
+    last_seen_at?: string | null;
+    freshness_bucket?: string | null;
+    job_age_days?: number | null;
+    job_age_date_source?: string | null;
+    freshness_ranking_penalty?: number | null;
   };
 };
 
@@ -277,6 +291,14 @@ const displayDate = (value: string | null | undefined) => {
 };
 
 const compareText = (left: string, right: string) => left.localeCompare(right, "de", { sensitivity: "base" });
+
+function jobAgeText(record: CareerIntelligenceRecord) {
+  const bucket = record.freshness_bucket || record.provenance?.freshness_bucket || "UNKNOWN";
+  const age = record.job_age_days ?? record.provenance?.job_age_days;
+  const source = record.job_age_date_source || record.provenance?.job_age_date_source;
+  if (typeof age !== "number") return `${bucket} · date unknown`;
+  return `${bucket} · ${age}d · ${label(source)}`;
+}
 
 function compareJobs(a: Job, b: Job, sort: JobSort) {
   if (sort === "fit_desc" || sort === "fit_asc") {
@@ -733,13 +755,14 @@ function CareerIntelligence({
 
     <section className="ow-job-workspace ow-career-workspace">
       <div className="ow-career-list">
-        <div className="ow-career-list-head"><span>Score</span><span>State</span><span>Recommendation</span><span>Opportunity</span><span>Lane</span></div>
+        <div className="ow-career-list-head"><span>Score</span><span>State</span><span>Recommendation</span><span>Opportunity</span><span>Freshness</span><span>Lane</span></div>
         {filtered.map((record) =>
           <button type="button" key={record.source_file} className={selected?.source_file === record.source_file ? "selected" : ""} onClick={() => setSelectedSource(record.source_file)}>
             <strong>{scoreText(record.opportunity_score)}</strong>
             <Status value={record.operator_state} />
             <Status value={record.recommendation || "unknown"} />
             <span className="ow-job-name"><b>{careerTitle(record)}</b><small>{careerCompany(record)} · {record.job_join_status === "joined" ? `Silver #${record.silver_job_id}` : "not joined to Product V1 job"}</small></span>
+            <Status value={jobAgeText(record)} />
             <span>{record.career_lane_label || label(record.career_lane)}</span>
           </button>
         )}
@@ -753,6 +776,7 @@ function CareerIntelligence({
         </div>
         <section className="ow-score-card"><h3>Career Intelligence</h3><div><span>Opportunity</span><i><b style={{ width: `${Math.max(0, Math.min(100, selected.opportunity_score || 0))}%` }} /></i><strong>{scoreText(selected.opportunity_score)}</strong></div><div><span>Network</span><i><b style={{ width: `${Math.max(0, Math.min(100, selected.network_access || 0))}%` }} /></i><strong>{scoreText(selected.network_access)}</strong></div>{selected.network_status && <p className="ow-score-note">Network detail: {label(selected.network_status)}</p>}</section>
         <section className="ow-facts"><div><span>Recommendation</span><Status value={selected.recommendation || "unknown"} /></div><div><span>Constraint</span><Status value={selected.constraint_action || "unknown"} /></div><div><span>Career lane</span><b>{selected.career_lane_label || label(selected.career_lane)}</b></div><div><span>Relationship</span><b>{label(selected.relationship_level)}</b></div></section>
+        <section className="ow-facts"><div><span>Freshness</span><Status value={jobAgeText(selected)} /></div><div><span>Published</span><b>{displayDate(selected.publication_date || selected.provenance?.publication_date)}</b></div><div><span>First seen</span><b>{displayDate(selected.first_seen_at || selected.provenance?.first_seen_at)}</b></div><div><span>Last seen</span><b>{displayDate(selected.last_seen_at || selected.provenance?.last_seen_at)}</b></div></section>
         <section className="ow-evidence"><div><span>Matched capabilities</span>{selected.key_matched_capabilities?.length ? <ul>{selected.key_matched_capabilities.slice(0, 6).map((item, index) => <li key={`${compactItemText(item)}-${index}`}>{compactItemText(item)}</li>)}</ul> : <p>No matched capabilities projected.</p>}</div><div><span>Key risks</span>{selected.risks?.length ? <ul>{selected.risks.slice(0, 6).map((item, index) => <li key={`${compactItemText(item)}-${index}`}>{compactItemText(item)}</li>)}</ul> : <p>No key risks projected.</p>}</div></section>
         <section className="ow-facts"><div><span>Source</span><b>{selected.provenance?.source_name || "unknown"}</b></div><div><span>External id</span><b>{selected.provenance?.external_job_id || "unknown"}</b></div><div><span>Description</span><b>{label(selected.provenance?.description_quality)} · {label(selected.provenance?.description_source)}</b></div><div><span>Join</span><b>{label(selected.job_join_status)}</b></div></section>
         {selected.workspace_available ? <div className="ow-actions"><button type="button" className="ow-primary" onClick={() => setApplicationWorkspaceJob(selected.silver_job_id)}>Open Application Workspace</button>{selected.provenance?.source_url && <a className="ow-primary-link" href={selected.provenance.source_url} target="_blank" rel="noreferrer">Original job ↗</a>}</div> : <p className="ow-muted">Application Workspace opens only for joined INTERESTED, APPLY_NOW, or NETWORK_FIRST opportunities and still enforces its own gates.</p>}

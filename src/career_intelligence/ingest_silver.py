@@ -18,6 +18,8 @@ from src.career_intelligence.batch import (
     _validate_result_record,
     _write_temporary,
 )
+from src.career_intelligence.freshness import apply_freshness_penalty
+from src.career_intelligence.recommender import recommend_action
 from src.career_intelligence.silver_adapter import (
     SilverCareerInput,
     SilverJobReadRepository,
@@ -80,7 +82,14 @@ def _merge_provenance(
     }
     for item in additions:
         source_file = str(item["source_file"])
-        by_source_file.setdefault(source_file, item)
+        previous = by_source_file.get(source_file)
+        if (
+            previous is not None
+            and previous.get("ingestion_status") == "assessed"
+            and item.get("ingestion_status") == "skipped"
+        ):
+            continue
+        by_source_file[source_file] = item
     return [by_source_file[key] for key in sorted(by_source_file)]
 
 
@@ -101,6 +110,58 @@ def _prepare_json_payloads(
     json.loads(opportunities_content)
     json.loads(provenance_content)
     return opportunities_content, radar_content, provenance_content
+
+
+def _apply_freshness_to_assessment(
+    assessment: dict[str, Any],
+    item: SilverCareerInput,
+) -> dict[str, Any]:
+    base_score = assessment["opportunity_score"]
+    adjusted = apply_freshness_penalty(assessment, item.freshness)
+    adjusted["recommendation"] = recommend_action(
+        opportunity_score=adjusted["opportunity_score"],
+        constraint_action=adjusted.get("constraint_action", "REVIEW"),
+        network_access=int(adjusted.get("network_access") or 0),
+        high_risks=list(adjusted.get("high_risks") or []),
+        reviews=list(adjusted.get("reviews") or []),
+    )
+    item.provenance["base_opportunity_score"] = base_score
+    item.provenance["freshness_adjusted_opportunity_score"] = adjusted[
+        "opportunity_score"
+    ]
+    return adjusted
+
+
+def _number(value: object) -> int | None:
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, (int, float)):
+        return int(round(value))
+    return None
+
+
+def _refresh_existing_freshness(
+    opportunity: dict[str, Any],
+    existing_provenance: dict[str, Any] | None,
+    item: SilverCareerInput,
+) -> bool:
+    previous_penalty = _number(
+        (existing_provenance or {}).get("freshness_ranking_penalty")
+    ) or 0
+    base_score = _number((existing_provenance or {}).get("base_opportunity_score"))
+    if base_score is None:
+        current_score = _number(opportunity.get("opportunity_score"))
+        if current_score is None:
+            return False
+        base_score = min(100, current_score + previous_penalty)
+
+    adjusted_score = max(0, base_score - item.freshness.ranking_penalty)
+    item.provenance["base_opportunity_score"] = base_score
+    item.provenance["freshness_adjusted_opportunity_score"] = adjusted_score
+    if opportunity.get("opportunity_score") == adjusted_score:
+        return False
+    opportunity["opportunity_score"] = adjusted_score
+    return True
 
 
 def _write_output_pair(
@@ -141,9 +202,21 @@ def assess_silver_inputs(
     opportunities = _load_existing_results(opportunities_path)
     existing_sources = {item["source_file"] for item in opportunities}
     existing_provenance = _load_existing_provenance(results / PROVENANCE_FILE)
+    provenance_by_source_file = {
+        str(item.get("source_file")): item
+        for item in existing_provenance
+        if isinstance(item.get("source_file"), str) and item["source_file"]
+    }
+    opportunities_by_source_file = {
+        str(item["source_file"]): item
+        for item in opportunities
+        if isinstance(item.get("source_file"), str)
+    }
 
     errors: list[dict[str, Any]] = []
     assessed: list[SilverCareerInput] = []
+    refreshed_provenance: list[dict[str, Any]] = []
+    freshness_refreshed = 0
     seen_this_run: set[str] = set()
 
     for item in inputs:
@@ -157,10 +230,19 @@ def assess_silver_inputs(
             continue
         seen_this_run.add(item.source_file)
         if item.source_file in existing_sources:
+            existing_opportunity = opportunities_by_source_file.get(item.source_file)
+            if existing_opportunity is not None and _refresh_existing_freshness(
+                existing_opportunity,
+                provenance_by_source_file.get(item.source_file),
+                item,
+            ):
+                freshness_refreshed += 1
+            refreshed_provenance.append(item.provenance)
             continue
 
         try:
             assessment = assess_opportunity(item.company, item.title, item.description)
+            assessment = _apply_freshness_to_assessment(assessment, item)
             opportunities.append(_result_record(assessment, item.source_file))
             existing_sources.add(item.source_file)
             assessed.append(item)
@@ -169,10 +251,19 @@ def assess_silver_inputs(
 
     merged_provenance = _merge_provenance(
         existing_provenance,
-        [*(skipped_provenance or []), *[item.provenance for item in assessed]],
+        [
+            *(skipped_provenance or []),
+            *refreshed_provenance,
+            *[item.provenance for item in assessed],
+        ],
     )
     _sort_opportunities(opportunities)
-    if assessed or skipped_provenance or not opportunities_path.exists():
+    if (
+        assessed
+        or skipped_provenance
+        or refreshed_provenance
+        or not opportunities_path.exists()
+    ):
         _write_output_pair(
             results,
             opportunities=opportunities,
@@ -185,6 +276,7 @@ def assess_silver_inputs(
         "errors": errors,
         "opportunities": opportunities,
         "provenance": merged_provenance,
+        "freshness_refreshed": freshness_refreshed,
     }
 
 

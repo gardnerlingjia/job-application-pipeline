@@ -97,15 +97,18 @@ adds explicit gap rows for configured targets that do not yet have an existing
 candidate, connector support, active profile or ingestion evidence. It never
 changes connector readiness, validation, approval, activation or scoring logic.
 
-Career Intelligence V2.2 adds an adaptive candidate layer beside that curated
-strategy. `adaptive_sources.py` reads existing `opportunities.json` and
-`silver_ingestion_provenance.json`, normalizes employer identity, excludes
-already-configured strategy employers, aggregates evidence, and exposes
-promotion suggestions plus configured-source health advisories through the same
-source overview read model. Operator decisions live under
-`.runtime/career_intelligence/adaptive_source_state.json`. This runtime overlay
-is not connector lifecycle truth and cannot activate, register, crawl, ingest,
-rank or submit anything.
+V2.2 adds adaptive source candidates from existing Career Intelligence results
+and Silver provenance. Operator decisions live under
+`.runtime/career_intelligence/adaptive_source_state.json`; they are not
+connector lifecycle truth and cannot activate, register, crawl, ingest, rank or
+submit anything.
+
+V2.3 adds a MOIA-only live-source flow through existing `greenhouse:moia`
+lifecycle gates and the canonical ingest/Silver/daily commands. Freshness keeps
+employer `publication_date` distinct from observation `first_seen_at` and
+`last_seen_at`; first seen is only a labelled age fallback. Age penalties affect
+only the Career Intelligence sidecar score, not Product V1 ranking, Top-5 or
+application authority.
 
 ## Current maturity note
 
@@ -114,5 +117,4 @@ pipeline itself is not closed-loop yet. The biggest product blockers remain
 StepStone discovery rotation, candidate promotion quality, URL/detail evidence
 generics and repair/stop taxonomy.
 
-Detailed references live under `../reference/`. Diagrams live in
-`system-diagrams.md`.
+Detailed references live under `../reference/`; diagrams live in `system-diagrams.md`.

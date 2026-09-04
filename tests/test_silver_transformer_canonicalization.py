@@ -130,6 +130,40 @@ def test_supported_source_patterns_include_personio() -> None:
     assert "personio:%" in get_supported_source_patterns()
 
 
+def test_transform_greenhouse_moia_raw_job_uses_source_identity_fallbacks() -> None:
+    raw_job = {
+        "id": 8101,
+        "source_name": "greenhouse:moia",
+        "external_job_id": "12345",
+        "source_url": "https://boards-api.greenhouse.io/v1/boards/moia/jobs",
+        "raw_data": {
+            "board_token": "moia",
+            "job": {
+                "id": 12345,
+                "title": "Senior Technical Program Manager",
+                "absolute_url": "https://boards.greenhouse.io/moia/jobs/12345",
+                "location": {"name": "Berlin"},
+                "content": "<p>Lead autonomous mobility programs with data teams.</p>",
+                "first_published": "2026-09-01T10:00:00Z",
+            },
+        },
+    }
+
+    result = transform_raw_job_to_silver(raw_job)
+
+    assert result["raw_job_id"] == 8101
+    assert result["source_name"] == "greenhouse:moia"
+    assert result["external_job_id"] == "12345"
+    assert result["source_url"] == "https://boards.greenhouse.io/moia/jobs/12345"
+    assert result["title"] == "Senior Technical Program Manager"
+    assert result["company_name"] == "MOIA"
+    assert result["city"] == "Berlin"
+    assert result["canonical_source_type"] == "employer_origin_ats_backed_career_site"
+    assert result["canonical_key_candidate"] == (
+        "moia :: senior technical program manager :: berlin"
+    )
+
+
 def test_transform_stepstone_raw_job_uses_result_card_fields() -> None:
     raw_job = {
         "id": 6001,
