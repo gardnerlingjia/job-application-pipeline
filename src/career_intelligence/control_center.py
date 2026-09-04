@@ -156,6 +156,16 @@ def load_career_intelligence_control_center(
             "network_access": None,
             "relationship_level": None,
             "network_status": UNAVAILABLE_NETWORK_REASON,
+            "publication_date": source_provenance.get("publication_date"),
+            "first_seen_at": source_provenance.get("first_seen_at"),
+            "last_seen_at": source_provenance.get("last_seen_at"),
+            "job_age_days": source_provenance.get("job_age_days"),
+            "freshness_bucket": source_provenance.get("freshness_bucket") or "UNKNOWN",
+            "job_age_date_source": source_provenance.get("job_age_date_source"),
+            "freshness_ranking_penalty": source_provenance.get(
+                "freshness_ranking_penalty",
+                0,
+            ),
             "workspace_available": bool(
                 joined
                 and silver_job_id is not None
@@ -178,6 +188,15 @@ def load_career_intelligence_control_center(
                 "description_source": source_provenance.get("description_source"),
                 "description_quality": source_provenance.get("description_quality"),
                 "ingestion_status": source_provenance.get("ingestion_status"),
+                "publication_date": source_provenance.get("publication_date"),
+                "first_seen_at": source_provenance.get("first_seen_at"),
+                "last_seen_at": source_provenance.get("last_seen_at"),
+                "freshness_bucket": source_provenance.get("freshness_bucket"),
+                "job_age_days": source_provenance.get("job_age_days"),
+                "job_age_date_source": source_provenance.get("job_age_date_source"),
+                "freshness_ranking_penalty": source_provenance.get(
+                    "freshness_ranking_penalty"
+                ),
             },
         }
         records.append(record)
