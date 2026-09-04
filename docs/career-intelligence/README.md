@@ -4,7 +4,8 @@ Career Intelligence assesses job descriptions against a versioned candidate prof
 local batch automation. V1.2 adds Silver-layer ingestion; it does not apply to jobs, scrape new
 sources, alter upstream ingestion, or modify the Silver schema. V1.3 adds a local daily runner for
 unattended macOS refreshes from the existing Silver layer. V1.4-lite adds persistent local operator
-review state for the daily radar.
+review state for the daily radar. V2.0 projects Career Intelligence into the existing Product V1
+Control Center as an additional decision lens.
 
 ## Architecture
 
@@ -18,9 +19,10 @@ public result schema. `ingest_silver.py` assesses converted Silver rows through 
 cumulative result lifecycle. `daily.py` wraps Silver ingestion with a local runtime lock, concise
 logs, operator state counts, and operator-friendly terminal output for once-per-day execution.
 `operator_state.py` stores human review state outside `opportunities.json` and renders the daily
-radar by operator state, recommendation, and score. A bad file or bad Silver record is reported;
-other records continue processing. Hard-stop decisions come unchanged from the existing constraint
-and recommendation modules.
+radar by operator state, recommendation, and score. `control_center.py` reads those runtime files
+and joins them to Product V1 jobs through Silver provenance without changing scoring or the V1.1
+result schema. A bad file or bad Silver record is reported; other records continue processing.
+Hard-stop decisions come unchanged from the existing constraint and recommendation modules.
 
 ## Configuration
 
@@ -262,6 +264,43 @@ launchctl unload ~/Library/LaunchAgents/com.example.career-intelligence-daily.pl
 
 Then delete the copied plist from `~/Library/LaunchAgents/`.
 
+## Product V1 Control Center
+
+Career Intelligence V2.0 is integrated into the existing Product V1 Control Center. It does not
+create a second dashboard. The Control Center API reads:
+
+- `jobs/results/opportunities.json` for the V1.1 assessment records.
+- `jobs/results/silver_ingestion_provenance.json` for traceability and the `source_file` to
+  `silver_job_id` join.
+- `.runtime/career_intelligence/operator_state.json` for local operator state.
+
+The Product V1 job identity remains `silver_job_id`. Career Intelligence opportunities remain keyed
+by `source_file`; the sidecar provenance maps `source_file` back to `silver_job_id` when available.
+Joined jobs receive a `career_intelligence` decoration in the Control Center payload, and the full
+Career Intelligence lens is also exposed under the top-level `career_intelligence` key. Product V1
+ranking, Top-5 semantics, hard-filter decisions, Silver schema, and the public
+`opportunities.json` schema are unchanged.
+
+The UI adds a dedicated Career Intelligence tab inside the existing Operator Workspace because the
+filters and state actions are specific to the career radar. The tab shows score, recommendation,
+career lane, constraints, risks, matched capabilities, network fields when available, provenance,
+and operator state. Because V1.1 public results do not store `network_access` or
+`relationship_level`, the Control Center shows those fields as unavailable instead of recomputing or
+fabricating them.
+
+Operator-state changes in the Control Center call the same `operator_state.py` persistence logic used
+by the CLI. The POST action is scoped to `source_file` and one valid state:
+`NEW`, `REVIEWED`, `INTERESTED`, or `DISMISSED`. It writes only local runtime state, never Product V1
+ranking, Silver, connectors, applications, or provider-backed data.
+
+For `INTERESTED`, `APPLY_NOW`, and `NETWORK_FIRST` opportunities that join to a Product V1
+`silver_job_id`, the Career tab can open the existing Application Workspace with that job selected.
+The workspace still uses its source-grounded `draft_for_review` flow and keeps all approval gates,
+document checks, provider boundaries, and no-submission guarantees.
+
+If Career Intelligence has never run, or a runtime file is missing or malformed, the Control Center
+fails closed for the Career tab while leaving Product V1 available. Scores are never fabricated.
+
 ## Troubleshooting
 
 - If the command exits `2`, another run is active or a valid lock exists. Check
@@ -276,6 +315,11 @@ Then delete the copied plist from `~/Library/LaunchAgents/`.
 - If operator state looks wrong, inspect `.runtime/career_intelligence/operator_state.json`.
   Replace or remove it only intentionally; malformed files cause the state commands and daily
   runner to fail closed.
+- If the Control Center Career tab says the radar is unavailable, run
+  `python -m src.career_intelligence.daily` and check the latest daily log. Malformed runtime JSON
+  is reported in the tab instead of breaking the whole Control Center.
+- If a Career Intelligence opportunity cannot open the Application Workspace, confirm it is joined
+  to a Product V1 `silver_job_id` and is either `INTERESTED`, `APPLY_NOW`, or `NETWORK_FIRST`.
 
 ## Limitations
 

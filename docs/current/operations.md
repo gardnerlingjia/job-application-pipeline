@@ -9,6 +9,9 @@ Current operator entry points:
 
 - `../guides/development-workflow.md` for commit, PR, merge and cleanup blocks.
 - `../guides/operator-runbook.md` for local operation and recovery.
+- `../career-intelligence/README.md` for the local Career Intelligence
+  daily command, operator-state CLI, macOS scheduling template and Control
+  Center lens behavior.
 - `../guides/testing.md` for test expectations.
 - `../reference/governance/workflow/validate001_unified_validation_command.md` and `scripts/run_validate001_unified_validation.py` for the unified local validation entry point.
 - `../reference/operations/db_migration_tracking.md` for migration tracking.
@@ -17,6 +20,14 @@ Current operator entry points:
 The former generated chat-continuation restart mechanism is retired and
 archived as a bad idea. Continuity comes from direct repository inspection,
 temporary full-repository ZIP review, and later MCP-backed state.
+
+Career Intelligence daily operation is local-runtime-first:
+`python -m src.career_intelligence.daily` refreshes the Silver-backed career
+radar under `jobs/results/` and `.runtime/career_intelligence/`. The Product V1
+Control Center reads those files as an additional lens and writes only
+operator-state changes to `.runtime/career_intelligence/operator_state.json`.
+Those writes are intentionally separate from Product V1 ranking, connector
+operation, application drafting and application submission.
 
 Merge blocks must derive the PR number automatically from the current feature
 branch; they must not require manual `<PR_NUMBER>` replacement.

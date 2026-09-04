@@ -10,6 +10,7 @@ exports/
 docs/project_state/
 .runtime/
 frontend/control-center/dist/
+frontend/control-center/node_modules/
 private_candidate_facts/
 private_application_sources/
 *.candidate-facts.private.json

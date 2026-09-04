@@ -7,7 +7,9 @@ import { useEffect } from "react";
  */
 export default function ApplicationWorkspaceEventBridge() {
   useEffect(() => {
-    const openWorkspace = () => {
+    const openWorkspace = (event: Event) => {
+      const customEvent = event as CustomEvent<{ silverJobId?: number | null }>;
+      if (customEvent.detail?.silverJobId != null) return;
       const launcher = document.querySelector<HTMLButtonElement>(
         ".demo-application-launcher:not(:disabled)",
       );

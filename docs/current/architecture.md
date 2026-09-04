@@ -73,6 +73,21 @@ pressure, gate status, next safe actions and agent/health summaries. The current
 Agent Monitor uses derived lifecycle/gate/orchestrator signals; true runtime
 agent health remains future work.
 
+Career Opportunity Intelligence is integrated as a sidecar read model in the
+existing Product V1 Control Center. Its data owner remains
+`src/career_intelligence/`: assessments live in `jobs/results/opportunities.json`,
+Silver/source traceability lives in
+`jobs/results/silver_ingestion_provenance.json`, and operator review state lives
+in `.runtime/career_intelligence/operator_state.json`. The Control Center joins
+Career Intelligence opportunities to Product V1 jobs by `source_file` ->
+Silver provenance -> `silver_job_id`. Missing or malformed Career Intelligence
+runtime data fails closed for that lens and must not break Product V1.
+
+The Career Intelligence tab can select a joined `silver_job_id` into the existing
+Application Workspace for human review. It does not create application authority,
+does not bypass document or evidence gates, and does not automate submission.
+Product V1 ranking and Top-5 remain owned by the Gold/Product V1 read models.
+
 ## Current maturity note
 
 The documentation structure is now stable enough for product work again, but the

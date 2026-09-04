@@ -38,3 +38,17 @@ def test_readme_documents_v14_operator_workflow_contract():
     assert "canonical operator workflow" in text
     assert "lower-level V1.2 recommendation radar" in text
     assert "remove `.runtime/career_intelligence/operator_state.json`" in normalized
+
+
+def test_readme_documents_v20_control_center_contract():
+    text = README.read_text(encoding="utf-8")
+    normalized = " ".join(text.split())
+
+    assert "V2.0 projects Career Intelligence into the existing Product V1" in text
+    assert "`source_file` back to `silver_job_id`" in text
+    assert "Product V1 ranking" in normalized
+    assert "Top-5 semantics" in normalized
+    assert "network_access" in text
+    assert "operator_state.py` persistence logic" in text
+    assert "Application Workspace with that job selected" in text
+    assert "Scores are never fabricated" in normalized

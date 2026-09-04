@@ -3,7 +3,7 @@ import ApplicationSourceUpload from "./ApplicationSourceUpload";
 import JobReviewLabelControls, {
   type JobReviewLabelState,
 } from "./JobReviewLabelControls";
-import { readProductTruth } from "./productPayloadRuntimeAdapter";
+import { clearProductTruthCache, readProductTruth } from "./productPayloadRuntimeAdapter";
 import "./operator-workspace-v2.css";
 import "./operator-demo-hardening.css";
 
@@ -33,6 +33,58 @@ type Job = {
   explanations?: string[];
   uncertainties?: string[];
   review_label?: JobReviewLabelState | null;
+  career_intelligence?: CareerIntelligenceRecord | null;
+};
+
+type CareerOperatorState = "NEW" | "REVIEWED" | "INTERESTED" | "DISMISSED";
+type CareerRecommendation = "APPLY_NOW" | "NETWORK_FIRST" | "EXPLORE" | "WATCH" | "SKIP";
+
+type CareerIntelligenceRecord = {
+  source_file: string;
+  silver_job_id?: number | null;
+  job_join_status?: string;
+  company?: string | null;
+  title?: string | null;
+  opportunity_score?: number | null;
+  recommendation?: CareerRecommendation | string | null;
+  career_lane?: string | null;
+  career_lane_label?: string | null;
+  constraint_action?: string | null;
+  risks?: unknown[];
+  key_matched_capabilities?: unknown[];
+  network_access?: number | null;
+  relationship_level?: string | null;
+  network_status?: string | null;
+  operator_state: CareerOperatorState;
+  workspace_available?: boolean;
+  provenance?: {
+    source_file?: string;
+    silver_job_id?: number | null;
+    raw_job_id?: number | null;
+    source_name?: string | null;
+    external_job_id?: string | null;
+    source_url?: string | null;
+    stable_identity_type?: string | null;
+    stable_identity_sha256?: string | null;
+    description_source?: string | null;
+    description_quality?: string | null;
+    ingestion_status?: string | null;
+  };
+};
+
+type CareerIntelligencePayload = {
+  available: boolean;
+  status: string;
+  reason?: string | null;
+  records: CareerIntelligenceRecord[];
+  state_action_path?: string;
+  summary?: {
+    opportunity_count?: number;
+    joined_job_count?: number;
+    unmatched_opportunity_count?: number;
+    recommendation_counts?: Record<string, number>;
+    operator_state_counts?: Record<string, number>;
+  };
 };
 
 type SourceConnector = {
@@ -70,6 +122,7 @@ type ProductPayload = {
     application_ready_count: number;
   };
   job_readiness: Job[];
+  discovery_job_readiness?: Job[];
   top_jobs: Job[];
   application_sources_ready: {
     base_cv: boolean;
@@ -92,10 +145,13 @@ type ProductPayload = {
   review_label_capture?: {
     available: boolean;
   };
+  career_intelligence?: CareerIntelligencePayload;
 };
 
-type View = "overview" | "jobs" | "top5" | "application" | "applications" | "sources" | "approvals" | "operations";
+type View = "overview" | "jobs" | "career" | "top5" | "application" | "applications" | "sources" | "approvals" | "operations";
 type JobFilter = "current" | "unreviewed" | "interesting" | "not_relevant" | "rankable" | "all";
+type CareerStateFilter = CareerOperatorState | "ALL";
+type CareerRecommendationFilter = CareerRecommendation | "ALL";
 type JobSort =
   | "newest"
   | "oldest"
@@ -115,6 +171,16 @@ type SourceGroup = "Needs attention" | "Active" | "Pending" | "Not implemented";
 const normalize = (value: string | undefined | null) => (value || "").trim().toLocaleLowerCase();
 const label = (value: string | undefined | null) => (value || "unknown").replaceAll("_", " ");
 const scoreText = (value: number | null | undefined) => value == null ? "—" : `${Math.round(value)}%`;
+const compactItemText = (value: unknown) => {
+  if (value == null) return "";
+  if (typeof value === "string") return value.trim();
+  if (typeof value === "number" || typeof value === "boolean") return String(value);
+  if (typeof value === "object") {
+    const record = value as Record<string, unknown>;
+    return String(record.name || record.capability || record.constraint || record.reason || JSON.stringify(record));
+  }
+  return String(value);
+};
 const isCurrent = (job: Job) => ["active confirmed", "active_confirmed"].includes(normalize(job.lifecycle_status));
 const isRankable = (job: Job) => normalize(job.product_readiness_status) === "rankable";
 const employerName = (job: Job) => job.display_company_name || job.company_name || "Employer not resolved";
@@ -212,12 +278,12 @@ function Metric({ labelText, value, helper }: { labelText: string; value: number
   return <article className="ow-metric"><span>{labelText}</span><strong>{value}</strong><small>{helper}</small></article>;
 }
 
-function OpenApplicationButton({ disabled = false }: { disabled?: boolean }) {
+function OpenApplicationButton({ disabled = false, silverJobId }: { disabled?: boolean; silverJobId?: number | null }) {
   return <button
     type="button"
     className="ow-primary"
     disabled={disabled}
-    onClick={() => window.dispatchEvent(new CustomEvent("product-v1:open-application-workspace"))}
+    onClick={() => window.dispatchEvent(new CustomEvent("product-v1:open-application-workspace", { detail: { silverJobId } }))}
   >Prepare application</button>;
 }
 
@@ -289,7 +355,7 @@ function JobDetail({ job, payload, refresh }: { job: Job; payload: ProductPayloa
 
   return <aside className="ow-job-detail">
     <div className="ow-detail-head"><span>Silver #{job.silver_job_id}</span><h2>{job.title || "Untitled job"}</h2><p>{employerName(job)} · {locationText(job)}</p>{job.legal_entity_name && normalize(job.legal_entity_name) !== normalize(employerName(job)) && <small>Legal entity: {job.legal_entity_name}</small>}</div>
-    <div className="ow-actions">{sourceUrl && <a className="ow-primary-link" href={sourceUrl} target="_blank" rel="noreferrer">Open original ↗</a>}{rankable && <OpenApplicationButton />}</div>
+    <div className="ow-actions">{sourceUrl && <a className="ow-primary-link" href={sourceUrl} target="_blank" rel="noreferrer">Open original ↗</a>}{rankable && <OpenApplicationButton silverJobId={job.silver_job_id} />}</div>
     <JobReviewLabelControls silverJobId={job.silver_job_id} currentLabel={job.review_label} captureAvailable={payload.review_label_capture?.available === true} refreshProductTruth={refresh} />
     <section className="ow-score-card"><h3>{rankable ? "Profile fit" : "Role affinity · preliminary"}</h3>{scoreRows.map(([name, value]) => <div key={name}><span>{name}</span><i><b style={{ width: `${Math.max(0, Math.min(100, value || 0))}%` }} /></i><strong>{scoreText(value)}</strong></div>)}{!rankable && <p className="ow-score-note">Detail check required. This preliminary signal uses review-scope evidence and is not capability-fit or Product V1 ranking authority.</p>}</section>
     <section className="ow-facts"><div><span>Lifecycle</span><Status value={job.lifecycle_status} /></div><div><span>Product gate</span><Status value={job.product_readiness_status} /></div><div><span>Work model</span><b>{label(job.work_model)}</b></div><div><span>Commute</span><b>{job.commute_minutes == null ? "—" : `${job.commute_minutes} min`}</b></div></section>
@@ -481,6 +547,162 @@ function Jobs({ payload, refresh }: { payload: ProductPayload; refresh: () => Pr
   </div>;
 }
 
+function careerScore(record: CareerIntelligenceRecord) {
+  return typeof record.opportunity_score === "number" ? record.opportunity_score : -1;
+}
+
+function careerTitle(record: CareerIntelligenceRecord) {
+  return record.title || "Untitled opportunity";
+}
+
+function careerCompany(record: CareerIntelligenceRecord) {
+  return record.company || "Unknown employer";
+}
+
+function careerSort(a: CareerIntelligenceRecord, b: CareerIntelligenceRecord) {
+  const scoreDelta = careerScore(b) - careerScore(a);
+  if (scoreDelta !== 0) return scoreDelta;
+  const recommendationDelta = compareText(String(a.recommendation || ""), String(b.recommendation || ""));
+  if (recommendationDelta !== 0) return recommendationDelta;
+  const companyDelta = compareText(careerCompany(a), careerCompany(b));
+  if (companyDelta !== 0) return companyDelta;
+  const titleDelta = compareText(careerTitle(a), careerTitle(b));
+  if (titleDelta !== 0) return titleDelta;
+  return compareText(a.source_file, b.source_file);
+}
+
+function setApplicationWorkspaceJob(silverJobId: number | null | undefined) {
+  if (silverJobId == null) return;
+  window.dispatchEvent(new CustomEvent("product-v1:open-application-workspace", { detail: { silverJobId } }));
+}
+
+function CareerIntelligence({
+  payload,
+  refresh,
+}: {
+  payload: ProductPayload;
+  refresh: () => Promise<void>;
+}) {
+  const career = payload.career_intelligence;
+  const [recommendation, setRecommendation] = useState<CareerRecommendationFilter>("ALL");
+  const [operatorState, setOperatorState] = useState<CareerStateFilter>("ALL");
+  const [lane, setLane] = useState("ALL");
+  const [minimumScore, setMinimumScore] = useState(0);
+  const [includeDismissed, setIncludeDismissed] = useState(false);
+  const [selectedSource, setSelectedSource] = useState<string | null>(null);
+  const [saving, setSaving] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+
+  const records = career?.records || [];
+  const laneOptions = useMemo(() => {
+    const values = new Set(records.map((record) => record.career_lane).filter((value): value is string => Boolean(value)));
+    return Array.from(values).sort(compareText);
+  }, [records]);
+
+  const filtered = useMemo(() => records
+    .filter((record) => includeDismissed || record.operator_state !== "DISMISSED")
+    .filter((record) => recommendation === "ALL" || record.recommendation === recommendation)
+    .filter((record) => operatorState === "ALL" || record.operator_state === operatorState)
+    .filter((record) => lane === "ALL" || record.career_lane === lane)
+    .filter((record) => careerScore(record) >= minimumScore)
+    .sort(careerSort), [includeDismissed, lane, minimumScore, operatorState, recommendation, records]);
+
+  const selected = filtered.find((record) => record.source_file === selectedSource) || filtered[0] || null;
+  const summary = career?.summary;
+  const stateCounts = summary?.operator_state_counts || {};
+  const recommendationCounts = summary?.recommendation_counts || {};
+
+  const updateState = async (record: CareerIntelligenceRecord, nextState: CareerOperatorState) => {
+    if (!career?.state_action_path) return;
+    setSaving(record.source_file);
+    setActionError(null);
+    try {
+      const response = await fetch(career.state_action_path, {
+        method: "POST",
+        headers: { Accept: "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({ source_file: record.source_file, state: nextState }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(String(result.reason || `API returned ${response.status}`));
+      }
+      clearProductTruthCache();
+      await refresh();
+    } catch (reason) {
+      setActionError(String(reason));
+    } finally {
+      setSaving(null);
+    }
+  };
+
+  if (!career || career.available !== true) {
+    return <div className="ow-stack">
+      <header className="ow-page-header"><div><span>Career Intelligence</span><h1>Daily radar unavailable</h1><p>Run the daily Career Intelligence workflow to populate this lens.</p></div></header>
+      <section className="ow-card"><h2>{career?.status === "error" ? "Runtime data failed safely" : "No Career Intelligence run yet"}</h2><p>{career?.reason || "No local Career Intelligence opportunities were found. Product V1 remains available."}</p></section>
+    </div>;
+  }
+
+  return <div className="ow-stack">
+    <header className="ow-page-header">
+      <div><span>Career Intelligence</span><h1>Opportunity radar</h1><p>Additional decision lens from local Career Intelligence outputs. Product V1 ranking is unchanged.</p></div>
+      <strong className="ow-big-count">{filtered.length}/{records.length}</strong>
+    </header>
+
+    <section className="ow-metrics">
+      <Metric labelText="Career records" value={summary?.opportunity_count ?? records.length} helper="local V1.1 results" />
+      <Metric labelText="Joined jobs" value={summary?.joined_job_count ?? 0} helper="matched by Silver provenance" />
+      <Metric labelText="NEW" value={stateCounts.NEW ?? 0} helper="unreviewed radar items" />
+      <Metric labelText="INTERESTED" value={stateCounts.INTERESTED ?? 0} helper="kept prominent" />
+    </section>
+
+    <section className="ow-job-toolbar">
+      <div className="ow-filter-row">
+        {(["ALL", "APPLY_NOW", "NETWORK_FIRST", "EXPLORE", "WATCH", "SKIP"] as CareerRecommendationFilter[]).map((item) =>
+          <button type="button" key={item} className={recommendation === item ? "active" : ""} onClick={() => setRecommendation(item)}>
+            {item === "ALL" ? "All recommendations" : item}<b>{item === "ALL" ? records.length : recommendationCounts[item] ?? 0}</b>
+          </button>
+        )}
+      </div>
+      <div className="ow-toolbar-controls">
+        <label className="ow-sort"><span>State</span><select value={operatorState} onChange={(event) => setOperatorState(event.target.value as CareerStateFilter)}>{(["ALL", "NEW", "INTERESTED", "REVIEWED", "DISMISSED"] as CareerStateFilter[]).map((state) => <option key={state} value={state}>{state === "ALL" ? "All states" : state}</option>)}</select></label>
+        <label className="ow-sort"><span>Lane</span><select value={lane} onChange={(event) => setLane(event.target.value)}><option value="ALL">All lanes</option>{laneOptions.map((value) => <option key={value} value={value}>{label(value)}</option>)}</select></label>
+        <label className="ow-score-filter"><span>Min score</span><input type="number" min="0" max="100" value={minimumScore} onChange={(event) => setMinimumScore(Number(event.target.value) || 0)} /></label>
+        <label className="ow-checkbox"><input type="checkbox" checked={includeDismissed} onChange={(event) => setIncludeDismissed(event.target.checked)} />Dismissed</label>
+      </div>
+    </section>
+
+    {actionError && <section className="ow-callout warn"><b>State update failed</b><span>{actionError}</span></section>}
+
+    <section className="ow-job-workspace ow-career-workspace">
+      <div className="ow-career-list">
+        <div className="ow-career-list-head"><span>Score</span><span>State</span><span>Recommendation</span><span>Opportunity</span><span>Lane</span></div>
+        {filtered.map((record) =>
+          <button type="button" key={record.source_file} className={selected?.source_file === record.source_file ? "selected" : ""} onClick={() => setSelectedSource(record.source_file)}>
+            <strong>{scoreText(record.opportunity_score)}</strong>
+            <Status value={record.operator_state} />
+            <Status value={record.recommendation || "unknown"} />
+            <span className="ow-job-name"><b>{careerTitle(record)}</b><small>{careerCompany(record)} · {record.job_join_status === "joined" ? `Silver #${record.silver_job_id}` : "not joined to Product V1 job"}</small></span>
+            <span>{record.career_lane_label || label(record.career_lane)}</span>
+          </button>
+        )}
+        {filtered.length === 0 && <p className="ow-empty">No Career Intelligence opportunities match this filter.</p>}
+      </div>
+
+      {selected ? <aside className="ow-job-detail">
+        <div className="ow-detail-head"><span>{selected.source_file}</span><h2>{careerTitle(selected)}</h2><p>{careerCompany(selected)} · {selected.job_join_status === "joined" ? `Silver #${selected.silver_job_id}` : "No Product V1 join"}</p></div>
+        <div className="ow-actions">
+          {(["NEW", "REVIEWED", "INTERESTED", "DISMISSED"] as CareerOperatorState[]).map((state) => <button type="button" key={state} className={selected.operator_state === state ? "ow-primary" : "ow-secondary"} disabled={saving === selected.source_file || selected.operator_state === state} onClick={() => void updateState(selected, state)}>{state}</button>)}
+        </div>
+        <section className="ow-score-card"><h3>Career Intelligence</h3><div><span>Opportunity</span><i><b style={{ width: `${Math.max(0, Math.min(100, selected.opportunity_score || 0))}%` }} /></i><strong>{scoreText(selected.opportunity_score)}</strong></div><div><span>Network</span><i><b style={{ width: `${Math.max(0, Math.min(100, selected.network_access || 0))}%` }} /></i><strong>{scoreText(selected.network_access)}</strong></div>{selected.network_status && <p className="ow-score-note">Network detail: {label(selected.network_status)}</p>}</section>
+        <section className="ow-facts"><div><span>Recommendation</span><Status value={selected.recommendation || "unknown"} /></div><div><span>Constraint</span><Status value={selected.constraint_action || "unknown"} /></div><div><span>Career lane</span><b>{selected.career_lane_label || label(selected.career_lane)}</b></div><div><span>Relationship</span><b>{label(selected.relationship_level)}</b></div></section>
+        <section className="ow-evidence"><div><span>Matched capabilities</span>{selected.key_matched_capabilities?.length ? <ul>{selected.key_matched_capabilities.slice(0, 6).map((item, index) => <li key={`${compactItemText(item)}-${index}`}>{compactItemText(item)}</li>)}</ul> : <p>No matched capabilities projected.</p>}</div><div><span>Key risks</span>{selected.risks?.length ? <ul>{selected.risks.slice(0, 6).map((item, index) => <li key={`${compactItemText(item)}-${index}`}>{compactItemText(item)}</li>)}</ul> : <p>No key risks projected.</p>}</div></section>
+        <section className="ow-facts"><div><span>Source</span><b>{selected.provenance?.source_name || "unknown"}</b></div><div><span>External id</span><b>{selected.provenance?.external_job_id || "unknown"}</b></div><div><span>Description</span><b>{label(selected.provenance?.description_quality)} · {label(selected.provenance?.description_source)}</b></div><div><span>Join</span><b>{label(selected.job_join_status)}</b></div></section>
+        {selected.workspace_available ? <div className="ow-actions"><button type="button" className="ow-primary" onClick={() => setApplicationWorkspaceJob(selected.silver_job_id)}>Open Application Workspace</button>{selected.provenance?.source_url && <a className="ow-primary-link" href={selected.provenance.source_url} target="_blank" rel="noreferrer">Original job ↗</a>}</div> : <p className="ow-muted">Application Workspace opens only for joined INTERESTED, APPLY_NOW, or NETWORK_FIRST opportunities and still enforces its own gates.</p>}
+      </aside> : <aside className="ow-job-detail"><p className="ow-empty">Select a Career Intelligence opportunity.</p></aside>}
+    </section>
+  </div>;
+}
+
 function TopFive({ payload, refresh }: { payload: ProductPayload; refresh: () => Promise<void> }) {
   const [selectedId, setSelectedId] = useState<number | null>(payload.top_jobs[0]?.silver_job_id ?? null);
   const jobs = payload.top_jobs.slice(0, 5);
@@ -496,7 +718,7 @@ function Application({ payload, refresh }: { payload: ProductPayload; refresh: (
   return <div className="ow-stack">
     <header className="ow-page-header"><div><span>Final preparation step</span><h1>Application</h1><p>Verified vacancy + Candidate Facts + approved local base documents → complete review package. Never auto-submit.</p></div></header>
     <section className="ow-application-grid">
-      <article className="ow-card"><span className="ow-kicker">Selected target</span><h2>{top?.title || "No authoritative Top-5 job"}</h2>{top && <p>{employerName(top)} · {locationText(top)} · {scoreText(top.overall_quality_score)} authoritative fit</p>}<div className="ow-readiness"><div className={top ? "ready" : "blocked"}><i /><span>Top-5 target</span><b>{top ? "Ready" : "Required"}</b></div><div className={payload.application_sources_ready.base_cv ? "ready" : "blocked"}><i /><span>Base CV</span><b>{payload.application_sources_ready.base_cv ? "Approved" : "Required"}</b></div><div className={payload.application_sources_ready.base_application_letter ? "ready" : "blocked"}><i /><span>Base letter</span><b>{payload.application_sources_ready.base_application_letter ? "Approved" : "Required"}</b></div></div><OpenApplicationButton disabled={!top || !docsReady} /></article>
+      <article className="ow-card"><span className="ow-kicker">Selected target</span><h2>{top?.title || "No authoritative Top-5 job"}</h2>{top && <p>{employerName(top)} · {locationText(top)} · {scoreText(top.overall_quality_score)} authoritative fit</p>}<div className="ow-readiness"><div className={top ? "ready" : "blocked"}><i /><span>Top-5 target</span><b>{top ? "Ready" : "Required"}</b></div><div className={payload.application_sources_ready.base_cv ? "ready" : "blocked"}><i /><span>Base CV</span><b>{payload.application_sources_ready.base_cv ? "Approved" : "Required"}</b></div><div className={payload.application_sources_ready.base_application_letter ? "ready" : "blocked"}><i /><span>Base letter</span><b>{payload.application_sources_ready.base_application_letter ? "Approved" : "Required"}</b></div></div><OpenApplicationButton disabled={!top || !docsReady} silverJobId={top?.silver_job_id} /></article>
       <article className="ow-card ow-boundary-card"><span className="ow-kicker">Private source model</span><h2>{docsReady ? "Base documents are ready" : "Choose your two local base PDFs"}</h2><p>File bytes stay local. On your explicit Generate action, extracted text from the two approved base documents may be sent to the configured drafting provider as style/structure context. Candidate Facts remain authority for new candidate claims.</p><ul><li>Approved file bytes stay on this machine</li><li>Extracted base text is shared only on explicit Generate</li><li>Local PDF text extraction validates the approved source</li><li>No hidden auto-apply, submit or send</li></ul></article>
     </section>
     <article className="ow-card">
@@ -591,6 +813,7 @@ function Operations({ payload }: { payload: ProductPayload }) {
 const navItems: Array<{ id: View; label: string; glyph: string }> = [
   { id: "overview", label: "Overall", glyph: "◉" },
   { id: "jobs", label: "All jobs", glyph: "≡" },
+  { id: "career", label: "Career Intel", glyph: "◇" },
   { id: "top5", label: "Top 5", glyph: "★" },
   { id: "application", label: "Application", glyph: "↗" },
   { id: "applications", label: "Applications", glyph: "◎" },
@@ -636,6 +859,7 @@ export default function OperatorWorkspace() {
 
   const navBadges: Partial<Record<View, number>> = {
     jobs: payload.summary.review_scope_current_active_job_count ?? payload.job_readiness.filter(isCurrent).length,
+    career: payload.career_intelligence?.summary?.opportunity_count,
     top5: payload.summary.top_job_count,
     approvals: payload.source_connector_overview.sources.filter((source) => source.current_blocker === "final_approval_incomplete").length,
     sources: payload.source_connector_overview.summary.attention_count,
@@ -649,7 +873,7 @@ export default function OperatorWorkspace() {
     </aside>
     <div className="ow-content-shell">
       <header className="ow-topline"><div><b>{navItems.find((item) => item.id === view)?.label}</b><span>DEMO-001 · Personio pilot</span></div><button type="button" disabled={refreshing} onClick={() => void refresh()}>{refreshing ? "Refreshing…" : "↻ Refresh"}</button></header>
-      <main className="ow-main">{view === "overview" && <Overview payload={payload} onNavigate={setView} />}{view === "jobs" && <Jobs payload={payload} refresh={refresh} />}{view === "top5" && <TopFive payload={payload} refresh={refresh} />}{view === "application" && <Application payload={payload} refresh={refresh} />}{view === "applications" && <Applications payload={payload} onPrepare={() => setView("application")} />}{view === "sources" && <Sources payload={payload} />}{view === "approvals" && <Approvals payload={payload} />}{view === "operations" && <Operations payload={payload} />}</main>
+      <main className="ow-main">{view === "overview" && <Overview payload={payload} onNavigate={setView} />}{view === "jobs" && <Jobs payload={payload} refresh={refresh} />}{view === "career" && <CareerIntelligence payload={payload} refresh={refresh} />}{view === "top5" && <TopFive payload={payload} refresh={refresh} />}{view === "application" && <Application payload={payload} refresh={refresh} />}{view === "applications" && <Applications payload={payload} onPrepare={() => setView("application")} />}{view === "sources" && <Sources payload={payload} />}{view === "approvals" && <Approvals payload={payload} />}{view === "operations" && <Operations payload={payload} />}</main>
     </div>
   </div>;
 }

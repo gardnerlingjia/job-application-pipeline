@@ -1,10 +1,11 @@
 """Serve the canonical Product V1 Control Center.
 
 The canonical launcher preserves the reviewed read models and deterministic
-downstream evidence-preview GET endpoint. Two narrowly allowlisted POST actions
-are exposed: the existing employer-origin final-approval gate and append-only
-operator review relevance labels. Neither action can perform connector
-registration, activation, ingestion, provider, ranking or application behavior.
+downstream evidence-preview GET endpoint. Three narrowly allowlisted POST actions
+are exposed: the existing employer-origin final-approval gate, append-only
+operator review relevance labels, and local Career Intelligence operator state.
+None can perform connector registration, activation, ingestion, provider,
+ranking or application behavior.
 """
 
 from __future__ import annotations
@@ -41,6 +42,11 @@ from scripts.product_v1_job_review_actions import (
     parse_job_review_label_action_payload,
 )
 from scripts.run_employer_origin_candidate_queue_agent import DatabaseConfig
+from src.career_intelligence.control_center import (
+    load_career_intelligence_control_center,
+    merge_career_intelligence_payload,
+)
+from src.career_intelligence.operator_state import set_operator_state, validate_state
 from src.search_intelligence.product_v1_demo_origin_projection import (
     project_demo_origin_truth,
 )
@@ -53,6 +59,7 @@ build_source_connector_overview = _base.build_source_connector_overview
 rank_product_jobs = _base.rank_product_jobs
 _HARD_FILTER_POLICY_RELATION = "product_v1_hard_filter_policy"
 _MAX_ACTION_BODY_BYTES = 4096
+CAREER_OPERATOR_STATE_ACTION_PATH = "/api/v1/career-intelligence/operator-state"
 
 
 def _merge_structured_job_locations(
@@ -370,11 +377,13 @@ def load_product_v1_payload() -> dict[str, object]:
         label_rows,
         capture_available=label_capture_available,
     )
-    return _merge_demo_origin_projection(enriched)
+    enriched = _merge_demo_origin_projection(enriched)
+    career_payload = load_career_intelligence_control_center(enriched)
+    return merge_career_intelligence_payload(enriched, career_payload)
 
 
 class ProductV1Handler(_base.ProductV1Handler):
-    """Canonical read-mostly handler with two reviewed low-authority POST actions."""
+    """Canonical read-mostly handler with reviewed low-authority POST actions."""
 
     server_version = "DeepOceanProductV1/0.6"
 
@@ -520,8 +529,71 @@ class ProductV1Handler(_base.ProductV1Handler):
         )
         self._send_json(result, status=status)
 
+    def _post_career_operator_state(self) -> None:
+        try:
+            payload = self._read_action_payload()
+            if not isinstance(payload, dict):
+                raise ControlCenterActionStop("action payload must be a JSON object")
+            if set(payload) != {"source_file", "state"}:
+                raise ControlCenterActionStop("action payload contains unexpected fields")
+            source_file = str(payload.get("source_file") or "").strip()
+            state = validate_state(str(payload.get("state") or ""))
+            updated = set_operator_state(source_file=source_file, state=state)
+        except ControlCenterActionStop as exc:
+            self._send_json(
+                {
+                    "status": "blocked",
+                    "reason": str(exc),
+                    "database_writes": 0,
+                    "provider_requests": 0,
+                    "product_authority": False,
+                },
+                status=HTTPStatus.BAD_REQUEST,
+            )
+            return
+        except ValueError as exc:
+            self._send_json(
+                {
+                    "status": "blocked",
+                    "reason": str(exc),
+                    "database_writes": 0,
+                    "provider_requests": 0,
+                    "product_authority": False,
+                },
+                status=HTTPStatus.BAD_REQUEST,
+            )
+            return
+        except Exception as exc:
+            self._send_json(
+                {
+                    "status": "review_required",
+                    "reason": str(exc),
+                    "database_writes": 0,
+                    "provider_requests": 0,
+                    "product_authority": False,
+                },
+                status=HTTPStatus.CONFLICT,
+            )
+            return
+
+        self._send_json(
+            {
+                "status": "applied",
+                "source_file": source_file,
+                "state": state,
+                "operator_state_count": len(updated["states"]),
+                "local_runtime_writes": 1,
+                "database_writes": 0,
+                "provider_requests": 0,
+                "product_authority": False,
+            }
+        )
+
     def do_POST(self) -> None:  # noqa: N802 - exact reviewed action allowlist
         parsed = urlparse(self.path)
+        if parsed.path == CAREER_OPERATOR_STATE_ACTION_PATH:
+            self._post_career_operator_state()
+            return
         if parsed.path == JOB_REVIEW_LABEL_ACTION_PATH:
             self._post_job_review_label()
             return
