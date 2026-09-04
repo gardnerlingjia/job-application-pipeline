@@ -79,7 +79,9 @@ def strategy_from_mapping(record: Mapping[str, Any]) -> CareerSourceStrategy:
     if tier == "C" and role != "discovery":
         raise ValueError(f"Tier C source strategy record {source_name} must be discovery")
     if tier in {"A", "B"} and role != "employer_origin":
-        raise ValueError(f"Tier {tier} source strategy record {source_name} must be employer_origin")
+        raise ValueError(
+            f"Tier {tier} source strategy record {source_name} must be employer_origin"
+        )
     return CareerSourceStrategy(
         company_name=_required_text(record, "company_name"),
         source_name=source_name,
@@ -167,7 +169,11 @@ def _strategy_payload(strategy: CareerSourceStrategy) -> dict[str, Any]:
         "is_discovery": strategy.source_role == "discovery",
         "location_relevance": list(strategy.location_relevance),
         "status": strategy.status,
-        "career_relevance": "high" if strategy.tier == "A" else ("medium" if strategy.tier == "B" else "discovery"),
+        "career_relevance": (
+            "high"
+            if strategy.tier == "A"
+            else ("medium" if strategy.tier == "B" else "discovery")
+        ),
     }
 
 
@@ -205,7 +211,9 @@ def _gap_source(
         "connector": {
             "implemented": registered,
             "implementation_status": "implemented" if registered else "not_implemented",
-            "implementation_truth_source": "runtime_registry" if registered else "career_source_strategy",
+            "implementation_truth_source": (
+                "runtime_registry" if registered else "career_source_strategy"
+            ),
             "code_backed_registered": registered,
             "registration_status": registration["registration_status"],
             "connector_class": registration["connector_class"],
@@ -281,10 +289,20 @@ def enrich_source_overview_with_strategy(
     strategies: Sequence[CareerSourceStrategy] | None = None,
     strategy_path: Path = DEFAULT_SOURCE_STRATEGY_PATH,
     registry: ConnectorRegistryLike | None = None,
+    adaptive_read_model: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Decorate the existing source overview with Lingjia strategy metadata."""
 
-    strategy_rows = list(strategies) if strategies is not None else load_source_strategy(strategy_path)
+    strategy_rows = (
+        list(strategies) if strategies is not None else load_source_strategy(strategy_path)
+    )
+    if adaptive_read_model is None:
+        from src.career_intelligence.adaptive_sources import load_adaptive_source_read_model
+
+        adaptive_read_model = load_adaptive_source_read_model(strategy_path=strategy_path)
+    source_advisories = adaptive_read_model.get("source_advisories")
+    if not isinstance(source_advisories, Mapping):
+        source_advisories = {}
     strategy_by_source = {item.source_name: item for item in strategy_rows}
     sources: list[dict[str, Any]] = []
     seen: set[str] = set()
@@ -310,6 +328,9 @@ def enrich_source_overview_with_strategy(
             strategy_payload["source_status"] = _source_status(copied, strategy)
             copied["career_source_strategy"] = strategy_payload
             copied["source_label"] = strategy.company_name
+            copied["career_source_advisory"] = dict(
+                source_advisories.get(strategy.source_name) or {}
+            )
         sources.append(copied)
         if source_name:
             seen.add(source_name)
@@ -327,6 +348,9 @@ def enrich_source_overview_with_strategy(
             else "connector_gap"
         )
         gap["career_source_strategy"] = strategy_payload
+        gap["career_source_advisory"] = dict(
+            source_advisories.get(strategy.source_name) or {}
+        )
         sources.append(gap)
 
     sources.sort(
@@ -339,6 +363,12 @@ def enrich_source_overview_with_strategy(
         )
     )
     summary = dict(overview.get("summary") or {})
+    adaptive_candidates = adaptive_read_model.get("candidates")
+    if not isinstance(adaptive_candidates, list):
+        adaptive_candidates = []
+    adaptive_summary = adaptive_read_model.get("summary")
+    if not isinstance(adaptive_summary, Mapping):
+        adaptive_summary = {}
     configured_sources = [
         source for source in sources if source["career_source_strategy"].get("configured") is True
     ]
@@ -366,6 +396,11 @@ def enrich_source_overview_with_strategy(
                 source["career_source_strategy"].get("configured") is False
                 for source in sources
             ),
+            "adaptive_source_candidate_count": len(adaptive_candidates),
+            "adaptive_source_promotion_candidate_count": adaptive_summary.get(
+                "promotion_candidate_count",
+                0,
+            ),
         }
     )
     result = dict(overview)
@@ -378,9 +413,13 @@ def enrich_source_overview_with_strategy(
             "career_source_strategy_does_not_activate_connectors": True,
             "employer_origin_preferred_over_discovery_for_career_evidence": True,
             "generic_demo_sources_preserved": True,
+            "adaptive_sources_are_candidates_only": True,
+            "adaptive_sources_do_not_activate_connectors": True,
+            "adaptive_sources_do_not_mutate_product_v1_ranking": True,
         }
     )
     result["boundaries"] = boundaries
+    result["adaptive_source_discovery"] = dict(adaptive_read_model)
     result["career_source_strategy"] = {
         "schema_version": SCHEMA_VERSION,
         "owner": "lingjia_gardner",

@@ -42,13 +42,17 @@ from scripts.product_v1_job_review_actions import (
     parse_job_review_label_action_payload,
 )
 from scripts.run_employer_origin_candidate_queue_agent import DatabaseConfig
-from src.connectors.registry import build_default_connector_registry
+from src.career_intelligence.adaptive_sources import (
+    set_adaptive_source_decision,
+    validate_decision,
+)
 from src.career_intelligence.control_center import (
     load_career_intelligence_control_center,
     merge_career_intelligence_payload,
 )
 from src.career_intelligence.operator_state import set_operator_state, validate_state
 from src.career_intelligence.source_strategy import enrich_source_overview_with_strategy
+from src.connectors.registry import build_default_connector_registry
 from src.search_intelligence.product_v1_demo_origin_projection import (
     project_demo_origin_truth,
 )
@@ -61,6 +65,7 @@ rank_product_jobs = _base.rank_product_jobs
 _HARD_FILTER_POLICY_RELATION = "product_v1_hard_filter_policy"
 _MAX_ACTION_BODY_BYTES = 4096
 CAREER_OPERATOR_STATE_ACTION_PATH = "/api/v1/career-intelligence/operator-state"
+CAREER_ADAPTIVE_SOURCE_ACTION_PATH = "/api/v1/career-intelligence/adaptive-sources"
 
 
 def load_source_connector_overview_payload() -> dict[str, object]:
@@ -603,8 +608,78 @@ class ProductV1Handler(_base.ProductV1Handler):
             }
         )
 
+    def _post_career_adaptive_source_decision(self) -> None:
+        try:
+            payload = self._read_action_payload()
+            if not isinstance(payload, dict):
+                raise ControlCenterActionStop("action payload must be a JSON object")
+            if set(payload) - {"normalized_company_key", "decision", "company_name"}:
+                raise ControlCenterActionStop("action payload contains unexpected fields")
+            company_key = str(payload.get("normalized_company_key") or "").strip()
+            company_name = str(payload.get("company_name") or "").strip() or None
+            decision = validate_decision(str(payload.get("decision") or ""))
+            updated = set_adaptive_source_decision(
+                normalized_company_key=company_key,
+                decision=decision,
+                company_name=company_name,
+            )
+        except ControlCenterActionStop as exc:
+            self._send_json(
+                {
+                    "status": "blocked",
+                    "reason": str(exc),
+                    "database_writes": 0,
+                    "provider_requests": 0,
+                    "product_authority": False,
+                },
+                status=HTTPStatus.BAD_REQUEST,
+            )
+            return
+        except ValueError as exc:
+            self._send_json(
+                {
+                    "status": "blocked",
+                    "reason": str(exc),
+                    "database_writes": 0,
+                    "provider_requests": 0,
+                    "product_authority": False,
+                },
+                status=HTTPStatus.BAD_REQUEST,
+            )
+            return
+        except Exception as exc:
+            self._send_json(
+                {
+                    "status": "review_required",
+                    "reason": str(exc),
+                    "database_writes": 0,
+                    "provider_requests": 0,
+                    "product_authority": False,
+                },
+                status=HTTPStatus.CONFLICT,
+            )
+            return
+
+        self._send_json(
+            {
+                "status": "applied",
+                "normalized_company_key": company_key,
+                "decision": decision,
+                "adaptive_source_decision_count": len(updated["decisions"]),
+                "local_runtime_writes": 1,
+                "database_writes": 0,
+                "provider_requests": 0,
+                "product_authority": False,
+                "connector_activation": False,
+                "connector_registration": False,
+            }
+        )
+
     def do_POST(self) -> None:  # noqa: N802 - exact reviewed action allowlist
         parsed = urlparse(self.path)
+        if parsed.path == CAREER_ADAPTIVE_SOURCE_ACTION_PATH:
+            self._post_career_adaptive_source_decision()
+            return
         if parsed.path == CAREER_OPERATOR_STATE_ACTION_PATH:
             self._post_career_operator_state()
             return
@@ -667,8 +742,10 @@ def run_server(args: argparse.Namespace) -> None:
     server.frontend_dist = args.frontend_dist  # type: ignore[attr-defined]
     print(f"Deep Ocean Product V1 Control Center: http://{args.host}:{args.port}/")
     print(
-        "Boundary: read models + observed opportunities + deterministic evidence preview + reviewed final-approval and append-only review-label actions; "
-        "no provider call, connector registration, source activation, ingestion, ranking mutation, model training or application submission."
+        "Boundary: read models + observed opportunities + deterministic evidence preview "
+        "+ reviewed final-approval and append-only review-label actions; no provider call, "
+        "connector registration, source activation, ingestion, ranking mutation, model "
+        "training or application submission."
     )
     try:
         server.serve_forever()

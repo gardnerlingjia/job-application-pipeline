@@ -66,3 +66,15 @@ def test_readme_documents_v21_source_strategy_contract():
     assert "discovery sources may identify opportunities" in normalized.casefold()
     assert "Existing generic/demo sources remain visible" in text
     assert "does not activate or crawl sources automatically" in normalized
+
+
+def test_readme_documents_v22_adaptive_source_contract():
+    text = README.read_text(encoding="utf-8")
+    normalized = " ".join(text.split())
+
+    assert "V2.2 adds adaptive source discovery" in normalized
+    assert "config/career_adaptive_source_rules.yaml" in text
+    assert ".runtime/career_intelligence/adaptive_source_state.json" in text
+    assert "Employers already present in the curated strategy are not duplicated" in normalized
+    assert "Candidate action buttons write only adaptive source state" in normalized
+    assert "never downgrade a configured source automatically" in normalized

@@ -58,6 +58,14 @@ Control Center. It prioritizes employer-origin evidence for career decisions but
 does not register, activate, crawl, score, rank or apply to sources/jobs by
 itself.
 
+Career Intelligence V2.2 adds adaptive source discovery from existing observed
+opportunities, Career Intelligence results and Silver provenance. It suggests
+candidate employers for `PROMOTE_TO_TIER_A`, `PROMOTE_TO_TIER_B`, `WATCH`, or
+`IGNORE` with explicit reasons, then stores operator decisions only in local
+runtime state. These suggestions do not mutate the curated source strategy,
+Product V1 ranking, source activation, connector registration, ingestion or
+application submission.
+
 Deep Ocean is the visual language: sonar for sensing, depth for evidence,
 pressure for gates, calm control surfaces for decisions and repair loops for
 learning.

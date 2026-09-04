@@ -173,6 +173,24 @@ button, input { font: inherit; }
 .ow-callout { padding: 10px; border-radius: 7px; display: flex; flex-direction: column; gap: 4px; font-size: 9px; }
 .ow-callout.warn { border: 1px solid #6b5524; background: #2c2513; }
 .ow-callout.good { border: 1px solid #286957; background: #0e2d29; }
+.ow-callout.neutral { border: 1px solid var(--ow-line-soft); background: #0a2232; }
+.ow-adaptive-candidates {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 10px;
+}
+.ow-adaptive-candidates > .ow-source-group-title {
+  grid-column: 1 / -1;
+}
+.ow-adaptive-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ow-adaptive-card code {
+  color: #86cbe4;
+  font-size: 9px;
+}
 .ow-approval-row { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--ow-line-soft); }
 .ow-approval-row > span { display: flex; flex-direction: column; gap: 3px; }
 .ow-approval-row small { color: var(--ow-muted); font-size: 9px; }

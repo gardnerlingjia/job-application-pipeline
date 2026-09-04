@@ -105,6 +105,18 @@ def test_source_strategy_read_model_enriches_existing_source_deterministically()
     result = enrich_source_overview_with_strategy(
         overview(source_row(), source_row("legacy:demo", source_label="Legacy Demo")),
         strategies=[strategy_from_mapping(strategy_record())],
+        adaptive_read_model={
+            "available": True,
+            "candidates": [],
+            "source_advisories": {
+                "personio:moia": {
+                    "status": "LOW_ACTIVITY",
+                    "reasons": ["1 observed opportunity"],
+                    "automatic_downgrade": False,
+                }
+            },
+            "summary": {"promotion_candidate_count": 0},
+        },
     )
 
     names = [source["source_name"] for source in result["sources"]]
@@ -114,6 +126,7 @@ def test_source_strategy_read_model_enriches_existing_source_deterministically()
     assert strategy["tier"] == "A"
     assert strategy["source_role"] == "employer_origin"
     assert strategy["is_employer_origin"] is True
+    assert result["sources"][0]["career_source_advisory"]["status"] == "LOW_ACTIVITY"
     assert result["sources"][1]["career_source_strategy"]["strategy_group"] == (
         "Existing generic/demo sources"
     )
@@ -168,13 +181,28 @@ def test_source_strategy_summary_preserves_generic_demo_sources():
             ),
         ],
         registry=FakeRegistry(supported={"personio:moia", "stepstone"}),
+        adaptive_read_model={
+            "available": True,
+            "candidates": [{"normalized_company_key": "new mobility"}],
+            "source_advisories": {},
+            "summary": {"promotion_candidate_count": 1},
+        },
     )
 
     assert result["summary"]["career_strategy_tier_a_count"] == 1
     assert result["summary"]["career_strategy_discovery_count"] == 1
     assert result["summary"]["generic_demo_source_count"] == 1
     assert result["boundaries"]["generic_demo_sources_preserved"] is True
-    assert result["boundaries"]["employer_origin_preferred_over_discovery_for_career_evidence"] is True
+    assert (
+        result["boundaries"]["employer_origin_preferred_over_discovery_for_career_evidence"]
+        is True
+    )
+    assert result["boundaries"]["adaptive_sources_are_candidates_only"] is True
+    assert result["summary"]["adaptive_source_candidate_count"] == 1
+    assert result["summary"]["adaptive_source_promotion_candidate_count"] == 1
+    assert result["adaptive_source_discovery"]["candidates"][0]["normalized_company_key"] == (
+        "new mobility"
+    )
 
 
 class FakeRegistry:

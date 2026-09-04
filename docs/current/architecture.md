@@ -97,6 +97,16 @@ adds explicit gap rows for configured targets that do not yet have an existing
 candidate, connector support, active profile or ingestion evidence. It never
 changes connector readiness, validation, approval, activation or scoring logic.
 
+Career Intelligence V2.2 adds an adaptive candidate layer beside that curated
+strategy. `adaptive_sources.py` reads existing `opportunities.json` and
+`silver_ingestion_provenance.json`, normalizes employer identity, excludes
+already-configured strategy employers, aggregates evidence, and exposes
+promotion suggestions plus configured-source health advisories through the same
+source overview read model. Operator decisions live under
+`.runtime/career_intelligence/adaptive_source_state.json`. This runtime overlay
+is not connector lifecycle truth and cannot activate, register, crawl, ingest,
+rank or submit anything.
+
 ## Current maturity note
 
 The documentation structure is now stable enough for product work again, but the

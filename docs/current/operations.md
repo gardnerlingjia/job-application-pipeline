@@ -35,6 +35,14 @@ priorities in the Control Center, but it is not an activation queue. Any source
 candidate creation, connector implementation, final approval, active profile or
 ingestion remains governed by the existing bounded source lifecycle.
 
+Adaptive source decisions live in
+`.runtime/career_intelligence/adaptive_source_state.json`. The file is local,
+gitignored and atomically written by the Control Center action endpoint. Removing
+it intentionally resets adaptive candidate decisions to `UNREVIEWED`; malformed
+state fails closed instead of being overwritten. Adaptive decisions are promotion
+overlays only and must not be treated as connector approval, activation,
+registration, crawling, ingestion or Product V1 ranking authority.
+
 Merge blocks must derive the PR number automatically from the current feature
 branch; they must not require manual `<PR_NUMBER>` replacement.
 

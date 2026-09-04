@@ -6,7 +6,9 @@ sources, alter upstream ingestion, or modify the Silver schema. V1.3 adds a loca
 unattended macOS refreshes from the existing Silver layer. V1.4-lite adds persistent local operator
 review state for the daily radar. V2.0 projects Career Intelligence into the existing Product V1
 Control Center as an additional decision lens. V2.1 adds Lingjia Gardner's source strategy as a
-configuration-backed prioritization layer over the existing source architecture.
+configuration-backed prioritization layer over the existing source architecture. V2.2 adds
+adaptive source discovery and promotion suggestions from observed opportunities; those suggestions
+remain local candidates until an operator reviews them.
 
 ## Architecture
 
@@ -23,9 +25,12 @@ logs, operator state counts, and operator-friendly terminal output for once-per-
 radar by operator state, recommendation, and score. `control_center.py` reads those runtime files
 and joins them to Product V1 jobs through Silver provenance without changing scoring or the V1.1
 result schema. `source_strategy.py` reads `config/career_source_strategy.yaml` and decorates the
-existing source overview with Lingjia-specific source tiers, roles, priorities, and gaps. A bad file
-or bad Silver record is reported; other records continue processing. Hard-stop decisions come
-unchanged from the existing constraint and recommendation modules.
+existing source overview with Lingjia-specific source tiers, roles, priorities, and gaps.
+`adaptive_sources.py` reads the same Career Intelligence results and Silver provenance, aggregates
+unknown employers into adaptive source candidates, adds source-health advisory signals, and stores
+operator promotion decisions in local runtime state only. A bad file or bad Silver record is
+reported; other records continue processing. Hard-stop decisions come unchanged from the existing
+constraint and recommendation modules.
 
 ## Configuration
 
@@ -334,6 +339,47 @@ gaps or candidate sources. Supported connector families such as `personio:*`, `g
 `successfactors:*` can be shown as connector-supported but unconfigured. Unknown source families are
 shown as connector gaps. Existing generic/demo sources remain visible under "Existing generic/demo
 sources" and are not deleted or reclassified as Lingjia strategy targets.
+
+## Adaptive Source Discovery
+
+V2.2 keeps `config/career_source_strategy.yaml` as the committed baseline strategy and adds
+`config/career_adaptive_source_rules.yaml` for deterministic suggestion thresholds. The adaptive
+layer reads only existing local evidence:
+
+1. Career Intelligence opportunities from `jobs/results/opportunities.json`.
+2. Silver/source traceability from `jobs/results/silver_ingestion_provenance.json`.
+3. The curated V2.1 strategy from `config/career_source_strategy.yaml`.
+4. Local operator decisions from `.runtime/career_intelligence/adaptive_source_state.json`.
+
+Candidates are keyed by normalized employer identity, not source URL. Employers already present in
+the curated strategy are not duplicated as adaptive candidates. For new employers, the read model
+aggregates observed opportunity count, assessed opportunity count, best and average opportunity
+score, recommendation distribution, represented career lanes, Berlin/remote-Germany relevance,
+location conflicts, evidence quality, employer-origin evidence availability, discovery-source
+evidence availability, network relevance when available, first/last seen values, and explicit
+promotion reasons.
+
+Suggested actions are deterministic and explainable:
+
+- `PROMOTE_TO_TIER_A`: repeated high-quality, high-scoring, location-compatible opportunities in
+  primary career lanes, with employer-origin evidence.
+- `PROMOTE_TO_TIER_B`: credible relevant opportunities in primary or adjacent lanes with compatible
+  location evidence.
+- `WATCH`: useful but thin, weak, aggregator-only, or ambiguous evidence.
+- `IGNORE`: repeated low fit or a hard location conflict such as relocation to Munich or China.
+
+Operator decisions are stored atomically in
+`.runtime/career_intelligence/adaptive_source_state.json` with states `UNREVIEWED`, `PROMOTED_A`,
+`PROMOTED_B`, `WATCH`, and `IGNORED`. These decisions survive reruns and do not edit
+`config/career_source_strategy.yaml`, register connectors, activate profiles, crawl employers,
+trigger ingestion, modify Product V1 ranking, or change Career Intelligence scoring. Approved
+promotions are therefore local strategy overlays/candidate decisions, not lifecycle truth.
+
+The Control Center Sources tab shows five groups: Strategic employers, Adjacent employers,
+Discovery sources, Adaptive candidates, and Existing generic/demo sources. Candidate action buttons
+write only adaptive source state. Configured sources may also receive advisory signals such as
+`HEALTHY`, `LOW_ACTIVITY`, `LOW_RELEVANCE`, `NO_RECENT_SIGNAL`, or `REVIEW_RECOMMENDED`; these are
+review prompts only and never downgrade a configured source automatically.
 
 ## Troubleshooting
 

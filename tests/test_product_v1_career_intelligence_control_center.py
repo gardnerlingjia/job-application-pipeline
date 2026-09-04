@@ -143,6 +143,51 @@ def test_career_operator_state_post_rejects_invalid_state(monkeypatch) -> None:
     assert int(responses[0][1]) == 400
 
 
+def test_career_adaptive_source_post_route_updates_local_state(monkeypatch) -> None:
+    calls: list[tuple[str, str, str | None]] = []
+
+    def set_decision(*, normalized_company_key: str, decision: str, company_name: str | None):
+        calls.append((normalized_company_key, decision, company_name))
+        return {"decisions": {normalized_company_key: {"decision": decision}}}
+
+    monkeypatch.setattr(server, "set_adaptive_source_decision", set_decision)
+    handler, responses = _handler(
+        server.CAREER_ADAPTIVE_SOURCE_ACTION_PATH,
+        {
+            "normalized_company_key": "fleet robotics",
+            "company_name": "Fleet Robotics",
+            "decision": "PROMOTED_A",
+        },
+    )
+
+    handler.do_POST()
+
+    assert calls == [("fleet robotics", "PROMOTED_A", "Fleet Robotics")]
+    assert responses[0][0]["status"] == "applied"
+    assert responses[0][0]["database_writes"] == 0
+    assert responses[0][0]["connector_activation"] is False
+    assert responses[0][0]["connector_registration"] is False
+    assert responses[0][0]["product_authority"] is False
+    assert int(responses[0][1]) == 200
+
+
+def test_career_adaptive_source_post_rejects_invalid_decision(monkeypatch) -> None:
+    calls: list[int] = []
+    monkeypatch.setattr(server, "set_adaptive_source_decision", lambda **kwargs: calls.append(1))
+    handler, responses = _handler(
+        server.CAREER_ADAPTIVE_SOURCE_ACTION_PATH,
+        {"normalized_company_key": "fleet robotics", "decision": "ACTIVATE"},
+    )
+
+    handler.do_POST()
+
+    assert calls == []
+    assert responses[0][0]["status"] == "blocked"
+    assert "invalid adaptive source decision" in responses[0][0]["reason"]
+    assert responses[0][0]["provider_requests"] == 0
+    assert int(responses[0][1]) == 400
+
+
 def test_frontend_renders_career_intelligence_controls_and_fields() -> None:
     text = FRONTEND.read_text(encoding="utf-8")
 
@@ -183,6 +228,10 @@ def test_frontend_sources_section_groups_lingjia_strategy_sources() -> None:
     assert "source_status" in text
     assert "relevant_career_lanes" in text
     assert "preferred_evidence_type" in text
+    assert '"Adaptive candidates"' in text
+    assert "adaptive_source_discovery" in text
+    assert "setAdaptiveDecision" in text
+    assert "career_source_advisory" in text
 
 
 class _EmptyCursor:

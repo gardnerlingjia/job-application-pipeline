@@ -124,6 +124,34 @@ type SourceConnector = {
     strategy_group?: string;
     career_relevance?: string;
   };
+  career_source_advisory?: {
+    status?: string;
+    observed_opportunity_count?: number;
+    best_score?: number | null;
+    reasons?: string[];
+    automatic_downgrade?: boolean;
+  };
+};
+
+type AdaptiveSourceCandidate = {
+  company_name: string;
+  normalized_company_key: string;
+  observed_opportunity_count: number;
+  assessed_opportunity_count: number;
+  highest_opportunity_score: number;
+  average_opportunity_score: number;
+  recommendations_distribution?: Record<string, number>;
+  career_lanes: string[];
+  berlin_relevance: boolean;
+  remote_germany_relevance: boolean;
+  location_constraint_conflicts: boolean;
+  evidence_quality: string;
+  employer_origin_evidence_available: boolean;
+  discovery_source_evidence_available: boolean;
+  source_strategy_status: string;
+  suggested_action: string;
+  operator_decision: string;
+  promotion_reasons: string[];
 };
 
 type ProductPayload = {
@@ -157,6 +185,19 @@ type ProductPayload = {
       attention_count: number;
     };
     sources: SourceConnector[];
+    adaptive_source_discovery?: {
+      available: boolean;
+      status: string;
+      reason?: string | null;
+      state_action_path?: string;
+      candidates?: AdaptiveSourceCandidate[];
+      summary?: {
+        candidate_count?: number;
+        promotion_candidate_count?: number;
+        watch_candidate_count?: number;
+        ignored_candidate_count?: number;
+      };
+    };
   };
   operator_blockers: Array<{ code: string; title: string; detail: string }>;
   review_label_capture?: {
@@ -183,7 +224,7 @@ type JobSort =
   | "gate_asc"
   | "gate_desc";
 type SortColumn = "fit" | "review" | "job" | "location" | "published" | "gate";
-type SourceGroup = "Strategic employers" | "Adjacent employers" | "Discovery sources" | "Existing generic/demo sources";
+type SourceGroup = "Strategic employers" | "Adjacent employers" | "Discovery sources" | "Adaptive candidates" | "Existing generic/demo sources";
 
 const normalize = (value: string | undefined | null) => (value || "").trim().toLocaleLowerCase();
 const label = (value: string | undefined | null) => (value || "unknown").replaceAll("_", " ");
@@ -787,13 +828,24 @@ function sourceGroup(source: SourceConnector): SourceGroup {
   return "Existing generic/demo sources";
 }
 
-function Sources({ payload }: { payload: ProductPayload }) {
+function adaptiveDecisionForSuggestion(suggestedAction: string): string {
+  if (suggestedAction === "PROMOTE_TO_TIER_A") return "PROMOTED_A";
+  if (suggestedAction === "PROMOTE_TO_TIER_B") return "PROMOTED_B";
+  if (suggestedAction === "IGNORE") return "IGNORED";
+  return "WATCH";
+}
+
+function Sources({ payload, refresh }: { payload: ProductPayload; refresh: () => Promise<void> }) {
   const sources = payload.source_connector_overview.sources;
   const [selectedName, setSelectedName] = useState(sources.find((source) => source.career_source_strategy?.tier === "A")?.source_name || sources.find((source) => source.current_blocker)?.source_name || sources.find((source) => source.activation.active === true)?.source_name || sources[0]?.source_name || "");
   const [showAll, setShowAll] = useState(false);
+  const [adaptiveBusyKey, setAdaptiveBusyKey] = useState<string | null>(null);
   const lifecycleGroups = ["Needs attention", "Active", "Pending", "Not implemented"];
-  const groups: SourceGroup[] = ["Strategic employers", "Adjacent employers", "Discovery sources", "Existing generic/demo sources"];
+  const adaptive = payload.source_connector_overview.adaptive_source_discovery;
+  const adaptiveCandidates = adaptive?.candidates || [];
+  const groups: SourceGroup[] = ["Strategic employers", "Adjacent employers", "Discovery sources", "Adaptive candidates", "Existing generic/demo sources"];
   const groupCounts = Object.fromEntries(groups.map((group) => [group, sources.filter((source) => sourceGroup(source) === group).length])) as Record<SourceGroup, number>;
+  groupCounts["Adaptive candidates"] = adaptiveCandidates.length;
   const visibleGroups = groups
     .map((group) => ({
       group,
@@ -810,15 +862,44 @@ function Sources({ payload }: { payload: ProductPayload }) {
   const visible = visibleGroups.flatMap((entry) => entry.sources);
   const selected = sources.find((source) => source.source_name === selectedName) || visible[0] || null;
   const strategy = selected?.career_source_strategy;
+  const setAdaptiveDecision = async (candidate: AdaptiveSourceCandidate, decision: string) => {
+    const path = adaptive?.state_action_path || "/api/v1/career-intelligence/adaptive-sources";
+    setAdaptiveBusyKey(candidate.normalized_company_key);
+    try {
+      const response = await fetch(path, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          normalized_company_key: candidate.normalized_company_key,
+          company_name: candidate.company_name,
+          decision,
+        }),
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.reason || `Adaptive source update failed (${response.status})`);
+      }
+      clearProductTruthCache();
+      await refresh();
+    } finally {
+      setAdaptiveBusyKey(null);
+    }
+  };
 
   return <div className="ow-stack">
     <header className="ow-page-header"><div><span>Source control</span><h1>Sources</h1><p>Lingjia strategy sources are grouped above existing generic/demo sources. Lifecycle gates still own activation truth.</p></div><button type="button" className="ow-secondary" title={`Lifecycle vocabulary: ${lifecycleGroups.join(", ")}`} onClick={() => setShowAll((value) => !value)}>{showAll ? "Hide generic/demo" : `Show all ${sources.length}`}</button></header>
     <section className="ow-source-summary-strip">
       {groups.map((group) => <div key={group}><span>{group}</span><b>{groupCounts[group]}</b></div>)}
     </section>
+    {adaptive?.available === false && <div className="ow-callout warn"><b>Adaptive discovery unavailable</b><span>{adaptive.reason || "Runtime source evidence is not ready."}</span></div>}
+    {adaptiveCandidates.length > 0 && <section className="ow-adaptive-candidates"><div className="ow-source-group-title"><span>Adaptive candidates</span><b>{adaptiveCandidates.length}</b></div>{adaptiveCandidates.map((candidate) => {
+      const recommendedDecision = adaptiveDecisionForSuggestion(candidate.suggested_action);
+      const busy = adaptiveBusyKey === candidate.normalized_company_key;
+      return <article className="ow-card ow-adaptive-card" key={candidate.normalized_company_key}><div><span className="ow-kicker">{label(candidate.suggested_action)} · {label(candidate.operator_decision)}</span><h2>{candidate.company_name}</h2><code>{candidate.normalized_company_key}</code></div><div className="ow-strategy-band"><div><span>Opportunities</span><b>{candidate.observed_opportunity_count}</b></div><div><span>Best score</span><b>{candidate.highest_opportunity_score}</b></div><div><span>Average</span><b>{candidate.average_opportunity_score}</b></div><div><span>Evidence</span><b>{label(candidate.evidence_quality)}</b></div></div><div className="ow-source-facts"><div><span>Employer origin</span><b>{candidate.employer_origin_evidence_available ? "available" : "not observed"}</b></div><div><span>Discovery</span><b>{candidate.discovery_source_evidence_available ? "available" : "not observed"}</b></div><div><span>Berlin</span><b>{candidate.berlin_relevance ? "yes" : "not observed"}</b></div><div><span>Remote Germany</span><b>{candidate.remote_germany_relevance ? "yes" : "not observed"}</b></div><div><span>Location conflict</span><b>{candidate.location_constraint_conflicts ? "yes" : "no"}</b></div><div><span>Lanes</span><b>{candidate.career_lanes.map(label).join(", ") || "unknown"}</b></div></div><section className="ow-evidence"><div><span>Promotion reasons</span><ul>{candidate.promotion_reasons.map((reason) => <li key={reason}>{reason}</li>)}</ul></div></section><div className="ow-actions"><button type="button" onClick={() => void setAdaptiveDecision(candidate, "PROMOTED_A")} disabled={busy}>Promote to Tier A</button><button type="button" onClick={() => void setAdaptiveDecision(candidate, "PROMOTED_B")} disabled={busy}>Promote to Tier B</button><button type="button" onClick={() => void setAdaptiveDecision(candidate, "WATCH")} disabled={busy || recommendedDecision === "WATCH"}>Watch</button><button type="button" onClick={() => void setAdaptiveDecision(candidate, "IGNORED")} disabled={busy}>Ignore</button></div></article>;
+    })}</section>}
     <section className="ow-source-workspace">
       <div className="ow-source-list">{visibleGroups.map(({ group, sources: groupedSources }) => <div key={group}><div className="ow-source-group-title"><span>{group}</span><b>{groupedSources.length}</b></div>{groupedSources.map((source) => <button type="button" key={source.source_name} className={selected?.source_name === source.source_name ? "selected" : ""} onClick={() => setSelectedName(source.source_name)}><span><b>{source.source_label}</b><small>{source.source_name}</small></span><span className="ow-source-mini"><Status value={source.career_source_strategy?.source_status || source.current_blocker || source.activation.status} /><small>{source.career_source_strategy?.source_role || "generic"}</small></span></button>)}</div>)}</div>
-      {selected && <article className="ow-card ow-source-detail"><span className="ow-kicker">{sourceGroup(selected)} · {selected.source_type}</span><h2>{selected.source_label}</h2><code>{selected.source_name}</code>{strategy?.configured ? <div className="ow-strategy-band"><div><span>Tier</span><b>{strategy.tier} · {strategy.tier_label}</b></div><div><span>Priority</span><b>{strategy.strategic_priority}</b></div><div><span>Role</span><b>{label(strategy.source_role)}</b></div><div><span>Status</span><b>{label(strategy.source_status)}</b></div></div> : <div className="ow-callout warn"><b>Existing generic/demo source</b><span>This source remains available but is not part of Lingjia's target-source strategy.</span></div>}<div className="ow-source-facts"><div><span>Implementation</span><b>{label(selected.connector.implementation_status)}</b></div><div><span>Validation</span><b>{label(selected.gates.connector_validation_gate.status)}</b></div><div><span>Approval</span><b>{label(selected.gates.final_approval_gate.status)}</b></div><div><span>Activation</span><b>{label(selected.activation.status)}</b></div><div><span>Profiles</span><b>{selected.search_profiles.active_profile_count}/{selected.search_profiles.profile_count} active</b></div><div><span>Layers</span><b>Bronze {selected.layers.bronze_count} · Silver {selected.layers.silver_count}</b></div></div>{strategy?.configured && <section className="ow-evidence"><div><span>Career lanes</span>{strategy.relevant_career_lanes?.length ? <ul>{strategy.relevant_career_lanes.map((lane) => <li key={lane}>{label(lane)}</li>)}</ul> : <p>No configured lanes.</p>}</div><div><span>Location relevance</span>{strategy.location_relevance?.length ? <ul>{strategy.location_relevance.map((item) => <li key={item}>{item}</li>)}</ul> : <p>No location relevance configured.</p>}</div></section>}{selected.current_blocker ? <div className="ow-callout warn"><b>{label(selected.current_blocker)}</b><span>{selected.next_action}</span></div> : <div className="ow-callout good"><b>No current blocker</b><span>{selected.next_action}</span></div>}</article>}
+      {selected && <article className="ow-card ow-source-detail"><span className="ow-kicker">{sourceGroup(selected)} · {selected.source_type}</span><h2>{selected.source_label}</h2><code>{selected.source_name}</code>{strategy?.configured ? <div className="ow-strategy-band"><div><span>Tier</span><b>{strategy.tier} · {strategy.tier_label}</b></div><div><span>Priority</span><b>{strategy.strategic_priority}</b></div><div><span>Role</span><b>{label(strategy.source_role)}</b></div><div><span>Status</span><b>{label(strategy.source_status)}</b></div></div> : <div className="ow-callout warn"><b>Existing generic/demo source</b><span>This source remains available but is not part of Lingjia's target-source strategy.</span></div>}{selected.career_source_advisory && <div className="ow-callout neutral"><b>Source advisory: {label(selected.career_source_advisory.status)}</b><span>{selected.career_source_advisory.reasons?.join(" · ") || "No advisory detail."}</span></div>}<div className="ow-source-facts"><div><span>Implementation</span><b>{label(selected.connector.implementation_status)}</b></div><div><span>Validation</span><b>{label(selected.gates.connector_validation_gate.status)}</b></div><div><span>Approval</span><b>{label(selected.gates.final_approval_gate.status)}</b></div><div><span>Activation</span><b>{label(selected.activation.status)}</b></div><div><span>Profiles</span><b>{selected.search_profiles.active_profile_count}/{selected.search_profiles.profile_count} active</b></div><div><span>Layers</span><b>Bronze {selected.layers.bronze_count} · Silver {selected.layers.silver_count}</b></div></div>{strategy?.configured && <section className="ow-evidence"><div><span>Career lanes</span>{strategy.relevant_career_lanes?.length ? <ul>{strategy.relevant_career_lanes.map((lane) => <li key={lane}>{label(lane)}</li>)}</ul> : <p>No configured lanes.</p>}</div><div><span>Location relevance</span>{strategy.location_relevance?.length ? <ul>{strategy.location_relevance.map((item) => <li key={item}>{item}</li>)}</ul> : <p>No location relevance configured.</p>}</div></section>}{selected.current_blocker ? <div className="ow-callout warn"><b>{label(selected.current_blocker)}</b><span>{selected.next_action}</span></div> : <div className="ow-callout good"><b>No current blocker</b><span>{selected.next_action}</span></div>}</article>}
     </section>
   </div>;
 }
@@ -897,7 +978,7 @@ export default function OperatorWorkspace() {
     </aside>
     <div className="ow-content-shell">
       <header className="ow-topline"><div><b>{navItems.find((item) => item.id === view)?.label}</b><span>DEMO-001 · Personio pilot</span></div><button type="button" disabled={refreshing} onClick={() => void refresh()}>{refreshing ? "Refreshing…" : "↻ Refresh"}</button></header>
-      <main className="ow-main">{view === "overview" && <Overview payload={payload} onNavigate={setView} />}{view === "jobs" && <Jobs payload={payload} refresh={refresh} />}{view === "career" && <CareerIntelligence payload={payload} refresh={refresh} />}{view === "top5" && <TopFive payload={payload} refresh={refresh} />}{view === "application" && <Application payload={payload} refresh={refresh} />}{view === "applications" && <Applications payload={payload} onPrepare={() => setView("application")} />}{view === "sources" && <Sources payload={payload} />}{view === "approvals" && <Approvals payload={payload} />}{view === "operations" && <Operations payload={payload} />}</main>
+      <main className="ow-main">{view === "overview" && <Overview payload={payload} onNavigate={setView} />}{view === "jobs" && <Jobs payload={payload} refresh={refresh} />}{view === "career" && <CareerIntelligence payload={payload} refresh={refresh} />}{view === "top5" && <TopFive payload={payload} refresh={refresh} />}{view === "application" && <Application payload={payload} refresh={refresh} />}{view === "applications" && <Applications payload={payload} onPrepare={() => setView("application")} />}{view === "sources" && <Sources payload={payload} refresh={refresh} />}{view === "approvals" && <Approvals payload={payload} />}{view === "operations" && <Operations payload={payload} />}</main>
     </div>
   </div>;
 }
