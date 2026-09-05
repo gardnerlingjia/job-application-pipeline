@@ -1,9 +1,11 @@
 import pytest
 
 from src.career_intelligence.silver_adapter import (
+    ATS_PROVIDER_IDENTITY_DESCRIPTION_QUALITY,
     adapt_silver_row,
     adapt_silver_rows,
     extract_description,
+    has_ats_backed_provider_identity,
     normalize_source_patterns,
     source_file_for_row,
     stable_identity,
@@ -174,6 +176,96 @@ def test_greenhouse_job_content_is_strong_description_evidence_for_live_moia():
     assert result.description_quality == "strong"
     assert result.provenance["description_source"] == "job.content"
     assert result.provenance["source_name"] == "greenhouse:moia"
+
+
+def live_greenhouse_moia_silver_row(**overrides):
+    row = {
+        "silver_job_id": 1,
+        "raw_job_id": 1,
+        "source_name": "greenhouse:moia",
+        "external_job_id": "4967879101",
+        "source_url": "https://job-boards.eu.greenhouse.io/moia/jobs/4967879101",
+        "title": "Unsolicited Application – Business (all genders) ",
+        "company_name": "MOIA GmbH",
+        "city": (
+            "Berlin, Germany; Hamburg, Germany; Hannover, Germany; "
+            "Munich, Germany; Wolfsburg, Germany"
+        ),
+        "postal_code": None,
+        "country": None,
+        "publication_date": "2026-09-03",
+        "first_seen_at": "2026-09-03T13:10:00+00:00",
+        "last_seen_at": "2026-09-03T13:10:00+00:00",
+        "canonical_source_type": "employer_origin_ats_backed_career_site",
+        "canonical_key_candidate": (
+            "moia gmbh :: unsolicited application – business (all genders) :: "
+            "berlin, germany; hamburg, germany; hannover, germany; munich, "
+            "germany; wolfsburg, germany"
+        ),
+        "raw_data": {
+            "board_token": "moia",
+            "matching": {
+                "matched_search_term_ids": [130],
+                "matched_terms": ["*"],
+                "matching_mode": "field_scoped_case_insensitive_term_match",
+            },
+            "job": {
+                "absolute_url": (
+                    "https://job-boards.eu.greenhouse.io/moia/jobs/4967879101"
+                ),
+                "application_deadline": None,
+                "company_name": "MOIA GmbH",
+                "data_compliance": [
+                    {
+                        "demographic_data_consent_applies": False,
+                        "requires_consent": False,
+                        "requires_processing_consent": False,
+                        "requires_retention_consent": False,
+                        "retention_period": None,
+                        "type": "gdpr",
+                    }
+                ],
+                "first_published": "2026-09-03T09:00:20-04:00",
+                "id": 4967879101,
+                "internal_job_id": 6413596,
+                "language": "en",
+                "location": {
+                    "name": (
+                        "Berlin, Germany; Hamburg, Germany; Hannover, Germany; "
+                        "Munich, Germany; Wolfsburg, Germany"
+                    )
+                },
+                "metadata": None,
+                "requisition_id": "6413596",
+                "title": "Unsolicited Application – Business (all genders) ",
+                "updated_at": "2026-09-03T09:00:20-04:00",
+            },
+        },
+    }
+    row.update(overrides)
+    return row
+
+
+def test_live_greenhouse_moia_missing_description_uses_ats_provider_identity():
+    row = live_greenhouse_moia_silver_row()
+
+    assert extract_description(row["raw_data"]) == (None, None, "missing")
+    assert has_ats_backed_provider_identity(row) is True
+
+    result = adapt_silver_row(row)
+
+    assert result.company == "MOIA GmbH"
+    assert result.title == "Unsolicited Application – Business (all genders)"
+    assert result.description == ""
+    assert result.description_quality == ATS_PROVIDER_IDENTITY_DESCRIPTION_QUALITY
+    assert result.provenance["description_source"] is None
+    assert result.provenance["description_quality"] == (
+        ATS_PROVIDER_IDENTITY_DESCRIPTION_QUALITY
+    )
+    assert result.provenance["ingestion_status"] == "assessed"
+    assert result.provenance["canonical_source_type"] == (
+        "employer_origin_ats_backed_career_site"
+    )
 
 
 def test_publication_date_is_preserved_separately_from_first_and_last_seen():

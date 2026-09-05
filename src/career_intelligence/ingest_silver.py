@@ -20,7 +20,9 @@ from src.career_intelligence.batch import (
 )
 from src.career_intelligence.freshness import apply_freshness_penalty
 from src.career_intelligence.recommender import recommend_action
+from src.career_intelligence.scoring import calculate_opportunity_score
 from src.career_intelligence.silver_adapter import (
+    ATS_PROVIDER_IDENTITY_DESCRIPTION_QUALITY,
     SilverCareerInput,
     SilverJobReadRepository,
     adapt_silver_rows,
@@ -66,9 +68,38 @@ def _validate_provenance_record(record: Any) -> dict[str, Any]:
         raise ValueError("Silver provenance record has invalid source_file")
     if record["ingestion_status"] not in {"assessed", "skipped"}:
         raise ValueError("Silver provenance record has invalid ingestion_status")
-    if record["description_quality"] not in {"strong", "weak", "missing"}:
+    if record["description_quality"] not in {
+        "strong",
+        "weak",
+        "missing",
+        ATS_PROVIDER_IDENTITY_DESCRIPTION_QUALITY,
+    }:
         raise ValueError("Silver provenance record has invalid description_quality")
     return record
+
+
+def _remove_missing_description_evidence(
+    assessment: dict[str, Any],
+    item: SilverCareerInput,
+) -> dict[str, Any]:
+    if item.description_quality != ATS_PROVIDER_IDENTITY_DESCRIPTION_QUALITY:
+        return assessment
+
+    scores = dict(assessment.get("scores") or {})
+    scores["capability_fit"] = 0
+    scores["domain_fit"] = 0
+    scores["evidence_strength"] = 0
+
+    adjusted = dict(assessment)
+    adjusted["scores"] = scores
+    adjusted["matched_capabilities"] = []
+    adjusted["domain_matches"] = []
+    adjusted["evidence_details"] = []
+    adjusted["opportunity_score"] = calculate_opportunity_score(scores)
+    item.provenance["missing_description_evidence_policy"] = (
+        "ats_provider_identity_only_no_capability_or_domain_evidence"
+    )
+    return adjusted
 
 
 def _merge_provenance(
@@ -242,6 +273,7 @@ def assess_silver_inputs(
 
         try:
             assessment = assess_opportunity(item.company, item.title, item.description)
+            assessment = _remove_missing_description_evidence(assessment, item)
             assessment = _apply_freshness_to_assessment(assessment, item)
             opportunities.append(_result_record(assessment, item.source_file))
             existing_sources.add(item.source_file)
@@ -325,7 +357,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument(
         "--source",
-        help="Optional exact source name or source-family filter, e.g. personio:target or personio.",
+        help=(
+            "Optional exact source name or source-family filter, "
+            "e.g. personio:target or personio."
+        ),
     )
     parser.add_argument("--limit", type=positive_integer, default=100)
     parser.add_argument("--results", type=Path, default=Path("jobs/results"))

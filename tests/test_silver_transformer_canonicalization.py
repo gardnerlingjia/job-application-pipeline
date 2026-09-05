@@ -164,6 +164,63 @@ def test_transform_greenhouse_moia_raw_job_uses_source_identity_fallbacks() -> N
     )
 
 
+def test_transform_greenhouse_moia_unsolicited_live_fixture_jobs() -> None:
+    raw_jobs = [
+        {
+            "id": 8302,
+            "source_name": "greenhouse:moia",
+            "external_job_id": "71002",
+            "source_url": "https://boards-api.greenhouse.io/v1/boards/moia/jobs",
+            "raw_data": {
+                "board_token": "moia",
+                "job": {
+                    "id": 71002,
+                    "title": "Unsolicited Application - Business (all genders)",
+                    "absolute_url": "https://boards.greenhouse.io/moia/jobs/71002",
+                    "location": {"name": "Berlin"},
+                    "content": (
+                        "MOIA invites unsolicited applications for future business-facing "
+                        "openings based from Berlin and Hamburg."
+                    ),
+                    "first_published": "2026-09-01T10:00:00Z",
+                },
+            },
+        },
+        {
+            "id": 8303,
+            "source_name": "greenhouse:moia",
+            "external_job_id": "71003",
+            "source_url": "https://boards-api.greenhouse.io/v1/boards/moia/jobs",
+            "raw_data": {
+                "board_token": "moia",
+                "job": {
+                    "id": 71003,
+                    "title": "Unsolicited Application - Tech & Product (all genders)",
+                    "absolute_url": "https://boards.greenhouse.io/moia/jobs/71003",
+                    "location": {"name": "Berlin"},
+                    "content": (
+                        "MOIA invites unsolicited applications for future technology and "
+                        "product openings based from Berlin and Hamburg."
+                    ),
+                    "first_published": "2026-09-01T10:00:00Z",
+                },
+            },
+        },
+    ]
+
+    transformed = [transform_raw_job_to_silver(raw_job) for raw_job in raw_jobs]
+
+    assert [job["title"] for job in transformed] == [
+        "Unsolicited Application - Business (all genders)",
+        "Unsolicited Application - Tech & Product (all genders)",
+    ]
+    assert {job["company_name"] for job in transformed} == {"MOIA"}
+    assert {job["city"] for job in transformed} == {"Berlin"}
+    assert {job["canonical_source_type"] for job in transformed} == {
+        "employer_origin_ats_backed_career_site"
+    }
+
+
 def test_transform_stepstone_raw_job_uses_result_card_fields() -> None:
     raw_job = {
         "id": 6001,

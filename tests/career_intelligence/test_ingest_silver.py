@@ -9,7 +9,11 @@ from src.career_intelligence.ingest_silver import (
     parse_args,
     process_silver,
 )
-from src.career_intelligence.silver_adapter import adapt_silver_row, source_file_for_row
+from src.career_intelligence.silver_adapter import (
+    ATS_PROVIDER_IDENTITY_DESCRIPTION_QUALITY,
+    adapt_silver_row,
+    source_file_for_row,
+)
 
 
 def silver_row(**overrides):
@@ -49,6 +53,17 @@ def fake_assessment(company, title, description):
         "high_risks": [],
         "reviews": [],
         "matched_capabilities": ["python", "sql"],
+        "domain_matches": ["data platform"],
+        "evidence_details": [{"capability": "python"}],
+        "network_access": 0,
+        "scores": {
+            "career_lane_fit": 70,
+            "capability_fit": 80,
+            "domain_fit": 60,
+            "location_fit": 40,
+            "network_access": 0,
+            "evidence_strength": 70,
+        },
     }
 
 
@@ -247,6 +262,101 @@ def test_strong_detail_description_record_is_scored(tmp_path, monkeypatch):
     assert provenance[0]["description_quality"] == "strong"
 
 
+def live_greenhouse_moia_silver_row(**overrides):
+    row = {
+        "silver_job_id": 1,
+        "raw_job_id": 1,
+        "source_name": "greenhouse:moia",
+        "external_job_id": "4967879101",
+        "source_url": "https://job-boards.eu.greenhouse.io/moia/jobs/4967879101",
+        "title": "Unsolicited Application – Business (all genders) ",
+        "company_name": "MOIA GmbH",
+        "city": (
+            "Berlin, Germany; Hamburg, Germany; Hannover, Germany; "
+            "Munich, Germany; Wolfsburg, Germany"
+        ),
+        "postal_code": None,
+        "country": None,
+        "publication_date": "2026-09-03",
+        "first_seen_at": "2026-09-03T13:10:00+00:00",
+        "last_seen_at": "2026-09-03T13:10:00+00:00",
+        "canonical_source_type": "employer_origin_ats_backed_career_site",
+        "canonical_key_candidate": (
+            "moia gmbh :: unsolicited application – business (all genders) :: "
+            "berlin, germany; hamburg, germany; hannover, germany; munich, "
+            "germany; wolfsburg, germany"
+        ),
+        "raw_data": {
+            "board_token": "moia",
+            "matching": {
+                "matched_search_term_ids": [130],
+                "matched_terms": ["*"],
+                "matching_mode": "field_scoped_case_insensitive_term_match",
+            },
+            "job": {
+                "absolute_url": (
+                    "https://job-boards.eu.greenhouse.io/moia/jobs/4967879101"
+                ),
+                "application_deadline": None,
+                "company_name": "MOIA GmbH",
+                "first_published": "2026-09-03T09:00:20-04:00",
+                "id": 4967879101,
+                "internal_job_id": 6413596,
+                "language": "en",
+                "location": {
+                    "name": (
+                        "Berlin, Germany; Hamburg, Germany; Hannover, Germany; "
+                        "Munich, Germany; Wolfsburg, Germany"
+                    )
+                },
+                "metadata": None,
+                "requisition_id": "6413596",
+                "title": "Unsolicited Application – Business (all genders) ",
+                "updated_at": "2026-09-03T09:00:20-04:00",
+            },
+        },
+    }
+    row.update(overrides)
+    return row
+
+
+def test_ats_backed_missing_description_record_is_conservatively_scored(
+    tmp_path,
+    monkeypatch,
+):
+    calls = []
+
+    def assess(company, title, description):
+        calls.append((company, title, description))
+        return fake_assessment(company, title, description)
+
+    monkeypatch.setattr("src.career_intelligence.ingest_silver.assess_opportunity", assess)
+
+    summary = process_silver(
+        repository=FakeRepository([live_greenhouse_moia_silver_row()]),
+        results=tmp_path,
+    )
+
+    assert summary["converted"] == 1
+    assert summary["processed"] == 1
+    assert calls == [
+        (
+            "MOIA GmbH",
+            "Unsolicited Application – Business (all genders)",
+            "",
+        )
+    ]
+    result = summary["opportunities"][0]
+    assert result["key_matched_capabilities"] == []
+    assert result["opportunity_score"] < 80
+    provenance = json.loads((tmp_path / PROVENANCE_FILE).read_text())[0]
+    assert provenance["description_quality"] == ATS_PROVIDER_IDENTITY_DESCRIPTION_QUALITY
+    assert provenance["description_source"] is None
+    assert provenance["missing_description_evidence_policy"] == (
+        "ats_provider_identity_only_no_capability_or_domain_evidence"
+    )
+
+
 def test_duplicate_records_in_same_run_are_reported_once(tmp_path, monkeypatch):
     calls = []
 
@@ -305,7 +415,10 @@ def test_paired_output_write_failure_leaves_final_files_uncreated(
         return original_write_temporary(directory, content)
 
     monkeypatch.setattr("src.career_intelligence.ingest_silver.assess_opportunity", fake_assessment)
-    monkeypatch.setattr("src.career_intelligence.ingest_silver._write_temporary", fail_on_provenance)
+    monkeypatch.setattr(
+        "src.career_intelligence.ingest_silver._write_temporary",
+        fail_on_provenance,
+    )
 
     with pytest.raises(OSError, match="disk full"):
         process_silver(repository=FakeRepository([silver_row()]), results=tmp_path)

@@ -21,6 +21,8 @@ from src.config import get_database_config
 SOURCE_FILE_PREFIX = "silver"
 SOURCE_FILE_VERSION = "career-intelligence-silver-source.v1"
 PROVENANCE_SCHEMA_VERSION = 1
+ATS_BACKED_EMPLOYER_ORIGIN_SOURCE_TYPE = "employer_origin_ats_backed_career_site"
+ATS_PROVIDER_IDENTITY_DESCRIPTION_QUALITY = "missing_ats_provider_identity"
 
 
 @dataclass(frozen=True)
@@ -131,6 +133,18 @@ def _clean_text(value: object) -> str | None:
     return cleaned or None
 
 
+def _provider_text(value: object) -> str | None:
+    if isinstance(value, Mapping):
+        parts = [_provider_text(item) for item in value.values()]
+        text = " ".join(part for part in parts if part)
+        return text or None
+    if isinstance(value, list):
+        parts = [_provider_text(item) for item in value]
+        text = " ".join(part for part in parts if part)
+        return text or None
+    return _clean_text(value)
+
+
 def _nested(mapping: Mapping[str, Any], path: tuple[str, ...]) -> object:
     current: object = mapping
     for key in path:
@@ -172,6 +186,46 @@ def extract_description(raw_data: object) -> tuple[str | None, str | None, str]:
             return value, ".".join(path), "weak"
 
     return None, None, "missing"
+
+
+def _source_family(source_name: object) -> str | None:
+    if not isinstance(source_name, str) or ":" not in source_name:
+        return None
+    family, _ = source_name.split(":", 1)
+    return family or None
+
+
+def has_ats_backed_provider_identity(row: Mapping[str, Any]) -> bool:
+    if row.get("canonical_source_type") != ATS_BACKED_EMPLOYER_ORIGIN_SOURCE_TYPE:
+        return False
+
+    source_family = _source_family(row.get("source_name"))
+    if source_family not in {"greenhouse", "successfactors"}:
+        return False
+
+    raw_data = row.get("raw_data")
+    if not isinstance(raw_data, Mapping):
+        return False
+    job_data = _nested(raw_data, ("job",))
+    if not isinstance(job_data, Mapping):
+        return False
+
+    provider_job_id = _clean_text(row.get("external_job_id")) or _clean_text(
+        job_data.get("id")
+    )
+    provider_url = (
+        _clean_text(job_data.get("absolute_url"))
+        or _clean_text(job_data.get("source_url"))
+        or _clean_text(row.get("source_url"))
+    )
+    provider_context = (
+        _provider_text(job_data.get("location"))
+        or _provider_text(job_data.get("offices"))
+        or _clean_text(job_data.get("first_published"))
+        or _clean_text(job_data.get("updated_at"))
+    )
+
+    return bool(provider_job_id and provider_url and provider_context)
 
 
 def stable_identity(row: Mapping[str, Any]) -> tuple[str, str]:
@@ -249,6 +303,11 @@ def adapt_silver_row(row: Mapping[str, Any]) -> SilverCareerInput:
     company = _clean_text(row.get("company_name"))
     title = _clean_text(row.get("title"))
     description, description_source, description_quality = extract_description(row.get("raw_data"))
+    has_trusted_missing_description_identity = (
+        description is None and has_ats_backed_provider_identity(row)
+    )
+    if has_trusted_missing_description_identity:
+        description_quality = ATS_PROVIDER_IDENTITY_DESCRIPTION_QUALITY
     freshness = calculate_job_freshness(
         publication_date=row.get("publication_date"),
         first_seen_at=row.get("first_seen_at"),
@@ -266,7 +325,6 @@ def adapt_silver_row(row: Mapping[str, Any]) -> SilverCareerInput:
         for label, value in (
             ("company", company),
             ("title", title),
-            ("description", description),
         )
         if not value
     ]
@@ -275,7 +333,12 @@ def adapt_silver_row(row: Mapping[str, Any]) -> SilverCareerInput:
             f"missing or empty required fields: {', '.join(missing)}",
             provenance=base_provenance,
         )
-    if description_quality != "strong":
+    if not description and not has_trusted_missing_description_identity:
+        raise SilverAdaptationError(
+            "missing or empty required fields: description",
+            provenance=base_provenance,
+        )
+    if description_quality not in {"strong", ATS_PROVIDER_IDENTITY_DESCRIPTION_QUALITY}:
         raise SilverAdaptationError(
             "insufficient description evidence: weak listing/card text is not scored",
             provenance=base_provenance,
@@ -287,11 +350,10 @@ def adapt_silver_row(row: Mapping[str, Any]) -> SilverCareerInput:
 
     assert company is not None
     assert title is not None
-    assert description is not None
     return SilverCareerInput(
         company=company,
         title=title,
-        description=description,
+        description=description or "",
         description_quality=description_quality,
         freshness=freshness,
         source_file=source_file,

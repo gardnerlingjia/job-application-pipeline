@@ -86,7 +86,9 @@ def test_readme_documents_v23_moia_and_freshness_contract():
 
     assert "V2.3 adds the first bounded live employer" in text
     assert "greenhouse:moia" in text
-    assert "moia_greenhouse_lingjia_daily" in text
+    assert "moia_controlled_hannover_precision" in text
+    assert "validate --dry-run" in text
+    assert "approve --reviewed-by lingjia" in text
     assert "first_seen_fallback" in text
     assert "Dates are never fabricated" in text
     assert "jobs receive a local Career Intelligence ranking penalty" in normalized

@@ -18,6 +18,18 @@ from src.config import get_database_config
 from src.search_intelligence.employer_origin_gate_registry import gate_order
 
 VALIDATION_GATE = "connector_validation_gate"
+DEFAULT_CONNECTOR_VALIDATION_TESTS = (
+    "tests/test_connector_registry.py",
+    "tests/test_ingest_jobs_cli.py",
+)
+SOURCE_FAMILY_VALIDATION_TESTS = {
+    "greenhouse": (
+        "tests/test_greenhouse_connector.py",
+        "tests/test_greenhouse_board_candidate_validation.py",
+        "tests/test_silver_transformer_canonicalization.py",
+        "tests/career_intelligence/test_moia_live_source.py",
+    ),
+}
 
 
 @dataclass(frozen=True)
@@ -66,7 +78,34 @@ def class_name_for(candidate: SourceCandidate) -> str:
     return f"{pascal_case(candidate.source_family_candidate)}Connector"
 
 
-def bounded_connector_preview(import_path: str, class_name: str) -> dict[str, Any]:
+def canonical_validation_test_paths(candidate: SourceCandidate) -> list[str]:
+    paths = [
+        str(test_path_for(candidate)),
+        *DEFAULT_CONNECTOR_VALIDATION_TESTS,
+        *(
+            path
+            for path in SOURCE_FAMILY_VALIDATION_TESTS.get(
+                snake_case(candidate.source_family_candidate),
+                (),
+            )
+        ),
+    ]
+    unique_paths: list[str] = []
+    seen: set[str] = set()
+    for path in paths:
+        if path in seen:
+            continue
+        unique_paths.append(path)
+        seen.add(path)
+    return unique_paths
+
+
+def bounded_connector_preview(
+    import_path: str,
+    class_name: str,
+    *,
+    source_name_candidate: str | None = None,
+) -> dict[str, Any]:
     result: dict[str, Any] = {
         "attempted": True,
         "import_path": import_path,
@@ -93,6 +132,16 @@ def bounded_connector_preview(import_path: str, class_name: str) -> dict[str, An
 
         init_signature = inspect.signature(connector_class)
         kwargs: dict[str, Any] = {}
+
+        if "board_token" in init_signature.parameters and source_name_candidate:
+            from src.connectors.registry import source_target
+
+            kwargs["board_token"] = source_target(source_name_candidate)
+
+        if "target_key" in init_signature.parameters and source_name_candidate:
+            from src.connectors.registry import source_target
+
+            kwargs["target_key"] = source_target(source_name_candidate)
 
         if "fetcher" in init_signature.parameters:
             result["safe_fetcher_used"] = True
@@ -198,9 +247,15 @@ def evaluate_connector_validation(candidate: SourceCandidate, *, run_pytest: boo
     module_path = module_path_for(candidate)
     test_path = test_path_for(candidate)
     import_path = module_import_path_for(candidate)
+    validation_test_paths = canonical_validation_test_paths(candidate)
 
     module_exists = module_path.exists()
     test_exists = test_path.exists()
+    missing_validation_tests = [
+        str(path)
+        for path in validation_test_paths
+        if not Path(path).exists()
+    ]
     import_ok = False
     import_error = None
 
@@ -209,15 +264,27 @@ def evaluate_connector_validation(candidate: SourceCandidate, *, run_pytest: boo
     if module_exists:
         import_ok, import_error = import_connector_module(import_path)
         if import_ok:
-            bounded_preview = bounded_connector_preview(import_path, class_name_for(candidate))
+            bounded_preview = bounded_connector_preview(
+                import_path,
+                class_name_for(candidate),
+                source_name_candidate=candidate.source_name_candidate,
+            )
 
     commands: list[dict[str, Any]] = []
     commands.append(run_command([sys.executable, "-m", "compileall", "src", "scripts", "tests"]))
 
-    if run_pytest:
-        if test_exists:
-            commands.append(run_command([sys.executable, "-m", "pytest", "-q", str(test_path)]))
-        commands.append(run_command([sys.executable, "-m", "pytest", "-q"]))
+    if run_pytest and not missing_validation_tests:
+        commands.append(
+            run_command(
+                [
+                    sys.executable,
+                    "-m",
+                    "pytest",
+                    "-q",
+                    *validation_test_paths,
+                ]
+            )
+        )
 
     failed_commands = [command for command in commands if command["returncode"] != 0]
 
@@ -242,6 +309,8 @@ def evaluate_connector_validation(candidate: SourceCandidate, *, run_pytest: boo
             "import_error": import_error,
             "bounded_preview": bounded_preview,
         },
+        "validation_tests": validation_test_paths,
+        "missing_validation_tests": missing_validation_tests,
         "commands": commands,
         "boundary": {
             "database_writes": True,
@@ -266,6 +335,14 @@ def evaluate_connector_validation(candidate: SourceCandidate, *, run_pytest: boo
             gate_status="manual_review_required",
             decision="connector_validation_failed",
             stop_reason="connector test file is missing",
+            evidence=evidence,
+        )
+
+    if missing_validation_tests:
+        return ValidationResult(
+            gate_status="manual_review_required",
+            decision="connector_validation_failed",
+            stop_reason="canonical validation test file is missing",
             evidence=evidence,
         )
 

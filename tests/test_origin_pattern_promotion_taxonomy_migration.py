@@ -15,6 +15,13 @@ def test_origin_pattern_promotion_taxonomy_migration_adds_semantic_columns() -> 
     assert "listing_url_discovery" in sql
 
 
+def test_origin_pattern_promotion_taxonomy_migration_keeps_historical_sql_stable() -> None:
+    sql = Path("db/migrations/066_harden_origin_pattern_promotion_taxonomy.sql").read_text()
+
+    assert "DROP VIEW IF EXISTS gold_origin_promoted_observation_patterns" not in sql
+    assert "CREATE OR REPLACE VIEW gold_origin_promoted_observation_patterns" in sql
+
+
 def test_origin_pattern_promotion_taxonomy_migration_repairs_flat_a2d_outputs() -> None:
     sql = Path("db/migrations/066_harden_origin_pattern_promotion_taxonomy.sql").read_text().lower()
 
@@ -35,3 +42,12 @@ def test_origin_observed_pattern_taxonomy_repair_migration_covers_candidate_tabl
     assert "data & analytics" in sql
     assert "pattern_type = 'structural_marker'" in sql
     assert "diagnostics only" in sql
+
+
+def test_origin_pattern_candidate_taxonomy_repair_keeps_historical_sql_stable() -> None:
+    sql = Path(
+        "db/migrations/070_repair_origin_observed_pattern_candidate_taxonomy_columns.sql"
+    ).read_text()
+
+    assert "DROP VIEW IF EXISTS gold_origin_promoted_observation_patterns" not in sql
+    assert "CREATE OR REPLACE VIEW gold_origin_promoted_observation_patterns" in sql

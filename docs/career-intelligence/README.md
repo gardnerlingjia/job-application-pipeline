@@ -146,15 +146,18 @@ source_role: employer_origin
 ```
 
 `greenhouse:moia` maps to the Greenhouse board token `moia` and the canonical connector request
-`https://boards-api.greenhouse.io/v1/boards/moia/jobs`. The Greenhouse connector supports
-full-board fetch, so the source-level profile uses broad Lingjia theme terms and lets the existing
-local post-fetch filter plus Career Intelligence scoring perform the relevance work.
+`https://boards-api.greenhouse.io/v1/boards/moia/jobs`. The guided MOIA CLI delegates validation,
+approval and activation to the existing source lifecycle gates.
 
 MOIA activation is explicit and gate-bound:
 
 ```bash
+python -m src.career_intelligence.moia_live_source doctor
 python -m src.career_intelligence.moia_live_source preflight
-python -m src.career_intelligence.moia_live_source activate --apply
+python -m src.career_intelligence.moia_live_source validate --dry-run
+python -m src.career_intelligence.moia_live_source validate --reviewed-by lingjia
+python -m src.career_intelligence.moia_live_source approve --reviewed-by lingjia
+python -m src.career_intelligence.moia_live_source activate
 ```
 
 The seed migration `db/migrations/107_register_moia_greenhouse_source_candidate.sql` creates only a
@@ -171,7 +174,7 @@ python -m src.career_intelligence.moia_live_source run-daily
 
 That command composes the canonical pipeline:
 
-1. `python -m src.ingest_jobs --profile moia_greenhouse_lingjia_daily`
+1. `python -m src.ingest_jobs --profile moia_controlled_hannover_precision`
 2. `python -m src.run_silver_jobs --source greenhouse:moia --limit 25`
 3. `python -m src.career_intelligence.daily --source greenhouse:moia --limit 25`
 
@@ -180,6 +183,12 @@ Start the local database first with the repository Docker setup, for example:
 ```bash
 docker compose up -d postgres
 ```
+
+For local development, `src.config.get_database_config()` defaults to the repository Docker
+Compose database (`localhost:5432`, `job_pipeline`, `job_user`). `POSTGRES_*` environment variables
+still override those defaults. If the database is unavailable, MOIA commands print
+`Database unavailable. Start with: docker compose up -d postgres`; if required schema tables are
+missing, they print `.venv/bin/python scripts/apply_db_migrations.py --apply --applied-by local`.
 
 Then open the existing Product V1 Control Center with the repository launcher. The Sources view
 should show MOIA as active after activation, with last ingestion result, Bronze count and Silver

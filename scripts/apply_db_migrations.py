@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import re
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -10,11 +11,56 @@ from typing import Any
 import psycopg
 from psycopg.rows import dict_row
 
-from src.config import get_database_config
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from src.config import get_database_config  # noqa: E402
 
 
 DEFAULT_MIGRATIONS_DIR = Path("db/migrations")
 MIGRATION_RE = re.compile(r"^(\d+)_.*\.sql$")
+TRACKING_MIGRATION_KEY = "054_create_schema_migrations.sql"
+GREENHOUSE_STRIPE_REPAIR_MIGRATION_KEY = "018_replace_greenhouse_wildcard_search_terms.sql"
+FALSE_NEGATIVE_FOUNDATION_MIGRATION_KEY = (
+    "026_create_false_negative_intelligence_foundation.sql"
+)
+ORIGIN_PATTERN_TAXONOMY_MIGRATION_KEY = (
+    "066_harden_origin_pattern_promotion_taxonomy.sql"
+)
+ORIGIN_PATTERN_CANDIDATE_TAXONOMY_REPAIR_MIGRATION_KEY = (
+    "070_repair_origin_observed_pattern_candidate_taxonomy_columns.sql"
+)
+PRODUCT_V1_POLICY_MIGRATION_KEY = "078_activate_product_v1_operator_policy.sql"
+COMPATIBLE_HISTORICAL_CHECKSUMS = {
+    FALSE_NEGATIVE_FOUNDATION_MIGRATION_KEY: {
+        # Original 026 used timestamptz::date in an index expression. Existing
+        # databases that successfully tracked that historical file remain valid,
+        # while fresh installs use the immutable UTC date expression now in git.
+        "b864d49394e8a4f1b58b72a032f85fa02b8250cb9794d2052b0609b00b2b105b",
+        # Temporary local V2.3 fresh-init repair checksum. Migration 108 repairs
+        # the index back to date-level uniqueness without rerunning 026.
+        "df35b6c84908b2ee374a42a863e12dc382a84b10ce4930db769bb43f9560062e",
+    },
+    ORIGIN_PATTERN_TAXONOMY_MIGRATION_KEY: {
+        # Temporary local V2.3 fresh-init repair checksum that added a DROP VIEW.
+        # The committed runner now applies that drop as an execution precondition.
+        "a4b3e30667dd3793d9b66bcb76c61f3eb1361e30c8ee994780c78be247e1953e",
+    },
+    ORIGIN_PATTERN_CANDIDATE_TAXONOMY_REPAIR_MIGRATION_KEY: {
+        # Temporary local V2.3 fresh-init repair checksum that added a DROP VIEW.
+        # The committed runner now applies that drop as an execution precondition.
+        "1b1d869f91110c6a21d3151f512dc9adcad5802374e9d754e100b03cb288c3c5",
+    },
+}
+PRODUCT_V1_VIEW_RESET_SQL = """
+DROP VIEW IF EXISTS gold_product_v1_application_readiness;
+DROP VIEW IF EXISTS gold_product_v1_top_jobs;
+DROP VIEW IF EXISTS gold_product_v1_job_readiness;
+"""
+ORIGIN_PROMOTED_PATTERN_VIEW_RESET_SQL = """
+DROP VIEW IF EXISTS gold_origin_promoted_observation_patterns;
+"""
 
 
 @dataclass(frozen=True)
@@ -70,8 +116,12 @@ def discover_migration_files(migrations_dir: Path = DEFAULT_MIGRATIONS_DIR) -> l
     return sorted(migrations, key=lambda item: (item.version_number, item.filename))
 
 
-def connect() -> psycopg.Connection[Any]:
-    return psycopg.connect(**get_database_config(), row_factory=dict_row)
+def connect(*, autocommit: bool = False) -> psycopg.Connection[Any]:
+    return psycopg.connect(
+        **get_database_config(),
+        row_factory=dict_row,
+        autocommit=autocommit,
+    )
 
 
 def schema_migrations_exists(conn: psycopg.Connection[Any]) -> bool:
@@ -134,7 +184,13 @@ def checksum_mismatches(
 
     for migration in migrations:
         existing = tracked.get(migration.migration_key)
-        if existing and existing.checksum_sha256 != migration.checksum_sha256:
+        if (
+            existing
+            and existing.execution_status != "failed"
+            and existing.checksum_sha256 != migration.checksum_sha256
+            and existing.checksum_sha256
+            not in COMPATIBLE_HISTORICAL_CHECKSUMS.get(migration.migration_key, set())
+        ):
             mismatches.append((migration, existing))
 
     return mismatches
@@ -144,7 +200,12 @@ def pending_migrations(
     migrations: list[MigrationFile],
     tracked: dict[str, TrackedMigration],
 ) -> list[MigrationFile]:
-    return [migration for migration in migrations if migration.migration_key not in tracked]
+    return [
+        migration
+        for migration in migrations
+        if migration.migration_key not in tracked
+        or tracked[migration.migration_key].execution_status == "failed"
+    ]
 
 
 def select_exact_pending_migration(
@@ -238,7 +299,7 @@ def print_status(
     print(f"checksum_mismatches: {len(mismatches)}")
 
     if not table_exists:
-        print("next: apply the schema_migrations table migration manually, then bootstrap existing migrations")
+        print("next: run --apply to execute the schema_migrations bootstrap migration first")
         return
 
     if mismatches:
@@ -300,6 +361,125 @@ def bootstrap_existing(
     return inserted
 
 
+def _tracking_migration(migrations: list[MigrationFile]) -> MigrationFile:
+    matches = [
+        migration
+        for migration in migrations
+        if migration.migration_key == TRACKING_MIGRATION_KEY
+    ]
+    if len(matches) != 1:
+        raise RuntimeError(
+            f"Tracking migration must resolve once: {TRACKING_MIGRATION_KEY}"
+        )
+    return matches[0]
+
+
+def bootstrap_schema_migrations_if_needed(
+    *,
+    migrations: list[MigrationFile],
+    applied_by: str,
+) -> bool:
+    tracking = _tracking_migration(migrations)
+    with connect() as conn:
+        if schema_migrations_exists(conn):
+            return False
+
+        sql = tracking.path.read_text(encoding="utf-8")
+        with conn.transaction():
+            with conn.cursor() as cur:
+                cur.execute(sql)
+            insert_tracking_row(
+                conn,
+                tracking,
+                execution_status="success",
+                execution_mode="script_apply",
+                applied_by=applied_by,
+            )
+
+    print(f"applied: {tracking.filename}")
+    return True
+
+
+def prepare_historical_migration_dependencies(
+    conn: psycopg.Connection[Any],
+    migration: MigrationFile,
+) -> None:
+    """Recreate historical pre-tracking seed state needed by old repair migrations."""
+
+    if migration.migration_key == PRODUCT_V1_POLICY_MIGRATION_KEY:
+        with conn.cursor() as cur:
+            cur.execute(PRODUCT_V1_VIEW_RESET_SQL)
+        return
+
+    if migration.migration_key in {
+        ORIGIN_PATTERN_TAXONOMY_MIGRATION_KEY,
+        ORIGIN_PATTERN_CANDIDATE_TAXONOMY_REPAIR_MIGRATION_KEY,
+    }:
+        with conn.cursor() as cur:
+            cur.execute(ORIGIN_PROMOTED_PATTERN_VIEW_RESET_SQL)
+        return
+
+    if migration.migration_key == GREENHOUSE_STRIPE_REPAIR_MIGRATION_KEY:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+            INSERT INTO search_profiles (
+                profile_name,
+                source_name,
+                search_term,
+                search_location,
+                search_radius_km,
+                offer_type,
+                page_size,
+                is_active
+            )
+            VALUES (
+                'greenhouse_stripe',
+                'greenhouse:stripe',
+                NULL,
+                'global',
+                0,
+                NULL,
+                100,
+                TRUE
+            )
+            ON CONFLICT (profile_name) DO NOTHING;
+            """
+            )
+
+
+def execute_migration_sql(migration: MigrationFile) -> None:
+    sql = migration.path.read_text(encoding="utf-8")
+
+    with connect(autocommit=True) as conn:
+        if not schema_migrations_exists(conn):
+            raise RuntimeError("schema_migrations table does not exist. Apply the tracking migration first.")
+
+        prepare_historical_migration_dependencies(conn, migration)
+        with conn.cursor() as cur:
+            cur.execute(sql)
+
+
+def record_migration_success(
+    migration: MigrationFile,
+    *,
+    execution_mode: str,
+    applied_by: str,
+) -> None:
+    with connect() as conn:
+        if not schema_migrations_exists(conn):
+            raise RuntimeError("schema_migrations table does not exist. Apply the tracking migration first.")
+
+        with conn.transaction():
+            insert_tracking_row(
+                conn,
+                migration,
+                execution_status="success",
+                execution_mode=execution_mode,
+                applied_by=applied_by,
+            )
+
+
 def apply_pending(
     *,
     migrations: list[MigrationFile],
@@ -307,30 +487,26 @@ def apply_pending(
     applied_by: str,
 ) -> int:
     ensure_no_checksum_mismatches(migrations, tracked)
+    bootstrap_applied = bootstrap_schema_migrations_if_needed(
+        migrations=migrations,
+        applied_by=applied_by,
+    )
+    if bootstrap_applied:
+        with connect() as conn:
+            tracked = load_tracked_migrations(conn)
+        ensure_no_checksum_mismatches(migrations, tracked)
 
     pending = pending_migrations(migrations, tracked)
-    applied = 0
+    applied = 1 if bootstrap_applied else 0
 
     for migration in pending:
-        sql = migration.path.read_text(encoding="utf-8")
-
         try:
-            with connect() as conn:
-                if not schema_migrations_exists(conn):
-                    raise RuntimeError("schema_migrations table does not exist. Apply the tracking migration first.")
-
-                with conn.transaction():
-                    with conn.cursor() as cur:
-                        cur.execute(sql)
-
-                    insert_tracking_row(
-                        conn,
-                        migration,
-                        execution_status="success",
-                        execution_mode="script_apply",
-                        applied_by=applied_by,
-                    )
-
+            execute_migration_sql(migration)
+            record_migration_success(
+                migration,
+                execution_mode="script_apply",
+                applied_by=applied_by,
+            )
             applied += 1
             print(f"applied: {migration.filename}")
         except Exception as exc:
@@ -369,33 +545,27 @@ def apply_exact_migration(
     if state == "already_applied":
         return state
 
-    sql = target.path.read_text(encoding="utf-8")
     with connect() as conn:
         if not schema_migrations_exists(conn):
             raise RuntimeError("schema_migrations table does not exist. Apply the tracking migration first.")
 
-        with conn.transaction():
-            current = load_tracked_migrations(conn)
-            ensure_no_checksum_mismatches(migrations, current)
-            target, state = select_exact_pending_migration(
-                migrations=migrations,
-                tracked=current,
-                migration_key=migration_key,
-                require_sole_pending=require_sole_pending,
-            )
-            if state == "already_applied":
-                return state
+        current = load_tracked_migrations(conn)
+        ensure_no_checksum_mismatches(migrations, current)
+        target, state = select_exact_pending_migration(
+            migrations=migrations,
+            tracked=current,
+            migration_key=migration_key,
+            require_sole_pending=require_sole_pending,
+        )
+        if state == "already_applied":
+            return state
 
-            with conn.cursor() as cur:
-                cur.execute(sql)
-
-            insert_tracking_row(
-                conn,
-                target,
-                execution_status="success",
-                execution_mode="script_apply_exact",
-                applied_by=applied_by,
-            )
+    execute_migration_sql(target)
+    record_migration_success(
+        target,
+        execution_mode="script_apply_exact",
+        applied_by=applied_by,
+    )
 
     return "applied"
 
