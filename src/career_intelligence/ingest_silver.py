@@ -7,7 +7,7 @@ import json
 import os
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, Mapping
 
 from src.career_intelligence.assessor import assess_opportunity
 from src.career_intelligence.batch import (
@@ -118,6 +118,7 @@ def _merge_provenance(
             previous is not None
             and previous.get("ingestion_status") == "assessed"
             and item.get("ingestion_status") == "skipped"
+            and "duplicate_reason" not in item
         ):
             continue
         by_source_file[source_file] = item
@@ -193,6 +194,53 @@ def _refresh_existing_freshness(
         return False
     opportunity["opportunity_score"] = adjusted_score
     return True
+
+
+def _dedupe_preference(item: SilverCareerInput) -> tuple[int, int, str]:
+    canonical_type = str(item.provenance.get("canonical_source_type") or "").casefold()
+    employer_origin_rank = 0 if "employer_origin" in canonical_type else 1
+    quality_rank = 0 if item.description_quality == "strong" else 1
+    return employer_origin_rank, quality_rank, item.source_file
+
+
+def _provenance_preference(provenance: Mapping[str, Any]) -> tuple[int, int, str]:
+    canonical_type = str(provenance.get("canonical_source_type") or "").casefold()
+    quality = str(provenance.get("description_quality") or "").casefold()
+    source_file = str(provenance.get("source_file") or "")
+    employer_origin_rank = 0 if "employer_origin" in canonical_type else 1
+    quality_rank = 0 if quality == "strong" else 1
+    return employer_origin_rank, quality_rank, source_file
+
+
+def deduplicate_silver_inputs(
+    inputs: list[SilverCareerInput],
+) -> tuple[list[SilverCareerInput], list[dict[str, Any]]]:
+    by_key: dict[str, list[SilverCareerInput]] = {}
+    passthrough: list[SilverCareerInput] = []
+    for item in inputs:
+        canonical_key = item.provenance.get("canonical_key_candidate")
+        if isinstance(canonical_key, str) and canonical_key.strip():
+            by_key.setdefault(canonical_key, []).append(item)
+        else:
+            passthrough.append(item)
+
+    kept: list[SilverCareerInput] = list(passthrough)
+    skipped: list[dict[str, Any]] = []
+    for rows in by_key.values():
+        winner = sorted(rows, key=_dedupe_preference)[0]
+        kept.append(winner)
+        for duplicate in rows:
+            if duplicate is winner:
+                continue
+            provenance = dict(duplicate.provenance)
+            provenance["ingestion_status"] = "skipped"
+            provenance["duplicate_of_source_file"] = winner.source_file
+            provenance["duplicate_reason"] = "same_silver_canonical_key"
+            skipped.append(provenance)
+
+    kept.sort(key=lambda item: item.source_file)
+    skipped.sort(key=lambda item: str(item.get("source_file") or ""))
+    return kept, skipped
 
 
 def _write_output_pair(
@@ -271,6 +319,42 @@ def assess_silver_inputs(
             refreshed_provenance.append(item.provenance)
             continue
 
+        canonical_key = item.provenance.get("canonical_key_candidate")
+        existing_duplicate = None
+        if isinstance(canonical_key, str) and canonical_key.strip():
+            existing_duplicate = next(
+                (
+                    record
+                    for record in existing_provenance
+                    if record.get("canonical_key_candidate") == canonical_key
+                    and isinstance(record.get("source_file"), str)
+                    and record.get("source_file") in opportunities_by_source_file
+                ),
+                None,
+            )
+        if existing_duplicate is not None:
+            existing_source_file = str(existing_duplicate["source_file"])
+            if _dedupe_preference(item) < _provenance_preference(existing_duplicate):
+                opportunities = [
+                    opportunity
+                    for opportunity in opportunities
+                    if opportunity.get("source_file") != existing_source_file
+                ]
+                opportunities_by_source_file.pop(existing_source_file, None)
+                existing_sources.discard(existing_source_file)
+                skipped_existing = dict(existing_duplicate)
+                skipped_existing["ingestion_status"] = "skipped"
+                skipped_existing["duplicate_of_source_file"] = item.source_file
+                skipped_existing["duplicate_reason"] = "same_silver_canonical_key"
+                refreshed_provenance.append(skipped_existing)
+            else:
+                skipped_item = dict(item.provenance)
+                skipped_item["ingestion_status"] = "skipped"
+                skipped_item["duplicate_of_source_file"] = existing_source_file
+                skipped_item["duplicate_reason"] = "same_silver_canonical_key"
+                refreshed_provenance.append(skipped_item)
+                continue
+
         try:
             assessment = assess_opportunity(item.company, item.title, item.description)
             assessment = _remove_missing_description_evidence(assessment, item)
@@ -325,11 +409,12 @@ def process_silver(
         source_patterns=normalize_source_patterns(source),
     )
     inputs, conversion_errors = adapt_silver_rows(rows)
+    inputs, duplicate_provenance = deduplicate_silver_inputs(inputs)
     skipped_provenance = [
         error["provenance"]
         for error in conversion_errors
         if isinstance(error.get("provenance"), dict)
-    ]
+    ] + duplicate_provenance
     summary = assess_silver_inputs(
         inputs,
         results=results,

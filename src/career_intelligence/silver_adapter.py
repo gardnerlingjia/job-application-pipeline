@@ -123,7 +123,7 @@ def normalize_source_patterns(source_filter: str | None) -> list[str]:
         return []
     if "%" in value or ":" in value:
         return [value]
-    return [f"{value}:%"]
+    return [value, f"{value}:%"]
 
 
 def _clean_text(value: object) -> str | None:

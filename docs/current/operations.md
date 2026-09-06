@@ -46,6 +46,15 @@ state fails closed instead of being overwritten. Adaptive decisions are promotio
 overlays only and must not be treated as connector approval, activation,
 registration, crawling, ingestion or Product V1 ranking authority.
 
+Broad market discovery uses
+`python -m src.career_intelligence.market_discovery doctor` and
+`python -m src.career_intelligence.market_discovery run-daily`. Apply pending
+database migrations before running it so the V2.4 StepStone and Bundesagentur
+broad sensor profiles exist. The doctor reports source career priority,
+implementation status, active-profile readiness and live-fetch evidence; a
+blocked high-priority source must be fixed through the normal connector/source
+lifecycle, not marked live in configuration.
+
 Merge blocks must derive the PR number automatically from the current feature
 branch; they must not require manual `<PR_NUMBER>` replacement.
 

@@ -97,11 +97,9 @@ adds explicit gap rows for configured targets that do not yet have an existing
 candidate, connector support, active profile or ingestion evidence. It never
 changes connector readiness, validation, approval, activation or scoring logic.
 
-V2.2 adds adaptive source candidates from existing Career Intelligence results
-and Silver provenance. Operator decisions live under
-`.runtime/career_intelligence/adaptive_source_state.json`; they are not
-connector lifecycle truth and cannot activate, register, crawl, ingest, rank or
-submit anything.
+V2.2 adds adaptive source candidates from Career Intelligence and Silver
+provenance. Local decisions are review overlays, not lifecycle authority, and
+cannot activate, register, crawl, ingest, rank or submit anything.
 
 V2.3 adds a MOIA-only live-source flow through existing `greenhouse:moia`
 lifecycle gates and the canonical ingest/Silver/daily commands. Freshness keeps
@@ -110,11 +108,12 @@ employer `publication_date` distinct from observation `first_seen_at` and
 only the Career Intelligence sidecar score, not Product V1 ranking, Top-5 or
 application authority.
 
+V2.4 broad market discovery runs only active supported sensor profiles and keeps
+career-value priority separate from feasibility, gates, ranking and applications.
+
 ## Current maturity note
 
 The documentation structure is now stable enough for product work again, but the
 pipeline itself is not closed-loop yet. The biggest product blockers remain
 StepStone discovery rotation, candidate promotion quality, URL/detail evidence
-generics and repair/stop taxonomy.
-
-Detailed references live under `../reference/`; diagrams live in `system-diagrams.md`.
+generics and repair/stop taxonomy. References live under `../reference/`.

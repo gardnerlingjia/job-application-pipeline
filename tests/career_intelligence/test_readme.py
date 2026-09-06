@@ -93,3 +93,22 @@ def test_readme_documents_v23_moia_and_freshness_contract():
     assert "Dates are never fabricated" in text
     assert "jobs receive a local Career Intelligence ranking penalty" in normalized
     assert "Product V1 ranking authority and Top-5 semantics are unchanged" in normalized
+
+
+def test_readme_documents_v24_market_discovery_contract():
+    text = README.read_text(encoding="utf-8")
+    normalized = " ".join(text.split())
+
+    assert "V2.4 adds broad market discovery" in text
+    assert "config/career_market_discovery.yaml" in text
+    assert "python -m src.career_intelligence.market_discovery doctor" in text
+    assert "python -m src.career_intelligence.market_discovery run-daily" in text
+    assert "LinkedIn Jobs" in text
+    assert "career_priority" in text
+    assert "BLOCKED_NO_SUPPORTED_CONNECTOR" in text
+    assert "Discovery sources remain sensors" in normalized
+    assert "unknown employers" in normalized.casefold()
+    assert "does not auto-promote" in normalized
+    assert "raw_data.detail_evidence.text" in text
+    assert "DISCOVERED_NEEDS_DETAIL" in text
+    assert "Weak discovery result-card text is not scored directly" in text

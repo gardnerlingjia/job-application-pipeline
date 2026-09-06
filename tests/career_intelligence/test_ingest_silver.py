@@ -6,6 +6,7 @@ from src.career_intelligence.batch import RESULT_FIELDS
 from src.career_intelligence.ingest_silver import (
     PROVENANCE_FILE,
     assess_silver_inputs,
+    deduplicate_silver_inputs,
     parse_args,
     process_silver,
 )
@@ -379,6 +380,73 @@ def test_duplicate_records_in_same_run_are_reported_once(tmp_path, monkeypatch):
     ]
 
 
+def test_cross_source_duplicate_inputs_keep_one_and_preserve_skipped_provenance():
+    first = adapt_silver_row(
+        silver_row(
+            source_name="stepstone",
+            external_job_id="s-1",
+            raw_job_id=11,
+            silver_job_id=11,
+            canonical_source_type="unknown",
+        )
+    )
+    second = adapt_silver_row(
+        silver_row(
+            source_name="bundesagentur_fuer_arbeit",
+            external_job_id="ba-1",
+            raw_job_id=12,
+            silver_job_id=12,
+            canonical_source_type="unknown",
+        )
+    )
+
+    kept, skipped = deduplicate_silver_inputs([second, first])
+
+    assert len(kept) == 1
+    assert len(skipped) == 1
+    assert skipped[0]["source_file"] in {first.source_file, second.source_file}
+    assert skipped[0]["duplicate_of_source_file"] == kept[0].source_file
+    assert skipped[0]["duplicate_reason"] == "same_silver_canonical_key"
+
+
+def test_employer_origin_duplicate_replaces_existing_discovery_duplicate(
+    tmp_path,
+    monkeypatch,
+):
+    monkeypatch.setattr("src.career_intelligence.ingest_silver.assess_opportunity", fake_assessment)
+    discovery = adapt_silver_row(
+        silver_row(
+            source_name="stepstone",
+            external_job_id="s-1",
+            raw_job_id=11,
+            silver_job_id=11,
+            canonical_source_type="unknown",
+        )
+    )
+    employer = adapt_silver_row(
+        silver_row(
+            source_name="greenhouse:example",
+            external_job_id="g-1",
+            raw_job_id=12,
+            silver_job_id=12,
+            canonical_source_type="employer_origin_ats_backed_career_site",
+        )
+    )
+
+    first = assess_silver_inputs([discovery], results=tmp_path)
+    second = assess_silver_inputs([employer], results=tmp_path)
+
+    opportunities = json.loads((tmp_path / "opportunities.json").read_text())
+    provenance = json.loads((tmp_path / PROVENANCE_FILE).read_text())
+    assert first["processed"] == 1
+    assert second["processed"] == 1
+    assert len(opportunities) == 1
+    assert opportunities[0]["source_file"] == employer.source_file
+    skipped = [item for item in provenance if item["source_file"] == discovery.source_file][0]
+    assert skipped["ingestion_status"] == "skipped"
+    assert skipped["duplicate_of_source_file"] == employer.source_file
+
+
 def test_failure_preparing_provenance_does_not_update_opportunities(tmp_path, monkeypatch):
     monkeypatch.setattr(
         "src.career_intelligence.ingest_silver.assess_opportunity",
@@ -499,6 +567,44 @@ def test_bad_silver_record_does_not_stop_valid_assessment(tmp_path, monkeypatch)
     assert summary["converted"] == 1
     assert summary["processed"] == 1
     assert "description" in summary["errors"][0]["error"]
+
+
+def test_stepstone_source_filter_loads_exact_discovery_source_when_scorable(
+    tmp_path,
+    monkeypatch,
+):
+    monkeypatch.setattr(
+        "src.career_intelligence.ingest_silver.assess_opportunity",
+        fake_assessment,
+    )
+    repository = FakeRepository(
+        [
+            silver_row(
+                source_name="stepstone",
+                external_job_id="14202824",
+                raw_job_id=7,
+                silver_job_id=3,
+                canonical_source_type="unknown",
+                raw_data={
+                    "detail_evidence": {
+                        "description": (
+                            "Lead AI automation product delivery with analytics "
+                            "and data platform teams in Germany."
+                        )
+                    }
+                },
+            )
+        ]
+    )
+
+    summary = process_silver(repository=repository, results=tmp_path, source="stepstone")
+
+    assert repository.calls == [
+        {"limit": 100, "source_patterns": ["stepstone", "stepstone:%"]}
+    ]
+    assert summary["loaded"] == 1
+    assert summary["converted"] == 1
+    assert summary["processed"] == 1
 
 
 def test_cli_parser_uses_repository_path_conventions():

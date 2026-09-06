@@ -77,6 +77,14 @@ dates are preferred, first seen is only a labelled fallback, and jobs older than
 seven days receive a Career Intelligence score penalty without changing Product
 V1 ranking or Top-5 semantics.
 
+Career Intelligence V2.4 broadens the radar beyond pre-listed employers. The
+operator runs `python -m src.career_intelligence.market_discovery run-daily` to
+use existing supported discovery sensors, currently StepStone and Bundesagentur
+fuer Arbeit, then the normal Bronze/Silver/Career Intelligence/Control Center
+flow. Unknown employers may surface as opportunities and adaptive candidates,
+but the product still does not auto-promote sources, auto-activate connectors,
+replace Product V1 ranking, or submit applications.
+
 Deep Ocean is the visual language: sonar for sensing, depth for evidence,
 pressure for gates, calm control surfaces for decisions and repair loops for
 learning.

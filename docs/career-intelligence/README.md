@@ -456,10 +456,83 @@ write only adaptive source state. Configured sources may also receive advisory s
 `HEALTHY`, `LOW_ACTIVITY`, `LOW_RELEVANCE`, `NO_RECENT_SIGNAL`, or `REVIEW_RECOMMENDED`; these are
 review prompts only and never downgrade a configured source automatically.
 
+## Broad Market Discovery
+
+V2.4 adds broad market discovery through the existing source architecture. It does not create a
+second UI, second source system, second scoring model, or new scraping path. The operator commands
+are:
+
+```bash
+python -m src.career_intelligence.market_discovery doctor
+python -m src.career_intelligence.market_discovery run-daily
+```
+
+`config/career_market_discovery.yaml` owns Lingjia's broad-discovery strategy. It separates career
+value from technical feasibility with `career_priority` and `implementation_status`. The current
+career-value priority order is LinkedIn Jobs, StepStone, Indeed Germany, XING Jobs, Wellfound,
+Welcome to the Jungle, Bundesagentur fuer Arbeit, then niche robotics/autonomy/mobility/AI boards.
+Higher-priority blocked sources are reported honestly and do not prevent lower-priority feasible
+sources from running. For example, LinkedIn Jobs is currently
+`BLOCKED_NO_SUPPORTED_CONNECTOR`; StepStone and Bundesagentur fuer Arbeit use existing repository
+sensor connectors.
+
+The V2.4 migration creates a small set of recurring broad discovery profiles for the supported
+sensor rails:
+
+- `autonomy_robotics`
+- `technical_program_product`
+- `ai_data_transformation`
+- `strategy_operations`
+- `mobility_platform_deployment`
+
+Each theme has multiple search terms and is materialized for StepStone and Bundesagentur fuer
+Arbeit. The profiles intentionally avoid tight city clamping so discovery optimizes for recall;
+Career Intelligence later applies Berlin, remote Germany, Germany-wide, Munich, and China
+constraints as a decision lens.
+
+`market_discovery run-daily` reuses the canonical flow:
+
+1. Check local database connectivity and required schema.
+2. Enumerate active broad discovery profiles from `search_profiles` / `search_terms`.
+3. Run Bronze ingestion per source/profile with source-level failure isolation.
+4. Run the existing Silver transformer for each active discovery source.
+5. Enrich weak discovery records from already-stored detail URLs when bounded strong evidence is
+   available.
+6. Run `python -m src.career_intelligence.daily` for each active discovery source.
+7. Refresh the existing adaptive-source read model from Career Intelligence outputs.
+
+Discovery sources remain sensors. They may discover known, adjacent, or unknown employers, but they
+do not become employer-origin authority and they do not receive the ATS-backed missing-description
+relaxation. Unknown employers can enter Career Intelligence when they pass Silver and CI evidence
+requirements; repeated relevant unknown-employer evidence can become an adaptive source candidate,
+but V2.4 does not auto-promote, auto-activate, crawl employer sites, or submit applications.
+
+Weak discovery result-card text is not scored directly. The enrichment step reads the canonical
+Silver/raw record, fetches only the stored detail URL for eligible discovery-source rows, optionally
+checks one employer-origin candidate detail URL found on that page, and stores strong evidence under
+`raw_data.detail_evidence.text` with `source_kind` of `employer_origin_detail_page` or
+`aggregator_detail_page`. Raw HTML is not persisted. If strong evidence cannot be obtained, the row
+is marked in `raw_data.career_intelligence_detail_enrichment.state` as
+`DISCOVERED_NEEDS_DETAIL` or `DETAIL_ENRICHMENT_FAILED` and remains unscored.
+
+Cross-source duplicate handling uses Silver `canonical_key_candidate` when present. Obvious
+duplicates are not assessed twice in one run, and if an employer-origin version later appears for
+the same canonical key it is preferred over the discovery copy. Discovery provenance is preserved as
+skipped duplicate evidence instead of being deleted.
+
+The doctor reports configured source priority, implementation status, whether a live fetch has been
+verified from `ingestion_runs`, active broad profile readiness, blocked sources, and the exact next
+command. A source is only shown as `LIVE` when its broad profiles are active and a successful live
+fetch has been recorded. Configured-only or profile-only sources are not called live.
+
 ## Troubleshooting
 
 - If the command exits `2`, another run is active or a valid lock exists. Check
   `.runtime/career_intelligence/daily.lock` and the latest daily log.
+- If `market_discovery doctor` reports missing broad profiles, run
+  `.venv/bin/python scripts/apply_db_migrations.py --apply --applied-by local`.
+- If a higher-priority source is blocked, read its `implementation_status` and `blocker` in
+  `config/career_market_discovery.yaml`; blocked sources are not silently skipped as live sources.
 - If the command exits `1`, read the latest `.runtime/career_intelligence/logs/daily_*.log` and
   the terminal output. Record-level errors usually mean missing strong description evidence or
   invalid existing result/provenance files.

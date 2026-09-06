@@ -303,6 +303,78 @@ def test_source_file_is_stable_for_same_source_identity():
 
 def test_normalize_source_patterns_matches_silver_cli_conventions():
     assert normalize_source_patterns(None) == []
-    assert normalize_source_patterns("personio") == ["personio:%"]
+    assert normalize_source_patterns("personio") == ["personio", "personio:%"]
+    assert normalize_source_patterns("stepstone") == ["stepstone", "stepstone:%"]
+    assert normalize_source_patterns("bundesagentur_fuer_arbeit") == [
+        "bundesagentur_fuer_arbeit",
+        "bundesagentur_fuer_arbeit:%",
+    ]
     assert normalize_source_patterns("personio:example") == ["personio:example"]
     assert normalize_source_patterns("personio:%") == ["personio:%"]
+
+
+def test_live_stepstone_result_card_shape_loads_but_remains_weak_evidence():
+    inputs, errors = adapt_silver_rows(
+        [
+            silver_row(
+                silver_job_id=3,
+                raw_job_id=7,
+                source_name="stepstone",
+                external_job_id="14202824",
+                source_url=(
+                    "https://www.stepstone.de/stellenangebote--"
+                    "AI-Automation-Manager-Product-Owner-m-w-d-Muenchen-"
+                    "Ajaska-GmbH--14202824-inline.html"
+                ),
+                title="AI Automation Manager / Product Owner (m/w/d)",
+                company_name="Ajaska GmbH",
+                city="München",
+                publication_date=None,
+                canonical_source_type="unknown",
+                canonical_key_candidate=(
+                    "ajaska gmbh :: ai automation manager / product owner (m/w/d) "
+                    ":: münchen"
+                ),
+                raw_data={
+                    "extraction": {
+                        "selector": 'article[data-testid="job-item"]',
+                        "connector_mode": "limited_result_card",
+                        "extracted_from": "search_result_page",
+                        "observed_at_utc": "2026-09-06T07:31:27.078267+00:00",
+                        "pagination_used": False,
+                        "selector_version": "stepstone_result_card_v1",
+                        "detail_page_fetched": False,
+                    },
+                    "result_card": {
+                        "title": "AI Automation Manager / Product Owner (m/w/d)",
+                        "location": "München",
+                        "detail_url": (
+                            "https://www.stepstone.de/stellenangebote--"
+                            "AI-Automation-Manager-Product-Owner-m-w-d-Muenchen-"
+                            "Ajaska-GmbH--14202824-inline.html"
+                        ),
+                        "company_name": "Ajaska GmbH",
+                        "publication_hint_text": "vor 1 Woche",
+                        "external_job_id_candidate": "14202824",
+                    },
+                    "source_specific": {
+                        "raw_card_text": (
+                            "AI Automation Manager / Product Owner (m/w/d) "
+                            "Ajaska GmbH München KI Automatisierung Produktmanager"
+                        ),
+                        "article_external_job_id": "14202824",
+                        "detail_url_external_job_id": "14202824",
+                        "title_id_matches_article_id": True,
+                    },
+                },
+            )
+        ]
+    )
+
+    assert inputs == []
+    assert errors[0]["record"] == "3"
+    assert errors[0]["error"] == (
+        "insufficient description evidence: weak listing/card text is not scored"
+    )
+    assert errors[0]["provenance"]["description_source"] == "source_specific.raw_card_text"
+    assert errors[0]["provenance"]["description_quality"] == "weak"
