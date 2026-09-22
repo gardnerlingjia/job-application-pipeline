@@ -17,6 +17,21 @@ def normalize_text(title: str, description: str) -> str:
 
 
 def match_location(title: str, description: str) -> Dict:
+    from src.career_intelligence.practical_constraints import practical_evidence
+
+    practical = practical_evidence(normalize_text(title, description))
+    result = _match_location(title, description, practical)
+    result.update(practical)
+    if result.get("hard_conflict"):
+        result["compatibility"] = "incompatible"
+    if practical["compatibility"] == "incompatible":
+        result.update(location_fit=0.0, location_matches=["location_conflict"], hard_conflict=True)
+    if practical["compatibility"] == "confirmed" and not result["location_matches"]:
+        result.update(location_fit=80.0, location_matches=[practical["category"]])
+    return result
+
+
+def _match_location(title: str, description: str, practical: dict) -> Dict:
     with Path("config/constraints.yaml").open(encoding="utf-8") as file:
         location_policy = yaml.safe_load(file).get("location_enforcement", {})
     text = normalize_text(title, description)
@@ -38,12 +53,6 @@ def match_location(title: str, description: str) -> Dict:
         "germany wide",
     ]
 
-    relocation_terms = [
-        "relocation required",
-        "must relocate",
-        "relocate to",
-    ]
-
     munich_terms = [
         "munich",
         "münchen",
@@ -60,12 +69,7 @@ def match_location(title: str, description: str) -> Dict:
 
     # Explicit remote Germany is compatible even if the employer HQ is elsewhere.
     remote = any(term in text for term in preferred_terms[1:])
-    import re
-
-    required_relocation = (
-        any(re.search(r"(?<!no )(?<!not )" + re.escape(term), text) for term in relocation_terms)
-        or "requires relocation" in text
-    )
+    required_relocation = bool(practical["relocation_evidence"])
     daily = any(
         term.lower() in text for term in location_policy.get("outside_region_daily_terms", [])
     )

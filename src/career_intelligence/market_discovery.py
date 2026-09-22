@@ -225,6 +225,15 @@ class DatabaseMarketDiscoveryOperations:
                         MIGRATION_COMMAND,
                     )
                 ensure_required_schema(conn)
+                from src.career_intelligence.discovery_profile_sync import (
+                    build_plan, desired_profiles, read_profiles,
+                )
+                plan = build_plan(config, read_profiles(conn, desired_profiles(config)))
+                if plan["blockers"] or plan["differences"]:
+                    return False, ["BLOCKED: database search intent differs from YAML; "
+                                   "review the synchronization plan"], (
+                        "python -m src.career_intelligence.discovery_profile_sync"
+                    )
                 active = self._active_configured_profiles(conn, config)
                 expected = set(config.configured_profile_names())
                 missing_profiles = sorted(expected - active)
@@ -235,8 +244,9 @@ class DatabaseMarketDiscoveryOperations:
                         source_lines + [
                             "BLOCKED: broad discovery profiles missing/inactive: "
                             + ", ".join(missing_profiles)
+                            + "; activation requires the existing approval workflow"
                         ],
-                        MIGRATION_COMMAND,
+                        "python -m src.career_intelligence.discovery_profile_sync",
                     )
         except OperationalBlocker as exc:
             return False, [f"BLOCKED: {exc}"], exc.next_command or START_DATABASE_COMMAND
@@ -291,7 +301,7 @@ class DatabaseMarketDiscoveryOperations:
                         SELECT 1
                         FROM ingestion_runs
                         WHERE source_name = %s
-                          AND status = 'finished'
+                          AND status = 'success'
                           AND total_loaded > 0
                         LIMIT 1;
                         """,
@@ -312,7 +322,7 @@ class DatabaseMarketDiscoveryOperations:
                 blocker = source.blocker or (
                     None
                     if live_fetch_verified or not source.active
-                    else "no successful live fetch recorded yet"
+                    else "no successful nonempty live fetch recorded yet"
                 )
                 line = (
                     f"- {source.display_name}: career_priority={source.career_priority} "

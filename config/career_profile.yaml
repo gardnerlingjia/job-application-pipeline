@@ -17,12 +17,13 @@ location:
   location_notes:
     - Berlin is preferred.
     - Remote roles based in Germany are attractive.
-    - Frequent relocation requirements should reduce fit.
+    - Relocation is excluded; occasional domestic travel is acceptable.
+    - Frequent European travel is excluded; missing travel evidence remains unknown.
     - China-based roles should not be treated as preferred unless explicitly reviewed.
 
 career_lanes:
   autonomy_robotics:
-    label: Autonomous Systems Deployment & Technical Program Leadership
+    label: Autonomous Mobility Deployment & Execution Leadership
     priority: high
     role_keywords:
     - program manager
@@ -287,7 +288,9 @@ search_strategy:
 
   objective:
     - identify high-probability opportunities
-    - broaden beyond automotive without losing mobility and autonomy strengths
+    - prioritize Germany-focused autonomous mobility deployment and execution leadership
+    - use ADAS and vehicle software delivery as the secondary lane
+    - selectively consider AI-enabled transformation leadership
     - identify roles where transferable program leadership matters
     - identify companies worth networking with even when no suitable vacancy exists
     - avoid low-probability applications caused by hidden technical or commercial requirements
@@ -312,15 +315,15 @@ search_strategy:
     - Companies can be strategically relevant even when there is no current suitable vacancy.
 
 strategy_policy:
-  positioning: "From automated vehicles to autonomous machines: program, product-delivery, integration and deployment leadership for autonomous physical systems."
+  positioning: "Germany-focused autonomous mobility deployment, technical program delivery, launch readiness, operations and ecosystem integration; Berlin preferred."
   # Allocations guide search effort; they are not capability-score multipliers.
   autonomy_terms: [autonomous, robotics, robot, AMR, warehouse automation, logistics automation, fleet orchestration, simulation, mapping, sensor, intelligent transportation]
   domain_advantage_terms: [automotive, mobility, vehicle, ADAS, industrial, manufacturing]
   secondary_relevance_terms: [ADAS, automated driving, vehicle software, software, infotainment, mobility, data, autonomy]
   ai_data_terms: [AI, A.I., analytics, reporting, data, machine learning]
-  delivery_terms: [program, deployment, integration, delivery, product owner, product operations, fleet operations, fleet readiness, customer deployment, partnership manager, solution lead, solutions lead, reporting specialist, adoption, process transformation]
+  delivery_terms: [launch readiness, partner integration, ecosystem integration, program, deployment, integration, delivery, product owner, product operations, fleet operations, fleet readiness, customer deployment, partnership manager, solution lead, solutions lead, reporting specialist, adoption, process transformation]
   executive_terms: [chief of staff, founder’s associate, "founder's associate", executive assistant]
-  engineering_title_terms: [perception engineer, planning engineer, controls engineer, control engineer, mechatronics, robotics architect, robotics engineer, robotics software engineer, robotics hardware engineer, robotics software developer, robot software engineer, machine learning engineer, ML engineer, AI architect, data engineer, research scientist, AI researcher]
+  engineering_title_terms: [AI engineer, software engineer, software developer, perception engineer, planning engineer, controls engineer, control engineer, mechatronics, robotics architect, robotics engineer, robotics software engineer, robotics hardware engineer, robotics software developer, robot software engineer, machine learning engineer, ML engineer, AI architect, data engineer, research scientist, AI researcher]
   unsupported_leadership_terms: [head of enterprise AI, head of AI transformation, production AI transformations]
   bridge_support_terms: [adoption, process transformation, stakeholder leadership, program delivery, product delivery]
   candidate_apply_threshold: 65

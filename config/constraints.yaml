@@ -28,9 +28,9 @@ constraints:
       reason: Acceptable working model if travel remains reasonable.
 
     frequent_travel_required:
-      severity: medium
-      default_action: REVIEW
-      reason: Travel intensity should be reviewed before application.
+      severity: high
+      default_action: SKIP
+      reason: Explicit frequent travel conflicts with occasional domestic travel only.
 
 
   seniority:

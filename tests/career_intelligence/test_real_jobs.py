@@ -118,8 +118,5 @@ def test_strong_av_tpm_berlin():
 
     assert result["candidate_strength"]["score"] >= 70
 
-    assert result["recommendation"] in {
-        "NETWORK_FIRST",
-        "APPLY_NOW",
-        "EXPLORE",
-    }
+    assert result["recommendation"] == "WATCH"
+    assert result["explanation"]["location"]["travel_status"] == "unknown"

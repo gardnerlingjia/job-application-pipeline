@@ -68,8 +68,12 @@ def assess_opportunity(
         )
     if access == "cold":
         gaps["cold_access"] = "No documented referral, hiring-manager contact or warm access."
-    if location_match.get("hard_conflict"):
+    if location_match.get("travel_status", "").startswith("frequent"):
+        gaps["frequent_travel_conflict"] = "Required travel exceeds occasional domestic travel."
+    elif location_match.get("hard_conflict"):
         gaps["relocation_conflict"] = "Required presence conflicts with Berlin-region constraints."
+    if location_match.get("travel_status") == "unknown":
+        gaps["travel_unknown"] = "Travel requirements are not evidenced; confirm before applying."
     if not location_match["location_matches"]:
         gaps["location_unknown"] = "Confirm Berlin-compatible presence and travel requirements."
     market = normalize_market_evidence(market_evidence)
@@ -195,7 +199,7 @@ def assess_opportunity(
         for name, reason in gaps.items()
     )
     explanation = {
-        "semantics_version": 3,
+        "semantics_version": 4,
         "score_semantics": "weighted_current_candidacy_after_caps",
         "strategic_value": strategic_value,
         "scores": scores,
@@ -299,7 +303,7 @@ def decision_gates(
             for item in constraints["hard_skips"]
         )
     gates.extend({"gate": key, "reason": reason} for key, reason in blocking.items())
-    for key in ("location_unknown", "commissioning_scope_unknown", "hiring_budget_risk"):
+    for key in ("location_unknown", "travel_unknown", "commissioning_scope_unknown", "hiring_budget_risk"):
         if key in gaps:
             gates.append({"gate": key, "reason": gaps[key]})
     if action == "SKIP" and not gates:

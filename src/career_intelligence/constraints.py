@@ -218,9 +218,13 @@ def detect_constraints(title: str, description: str) -> List[Dict]:
         for constraint_name, rule in section.items():
             keywords = keyword_map.get(constraint_name, [])
 
-            matched_keywords = [
-                keyword for keyword in keywords if keyword in text
-            ]
+            title_only = constraint_name in {
+                "senior_software_engineering", "production_ml_engineering",
+                "deep_data_engineering", "robotics_research_engineer", "perception_engineer",
+                "senior_ml_engineer", "ml_research_scientist",
+            }
+            haystack = title.lower() if title_only else text
+            matched_keywords = [keyword for keyword in keywords if keyword in haystack]
 
             if matched_keywords:
                 detected.append(
@@ -242,6 +246,11 @@ def evaluate_constraints(title: str, description: str) -> Dict:
     from src.career_intelligence.location_matcher import match_location
 
     location = match_location(title, description)
+    if location.get("travel_status", "").startswith("frequent"):
+        detected.append({"constraint": "frequent_travel_required", "section": "location",
+                         "severity": "high", "action": "SKIP",
+                         "reason": "Explicit frequent travel conflicts with occasional domestic travel.",
+                         "matches": location["travel_evidence"]})
     if not location.get("hard_conflict"):
         detected = [item for item in detected if item["constraint"] not in {
             "relocation_required", "china_based_role", "munich_only"

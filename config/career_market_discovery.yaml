@@ -95,36 +95,34 @@ seniority_policy:
     - Intern
 profiles:
   - key: autonomy_robotics
-    label: Autonomy, robotics, and intelligent systems
+    label: Autonomous mobility deployment and execution
     career_lanes:
       - autonomous_mobility
       - robotics
       - mobility_ecosystems
     preferred_evidence_type: discovery_signal
     search_terms:
-      - autonomous mobility
-      - autonomous driving
-      - robotics program manager
-      - robotics product manager
-      - intelligent mobility systems
-      - AMR customer deployment lead
-      - robotics systems integration program lead
+      - autonomous mobility deployment
+      - autonomous driving program manager
+      - AV deployment Germany
+      - robotaxi launch readiness
+      - autonomous vehicle technical program manager
+      - autonomous mobility operations
   - key: technical_program_product
-    label: Technical program and product leadership
+    label: ADAS and vehicle software delivery
     career_lanes:
       - technical_program_leadership
       - technical_product_leadership
       - strategy_operations
     preferred_evidence_type: discovery_signal
     search_terms:
-      - technical program manager
-      - senior product manager platform
-      - product operations manager
-      - program manager data platform
+      - ADAS program manager
       - vehicle software delivery lead
-      - delivery lead technology
+      - vehicle integration program manager
+      - automated driving release manager
+      - mobility solution delivery lead
   - key: ai_data_transformation
-    label: AI and data transformation
+    label: Selective AI-enabled transformation leadership
     career_lanes:
       - ai_data_transformation
       - technical_product_leadership
@@ -132,25 +130,21 @@ profiles:
     preferred_evidence_type: discovery_signal
     search_terms:
       - AI transformation lead
-      - data transformation manager
-      - AI product manager
-      - data strategy lead
-      - analytics platform manager
-      - automotive AI reporting product owner
+      - AI adoption program manager
+      - automotive AI transformation
+      - business process transformation lead
   - key: strategy_operations
-    label: Strategy and executive operations
+    label: Mobility launch and ecosystem operations
     career_lanes:
       - strategy_operations
       - technical_program_leadership
       - mobility_ecosystems
     preferred_evidence_type: discovery_signal
     search_terms:
-      - strategy operations technology
-      - chief of staff technology
-      - executive operations mobility
-      - transformation program lead
-      - chief of staff autonomous systems
-      - strategic projects manager
+      - autonomous mobility strategy operations
+      - mobility launch readiness
+      - autonomous driving operations lead
+      - mobility partner integration
   - key: mobility_platform_deployment
     label: Mobility platforms and deployment ecosystems
     career_lanes:
@@ -159,12 +153,12 @@ profiles:
       - technical_program_leadership
     preferred_evidence_type: discovery_signal
     search_terms:
-      - mobility platform manager
-      - fleet operations technology
-      - mobility ecosystem strategy
-      - deployment program manager
-      - charging infrastructure product
-      - transport data platform
+      - fleet launch manager
+      - autonomous fleet operations
+      - mobility ecosystem integration
+      - mobility deployment program manager
+      - robotaxi operations Germany
+      - autonomes Fahren Projektleiter
 
 search_allocation_percent:
   autonomy_robotics: 55

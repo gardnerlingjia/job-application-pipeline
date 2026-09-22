@@ -1,4 +1,7 @@
 from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import yaml
 
@@ -59,6 +62,12 @@ def main() -> None:
         print(f"OK: {config_file}")
         print(f"    top-level keys: {', '.join(data.keys())}")
 
+    from src.career_intelligence.market_discovery import load_market_discovery_config
+    discovery = load_market_discovery_config()
+    names = discovery.configured_profile_names()
+    if len(names) != len(set(names)):
+        raise ValueError("Duplicate discovery profile names")
+    print("OK: config/career_market_discovery.yaml")
     print("\nAll career intelligence configuration files loaded successfully.")
 
 

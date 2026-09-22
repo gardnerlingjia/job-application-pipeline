@@ -1,0 +1,827 @@
+{
+  "schema_version": 1,
+  "desired": {
+    "lingjia_market_stepstone_autonomy_robotics": {
+      "source_name": "stepstone",
+      "terms": [
+        "AV deployment Germany",
+        "autonomous driving program manager",
+        "autonomous mobility deployment",
+        "autonomous mobility operations",
+        "autonomous vehicle technical program manager",
+        "robotaxi launch readiness"
+      ]
+    },
+    "lingjia_market_stepstone_technical_program_product": {
+      "source_name": "stepstone",
+      "terms": [
+        "ADAS program manager",
+        "automated driving release manager",
+        "mobility solution delivery lead",
+        "vehicle integration program manager",
+        "vehicle software delivery lead"
+      ]
+    },
+    "lingjia_market_stepstone_ai_data_transformation": {
+      "source_name": "stepstone",
+      "terms": [
+        "AI adoption program manager",
+        "AI transformation lead",
+        "automotive AI transformation",
+        "business process transformation lead"
+      ]
+    },
+    "lingjia_market_stepstone_strategy_operations": {
+      "source_name": "stepstone",
+      "terms": [
+        "autonomous driving operations lead",
+        "autonomous mobility strategy operations",
+        "mobility launch readiness",
+        "mobility partner integration"
+      ]
+    },
+    "lingjia_market_stepstone_mobility_platform_deployment": {
+      "source_name": "stepstone",
+      "terms": [
+        "autonomes Fahren Projektleiter",
+        "autonomous fleet operations",
+        "fleet launch manager",
+        "mobility deployment program manager",
+        "mobility ecosystem integration",
+        "robotaxi operations Germany"
+      ]
+    },
+    "lingjia_market_ba_autonomy_robotics": {
+      "source_name": "bundesagentur_fuer_arbeit",
+      "terms": [
+        "AV deployment Germany",
+        "autonomous driving program manager",
+        "autonomous mobility deployment",
+        "autonomous mobility operations",
+        "autonomous vehicle technical program manager",
+        "robotaxi launch readiness"
+      ]
+    },
+    "lingjia_market_ba_technical_program_product": {
+      "source_name": "bundesagentur_fuer_arbeit",
+      "terms": [
+        "ADAS program manager",
+        "automated driving release manager",
+        "mobility solution delivery lead",
+        "vehicle integration program manager",
+        "vehicle software delivery lead"
+      ]
+    },
+    "lingjia_market_ba_ai_data_transformation": {
+      "source_name": "bundesagentur_fuer_arbeit",
+      "terms": [
+        "AI adoption program manager",
+        "AI transformation lead",
+        "automotive AI transformation",
+        "business process transformation lead"
+      ]
+    },
+    "lingjia_market_ba_strategy_operations": {
+      "source_name": "bundesagentur_fuer_arbeit",
+      "terms": [
+        "autonomous driving operations lead",
+        "autonomous mobility strategy operations",
+        "mobility launch readiness",
+        "mobility partner integration"
+      ]
+    },
+    "lingjia_market_ba_mobility_platform_deployment": {
+      "source_name": "bundesagentur_fuer_arbeit",
+      "terms": [
+        "autonomes Fahren Projektleiter",
+        "autonomous fleet operations",
+        "fleet launch manager",
+        "mobility deployment program manager",
+        "mobility ecosystem integration",
+        "robotaxi operations Germany"
+      ]
+    }
+  },
+  "current": [
+    {
+      "id": 25,
+      "profile_name": "lingjia_market_ba_ai_data_transformation",
+      "source_name": "bundesagentur_fuer_arbeit",
+      "search_term": null,
+      "search_location": null,
+      "search_radius_km": null,
+      "offer_type": 1,
+      "page_size": 15,
+      "is_active": true,
+      "recurring_ingestion_enabled": true,
+      "terms": [
+        {
+          "search_term": "AI product manager",
+          "is_active": true
+        },
+        {
+          "search_term": "AI transformation lead",
+          "is_active": true
+        },
+        {
+          "search_term": "analytics platform manager",
+          "is_active": true
+        },
+        {
+          "search_term": "data strategy lead",
+          "is_active": true
+        },
+        {
+          "search_term": "data transformation manager",
+          "is_active": true
+        },
+        {
+          "search_term": "machine learning platform lead",
+          "is_active": true
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "profile_name": "lingjia_market_ba_autonomy_robotics",
+      "source_name": "bundesagentur_fuer_arbeit",
+      "search_term": null,
+      "search_location": null,
+      "search_radius_km": null,
+      "offer_type": 1,
+      "page_size": 15,
+      "is_active": true,
+      "recurring_ingestion_enabled": true,
+      "terms": [
+        {
+          "search_term": "ADAS strategy",
+          "is_active": true
+        },
+        {
+          "search_term": "autonomous driving",
+          "is_active": true
+        },
+        {
+          "search_term": "autonomous mobility",
+          "is_active": true
+        },
+        {
+          "search_term": "intelligent mobility systems",
+          "is_active": true
+        },
+        {
+          "search_term": "robotics product manager",
+          "is_active": true
+        },
+        {
+          "search_term": "robotics program manager",
+          "is_active": true
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "profile_name": "lingjia_market_ba_mobility_platform_deployment",
+      "source_name": "bundesagentur_fuer_arbeit",
+      "search_term": null,
+      "search_location": null,
+      "search_radius_km": null,
+      "offer_type": 1,
+      "page_size": 15,
+      "is_active": true,
+      "recurring_ingestion_enabled": true,
+      "terms": [
+        {
+          "search_term": "charging infrastructure product",
+          "is_active": true
+        },
+        {
+          "search_term": "deployment program manager",
+          "is_active": true
+        },
+        {
+          "search_term": "fleet operations technology",
+          "is_active": true
+        },
+        {
+          "search_term": "mobility ecosystem strategy",
+          "is_active": true
+        },
+        {
+          "search_term": "mobility platform manager",
+          "is_active": true
+        },
+        {
+          "search_term": "transport data platform",
+          "is_active": true
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "profile_name": "lingjia_market_ba_strategy_operations",
+      "source_name": "bundesagentur_fuer_arbeit",
+      "search_term": null,
+      "search_location": null,
+      "search_radius_km": null,
+      "offer_type": 1,
+      "page_size": 15,
+      "is_active": true,
+      "recurring_ingestion_enabled": true,
+      "terms": [
+        {
+          "search_term": "business operations AI",
+          "is_active": true
+        },
+        {
+          "search_term": "chief of staff technology",
+          "is_active": true
+        },
+        {
+          "search_term": "executive operations mobility",
+          "is_active": true
+        },
+        {
+          "search_term": "strategic projects manager",
+          "is_active": true
+        },
+        {
+          "search_term": "strategy operations technology",
+          "is_active": true
+        },
+        {
+          "search_term": "transformation program lead",
+          "is_active": true
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "profile_name": "lingjia_market_ba_technical_program_product",
+      "source_name": "bundesagentur_fuer_arbeit",
+      "search_term": null,
+      "search_location": null,
+      "search_radius_km": null,
+      "offer_type": 1,
+      "page_size": 15,
+      "is_active": true,
+      "recurring_ingestion_enabled": true,
+      "terms": [
+        {
+          "search_term": "delivery lead technology",
+          "is_active": true
+        },
+        {
+          "search_term": "principal product manager AI",
+          "is_active": true
+        },
+        {
+          "search_term": "product operations manager",
+          "is_active": true
+        },
+        {
+          "search_term": "program manager data platform",
+          "is_active": true
+        },
+        {
+          "search_term": "senior product manager platform",
+          "is_active": true
+        },
+        {
+          "search_term": "technical program manager",
+          "is_active": true
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "profile_name": "lingjia_market_stepstone_ai_data_transformation",
+      "source_name": "stepstone",
+      "search_term": null,
+      "search_location": null,
+      "search_radius_km": null,
+      "offer_type": 1,
+      "page_size": 15,
+      "is_active": true,
+      "recurring_ingestion_enabled": true,
+      "terms": [
+        {
+          "search_term": "AI product manager",
+          "is_active": true
+        },
+        {
+          "search_term": "AI transformation lead",
+          "is_active": true
+        },
+        {
+          "search_term": "analytics platform manager",
+          "is_active": true
+        },
+        {
+          "search_term": "data strategy lead",
+          "is_active": true
+        },
+        {
+          "search_term": "data transformation manager",
+          "is_active": true
+        },
+        {
+          "search_term": "machine learning platform lead",
+          "is_active": true
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "profile_name": "lingjia_market_stepstone_autonomy_robotics",
+      "source_name": "stepstone",
+      "search_term": null,
+      "search_location": null,
+      "search_radius_km": null,
+      "offer_type": 1,
+      "page_size": 15,
+      "is_active": true,
+      "recurring_ingestion_enabled": true,
+      "terms": [
+        {
+          "search_term": "ADAS strategy",
+          "is_active": true
+        },
+        {
+          "search_term": "autonomous driving",
+          "is_active": true
+        },
+        {
+          "search_term": "autonomous mobility",
+          "is_active": true
+        },
+        {
+          "search_term": "intelligent mobility systems",
+          "is_active": true
+        },
+        {
+          "search_term": "robotics product manager",
+          "is_active": true
+        },
+        {
+          "search_term": "robotics program manager",
+          "is_active": true
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "profile_name": "lingjia_market_stepstone_mobility_platform_deployment",
+      "source_name": "stepstone",
+      "search_term": null,
+      "search_location": null,
+      "search_radius_km": null,
+      "offer_type": 1,
+      "page_size": 15,
+      "is_active": true,
+      "recurring_ingestion_enabled": true,
+      "terms": [
+        {
+          "search_term": "charging infrastructure product",
+          "is_active": true
+        },
+        {
+          "search_term": "deployment program manager",
+          "is_active": true
+        },
+        {
+          "search_term": "fleet operations technology",
+          "is_active": true
+        },
+        {
+          "search_term": "mobility ecosystem strategy",
+          "is_active": true
+        },
+        {
+          "search_term": "mobility platform manager",
+          "is_active": true
+        },
+        {
+          "search_term": "transport data platform",
+          "is_active": true
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "profile_name": "lingjia_market_stepstone_strategy_operations",
+      "source_name": "stepstone",
+      "search_term": null,
+      "search_location": null,
+      "search_radius_km": null,
+      "offer_type": 1,
+      "page_size": 15,
+      "is_active": true,
+      "recurring_ingestion_enabled": true,
+      "terms": [
+        {
+          "search_term": "business operations AI",
+          "is_active": true
+        },
+        {
+          "search_term": "chief of staff technology",
+          "is_active": true
+        },
+        {
+          "search_term": "executive operations mobility",
+          "is_active": true
+        },
+        {
+          "search_term": "strategic projects manager",
+          "is_active": true
+        },
+        {
+          "search_term": "strategy operations technology",
+          "is_active": true
+        },
+        {
+          "search_term": "transformation program lead",
+          "is_active": true
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "profile_name": "lingjia_market_stepstone_technical_program_product",
+      "source_name": "stepstone",
+      "search_term": null,
+      "search_location": null,
+      "search_radius_km": null,
+      "offer_type": 1,
+      "page_size": 15,
+      "is_active": true,
+      "recurring_ingestion_enabled": true,
+      "terms": [
+        {
+          "search_term": "delivery lead technology",
+          "is_active": true
+        },
+        {
+          "search_term": "principal product manager AI",
+          "is_active": true
+        },
+        {
+          "search_term": "product operations manager",
+          "is_active": true
+        },
+        {
+          "search_term": "program manager data platform",
+          "is_active": true
+        },
+        {
+          "search_term": "senior product manager platform",
+          "is_active": true
+        },
+        {
+          "search_term": "technical program manager",
+          "is_active": true
+        }
+      ]
+    }
+  ],
+  "differences": [
+    {
+      "profile_name": "lingjia_market_stepstone_autonomy_robotics",
+      "before": [
+        "ADAS strategy",
+        "autonomous driving",
+        "autonomous mobility",
+        "intelligent mobility systems",
+        "robotics product manager",
+        "robotics program manager"
+      ],
+      "after": [
+        "AV deployment Germany",
+        "autonomous driving program manager",
+        "autonomous mobility deployment",
+        "autonomous mobility operations",
+        "autonomous vehicle technical program manager",
+        "robotaxi launch readiness"
+      ],
+      "add": [
+        "AV deployment Germany",
+        "autonomous driving program manager",
+        "autonomous mobility deployment",
+        "autonomous mobility operations",
+        "autonomous vehicle technical program manager",
+        "robotaxi launch readiness"
+      ],
+      "deactivate": [
+        "ADAS strategy",
+        "autonomous driving",
+        "autonomous mobility",
+        "intelligent mobility systems",
+        "robotics product manager",
+        "robotics program manager"
+      ],
+      "customization_status": "matches_migration_109_seed"
+    },
+    {
+      "profile_name": "lingjia_market_stepstone_technical_program_product",
+      "before": [
+        "delivery lead technology",
+        "principal product manager AI",
+        "product operations manager",
+        "program manager data platform",
+        "senior product manager platform",
+        "technical program manager"
+      ],
+      "after": [
+        "ADAS program manager",
+        "automated driving release manager",
+        "mobility solution delivery lead",
+        "vehicle integration program manager",
+        "vehicle software delivery lead"
+      ],
+      "add": [
+        "ADAS program manager",
+        "automated driving release manager",
+        "mobility solution delivery lead",
+        "vehicle integration program manager",
+        "vehicle software delivery lead"
+      ],
+      "deactivate": [
+        "delivery lead technology",
+        "principal product manager AI",
+        "product operations manager",
+        "program manager data platform",
+        "senior product manager platform",
+        "technical program manager"
+      ],
+      "customization_status": "matches_migration_109_seed"
+    },
+    {
+      "profile_name": "lingjia_market_stepstone_ai_data_transformation",
+      "before": [
+        "AI product manager",
+        "AI transformation lead",
+        "analytics platform manager",
+        "data strategy lead",
+        "data transformation manager",
+        "machine learning platform lead"
+      ],
+      "after": [
+        "AI adoption program manager",
+        "AI transformation lead",
+        "automotive AI transformation",
+        "business process transformation lead"
+      ],
+      "add": [
+        "AI adoption program manager",
+        "automotive AI transformation",
+        "business process transformation lead"
+      ],
+      "deactivate": [
+        "AI product manager",
+        "analytics platform manager",
+        "data strategy lead",
+        "data transformation manager",
+        "machine learning platform lead"
+      ],
+      "customization_status": "matches_migration_109_seed"
+    },
+    {
+      "profile_name": "lingjia_market_stepstone_strategy_operations",
+      "before": [
+        "business operations AI",
+        "chief of staff technology",
+        "executive operations mobility",
+        "strategic projects manager",
+        "strategy operations technology",
+        "transformation program lead"
+      ],
+      "after": [
+        "autonomous driving operations lead",
+        "autonomous mobility strategy operations",
+        "mobility launch readiness",
+        "mobility partner integration"
+      ],
+      "add": [
+        "autonomous driving operations lead",
+        "autonomous mobility strategy operations",
+        "mobility launch readiness",
+        "mobility partner integration"
+      ],
+      "deactivate": [
+        "business operations AI",
+        "chief of staff technology",
+        "executive operations mobility",
+        "strategic projects manager",
+        "strategy operations technology",
+        "transformation program lead"
+      ],
+      "customization_status": "matches_migration_109_seed"
+    },
+    {
+      "profile_name": "lingjia_market_stepstone_mobility_platform_deployment",
+      "before": [
+        "charging infrastructure product",
+        "deployment program manager",
+        "fleet operations technology",
+        "mobility ecosystem strategy",
+        "mobility platform manager",
+        "transport data platform"
+      ],
+      "after": [
+        "autonomes Fahren Projektleiter",
+        "autonomous fleet operations",
+        "fleet launch manager",
+        "mobility deployment program manager",
+        "mobility ecosystem integration",
+        "robotaxi operations Germany"
+      ],
+      "add": [
+        "autonomes Fahren Projektleiter",
+        "autonomous fleet operations",
+        "fleet launch manager",
+        "mobility deployment program manager",
+        "mobility ecosystem integration",
+        "robotaxi operations Germany"
+      ],
+      "deactivate": [
+        "charging infrastructure product",
+        "deployment program manager",
+        "fleet operations technology",
+        "mobility ecosystem strategy",
+        "mobility platform manager",
+        "transport data platform"
+      ],
+      "customization_status": "matches_migration_109_seed"
+    },
+    {
+      "profile_name": "lingjia_market_ba_autonomy_robotics",
+      "before": [
+        "ADAS strategy",
+        "autonomous driving",
+        "autonomous mobility",
+        "intelligent mobility systems",
+        "robotics product manager",
+        "robotics program manager"
+      ],
+      "after": [
+        "AV deployment Germany",
+        "autonomous driving program manager",
+        "autonomous mobility deployment",
+        "autonomous mobility operations",
+        "autonomous vehicle technical program manager",
+        "robotaxi launch readiness"
+      ],
+      "add": [
+        "AV deployment Germany",
+        "autonomous driving program manager",
+        "autonomous mobility deployment",
+        "autonomous mobility operations",
+        "autonomous vehicle technical program manager",
+        "robotaxi launch readiness"
+      ],
+      "deactivate": [
+        "ADAS strategy",
+        "autonomous driving",
+        "autonomous mobility",
+        "intelligent mobility systems",
+        "robotics product manager",
+        "robotics program manager"
+      ],
+      "customization_status": "matches_migration_109_seed"
+    },
+    {
+      "profile_name": "lingjia_market_ba_technical_program_product",
+      "before": [
+        "delivery lead technology",
+        "principal product manager AI",
+        "product operations manager",
+        "program manager data platform",
+        "senior product manager platform",
+        "technical program manager"
+      ],
+      "after": [
+        "ADAS program manager",
+        "automated driving release manager",
+        "mobility solution delivery lead",
+        "vehicle integration program manager",
+        "vehicle software delivery lead"
+      ],
+      "add": [
+        "ADAS program manager",
+        "automated driving release manager",
+        "mobility solution delivery lead",
+        "vehicle integration program manager",
+        "vehicle software delivery lead"
+      ],
+      "deactivate": [
+        "delivery lead technology",
+        "principal product manager AI",
+        "product operations manager",
+        "program manager data platform",
+        "senior product manager platform",
+        "technical program manager"
+      ],
+      "customization_status": "matches_migration_109_seed"
+    },
+    {
+      "profile_name": "lingjia_market_ba_ai_data_transformation",
+      "before": [
+        "AI product manager",
+        "AI transformation lead",
+        "analytics platform manager",
+        "data strategy lead",
+        "data transformation manager",
+        "machine learning platform lead"
+      ],
+      "after": [
+        "AI adoption program manager",
+        "AI transformation lead",
+        "automotive AI transformation",
+        "business process transformation lead"
+      ],
+      "add": [
+        "AI adoption program manager",
+        "automotive AI transformation",
+        "business process transformation lead"
+      ],
+      "deactivate": [
+        "AI product manager",
+        "analytics platform manager",
+        "data strategy lead",
+        "data transformation manager",
+        "machine learning platform lead"
+      ],
+      "customization_status": "matches_migration_109_seed"
+    },
+    {
+      "profile_name": "lingjia_market_ba_strategy_operations",
+      "before": [
+        "business operations AI",
+        "chief of staff technology",
+        "executive operations mobility",
+        "strategic projects manager",
+        "strategy operations technology",
+        "transformation program lead"
+      ],
+      "after": [
+        "autonomous driving operations lead",
+        "autonomous mobility strategy operations",
+        "mobility launch readiness",
+        "mobility partner integration"
+      ],
+      "add": [
+        "autonomous driving operations lead",
+        "autonomous mobility strategy operations",
+        "mobility launch readiness",
+        "mobility partner integration"
+      ],
+      "deactivate": [
+        "business operations AI",
+        "chief of staff technology",
+        "executive operations mobility",
+        "strategic projects manager",
+        "strategy operations technology",
+        "transformation program lead"
+      ],
+      "customization_status": "matches_migration_109_seed"
+    },
+    {
+      "profile_name": "lingjia_market_ba_mobility_platform_deployment",
+      "before": [
+        "charging infrastructure product",
+        "deployment program manager",
+        "fleet operations technology",
+        "mobility ecosystem strategy",
+        "mobility platform manager",
+        "transport data platform"
+      ],
+      "after": [
+        "autonomes Fahren Projektleiter",
+        "autonomous fleet operations",
+        "fleet launch manager",
+        "mobility deployment program manager",
+        "mobility ecosystem integration",
+        "robotaxi operations Germany"
+      ],
+      "add": [
+        "autonomes Fahren Projektleiter",
+        "autonomous fleet operations",
+        "fleet launch manager",
+        "mobility deployment program manager",
+        "mobility ecosystem integration",
+        "robotaxi operations Germany"
+      ],
+      "deactivate": [
+        "charging infrastructure product",
+        "deployment program manager",
+        "fleet operations technology",
+        "mobility ecosystem strategy",
+        "mobility platform manager",
+        "transport data platform"
+      ],
+      "customization_status": "matches_migration_109_seed"
+    }
+  ],
+  "blockers": [],
+  "approval_digest": "925f81eb08ee00c17ead971679e4fae3a9b18a3de82d3e402b65caa7d9677486"
+}

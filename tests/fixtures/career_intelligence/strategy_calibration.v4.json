@@ -1,0 +1,357 @@
+[
+  {
+    "key": "robotics_tpm",
+    "company": "Example Robotics",
+    "title": "Robotics Technical Program Manager",
+    "description": "Berlin/hybrid. Lead deployment and systems integration, coordinate engineering and suppliers.",
+    "before_score": 63.6,
+    "before_action": "EXPLORE",
+    "expected_actions": [
+      "WATCH"
+    ],
+    "fixture_version": 4,
+    "config_version": "career-calibration-v4",
+    "role_evidence": {},
+    "market_evidence": {},
+    "source_kind": "synthetic_calibration"
+  },
+  {
+    "key": "amr",
+    "company": "Example AMR",
+    "title": "AMR Customer Deployment Lead",
+    "description": "Remote Germany. Customer deployment, integration and program execution for mobile robotics.",
+    "before_score": 58.1,
+    "before_action": "WATCH",
+    "expected_actions": [
+      "WATCH"
+    ],
+    "fixture_version": 4,
+    "config_version": "career-calibration-v4",
+    "role_evidence": {},
+    "market_evidence": {},
+    "source_kind": "synthetic_calibration"
+  },
+  {
+    "key": "perception",
+    "company": "Example Robotics",
+    "title": "Robotics Perception Engineer",
+    "description": "Berlin. Requires C++, production ROS 2 and perception algorithms.",
+    "before_score": 58.7,
+    "before_action": "WATCH",
+    "expected_actions": [
+      "SKIP"
+    ],
+    "fixture_version": 4,
+    "config_version": "career-calibration-v4",
+    "role_evidence": {},
+    "market_evidence": {},
+    "source_kind": "synthetic_calibration"
+  },
+  {
+    "key": "architect",
+    "company": "Example Robotics",
+    "title": "Senior Robotics Architect",
+    "description": "Berlin. Requires controls, embedded systems and hardware ownership.",
+    "before_score": 56.1,
+    "before_action": "WATCH",
+    "expected_actions": [
+      "SKIP"
+    ],
+    "fixture_version": 4,
+    "config_version": "career-calibration-v4",
+    "role_evidence": {},
+    "market_evidence": {},
+    "source_kind": "synthetic_calibration"
+  },
+  {
+    "key": "here",
+    "company": "HERE",
+    "title": "Solution Lead Professional Services ADAS/AD EMEA",
+    "description": "Berlin. Customer-facing ADAS solution delivery, integration and program execution. Pre-sales support.",
+    "before_score": 52.6,
+    "before_action": "WATCH",
+    "expected_actions": [
+      "WATCH"
+    ],
+    "fixture_version": 4,
+    "config_version": "career-calibration-v4",
+    "role_evidence": {},
+    "market_evidence": {},
+    "source_kind": "synthetic_calibration"
+  },
+  {
+    "key": "cariad",
+    "company": "CARIAD",
+    "title": "Internal A.I. Reporting Specialist",
+    "description": "Berlin. Automotive reporting product, AI adoption and stakeholder delivery. Data-platform and DevOps depth required.",
+    "before_score": 51.3,
+    "before_action": "WATCH",
+    "expected_actions": [
+      "WATCH"
+    ],
+    "role_evidence": {
+      "network": {
+        "relationship_level": "internal_team_access",
+        "status": "confirmed",
+        "evidence_source": "User-provided career strategy revision, 2026-09-15"
+      }
+    },
+    "fixture_version": 4,
+    "config_version": "career-calibration-v4",
+    "market_evidence": {},
+    "source_kind": "representative_text_with_user_evidence",
+    "calibration_note": "Exact historical required-depth text retained; not weakened to manufacture APPLY."
+  },
+  {
+    "key": "enterprise_ai",
+    "company": "Example Retail",
+    "title": "Head of Enterprise AI Transformation",
+    "description": "Berlin. Unrelated retail industry. Requires multiple production AI transformations.",
+    "before_score": 52.8,
+    "before_action": "WATCH",
+    "expected_actions": [
+      "SKIP"
+    ],
+    "fixture_version": 4,
+    "config_version": "career-calibration-v4",
+    "role_evidence": {},
+    "market_evidence": {},
+    "source_kind": "synthetic_calibration"
+  },
+  {
+    "key": "founder",
+    "company": "Example Retail",
+    "title": "Founder’s Associate",
+    "description": "Berlin. General administrative support at an unrelated startup.",
+    "before_score": 10.0,
+    "before_action": "SKIP",
+    "expected_actions": [
+      "SKIP"
+    ],
+    "fixture_version": 4,
+    "config_version": "career-calibration-v4",
+    "role_evidence": {},
+    "market_evidence": {},
+    "source_kind": "synthetic_calibration"
+  },
+  {
+    "key": "cos",
+    "company": "Example Robotics",
+    "title": "Chief of Staff Autonomous Systems",
+    "description": "Berlin. Deep-tech technical program execution and founder-priority delivery.",
+    "before_score": 52.6,
+    "before_action": "WATCH",
+    "expected_actions": [
+      "WATCH"
+    ],
+    "fixture_version": 4,
+    "config_version": "career-calibration-v4",
+    "role_evidence": {},
+    "market_evidence": {},
+    "source_kind": "synthetic_calibration"
+  },
+  {
+    "key": "munich",
+    "company": "Example Mobility",
+    "title": "ADAS Program Lead",
+    "description": "Munich on-site. Relocation required.",
+    "before_score": 46.1,
+    "before_action": "SKIP",
+    "expected_actions": [
+      "SKIP"
+    ],
+    "fixture_version": 4,
+    "config_version": "career-calibration-v4",
+    "role_evidence": {},
+    "market_evidence": {},
+    "source_kind": "synthetic_calibration"
+  },
+  {
+    "key": "china",
+    "company": "Example Mobility",
+    "title": "ADAS Leadership",
+    "description": "Based in China. Relocation required.",
+    "before_score": 45.3,
+    "before_action": "SKIP",
+    "expected_actions": [
+      "SKIP"
+    ],
+    "fixture_version": 4,
+    "config_version": "career-calibration-v4",
+    "role_evidence": {},
+    "market_evidence": {},
+    "source_kind": "synthetic_calibration"
+  },
+  {
+    "key": "dx",
+    "company": "dx.one",
+    "title": "Product Owner - Vehicle & Customer Analytics",
+    "description": "Own data-driven vehicle and customer analytics use cases. Work with cloud-based platforms, data services and external development teams. Define product requirements and priorities. Several years of Product Owner experience in data-related use cases and strong cloud technology fundamentals are expected. Location: Berlin or Wolfsburg.",
+    "before_score": 48.3,
+    "before_action": "WATCH",
+    "expected_actions": [
+      "WATCH"
+    ],
+    "role_evidence": {
+      "network": {
+        "relationship_level": "employee_referral",
+        "status": "confirmed",
+        "evidence_source": "User-provided career strategy revision, 2026-09-15"
+      }
+    },
+    "fixture_version": 4,
+    "config_version": "career-calibration-v4",
+    "market_evidence": {},
+    "source_kind": "representative_text_with_user_evidence"
+  },
+  {
+    "key": "freenow",
+    "company": "FREENOW",
+    "title": "Senior Autonomous Vehicle Partnership Manager",
+    "description": "Build partnerships with autonomous vehicle companies. Develop commercial relationships, negotiate business agreements, support autonomous mobility market launches and mobility operations. Commercial ownership and business development experience are important. Location: Germany.",
+    "before_score": 64.1,
+    "before_action": "WATCH",
+    "expected_actions": [
+      "WATCH"
+    ],
+    "fixture_version": 4,
+    "role_evidence": {
+      "requirements": {
+        "commercial_core": {
+          "value": true,
+          "status": "confirmed",
+          "evidence_source": "User-reported real FREENOW commercial-heavy feedback, semantics refinement 2026-09-15"
+        }
+      }
+    },
+    "config_version": "career-calibration-v4",
+    "market_evidence": {},
+    "source_kind": "representative_text_with_user_evidence"
+  },
+  {
+    "key": "amr_confirmed_delivery",
+    "company": "Example AMR",
+    "title": "AMR Customer Deployment Lead",
+    "description": "Remote Germany. Customer deployment, integration and program execution for mobile robotics.",
+    "before_score": 58.1,
+    "before_action": "WATCH",
+    "expected_actions": [
+      "WATCH"
+    ],
+    "fixture_version": 4,
+    "role_evidence": {
+      "requirements": {
+        "engineering_commissioning_core": {
+          "value": false,
+          "status": "confirmed",
+          "evidence_source": "Synthetic scope-confirmation calibration; not verified employer evidence"
+        }
+      }
+    },
+    "config_version": "career-calibration-v4",
+    "market_evidence": {},
+    "source_kind": "synthetic_calibration"
+  },
+  {
+    "key": "amr_core_commissioning",
+    "company": "Example AMR",
+    "title": "AMR Customer Deployment Lead",
+    "description": "Remote Germany. Customer deployment, integration and program execution for mobile robotics.",
+    "before_score": 58.1,
+    "before_action": "WATCH",
+    "expected_actions": [
+      "WATCH"
+    ],
+    "fixture_version": 4,
+    "role_evidence": {
+      "requirements": {
+        "engineering_commissioning_core": {
+          "value": true,
+          "status": "confirmed",
+          "evidence_source": "Synthetic scope-confirmation calibration; not verified employer evidence"
+        }
+      }
+    },
+    "config_version": "career-calibration-v4",
+    "market_evidence": {},
+    "source_kind": "synthetic_calibration"
+  },
+  {
+    "key": "robotics_tpm_direct_years",
+    "company": "Example Robotics",
+    "title": "Robotics Technical Program Manager",
+    "description": "Berlin/hybrid. Lead deployment and systems integration. Multiple years of direct robotics-product experience required.",
+    "before_score": 63.6,
+    "before_action": "EXPLORE",
+    "expected_actions": [
+      "WATCH"
+    ],
+    "fixture_version": 4,
+    "config_version": "career-calibration-v4",
+    "role_evidence": {},
+    "market_evidence": {},
+    "source_kind": "synthetic_scope_variant",
+    "parent_fixture": "robotics_tpm",
+    "calibration_note": "Explicit scope variant for calibration, not a verified replacement job description."
+  },
+  {
+    "key": "amr_linux_field_engineering",
+    "company": "Example AMR",
+    "title": "AMR Customer Deployment Lead",
+    "description": "Remote Germany. Customer deployment and integration. Hands-on ROS 2 and Linux commissioning, robot configuration and field-engineering ownership are core responsibilities.",
+    "before_score": 58.1,
+    "before_action": "WATCH",
+    "expected_actions": [
+      "WATCH"
+    ],
+    "fixture_version": 4,
+    "config_version": "career-calibration-v4",
+    "role_evidence": {},
+    "market_evidence": {},
+    "source_kind": "synthetic_scope_variant",
+    "parent_fixture": "amr",
+    "calibration_note": "Explicit scope variant for calibration, not a verified replacement job description."
+  },
+  {
+    "key": "cos_finance_fundraising",
+    "company": "Example Robotics",
+    "title": "Chief of Staff Autonomous Systems",
+    "description": "Berlin. Autonomous systems technical program execution, founder-facing delivery, financial modeling, fundraising and company-building.",
+    "before_score": 52.6,
+    "before_action": "WATCH",
+    "expected_actions": [
+      "WATCH"
+    ],
+    "fixture_version": 4,
+    "config_version": "career-calibration-v4",
+    "role_evidence": {},
+    "market_evidence": {},
+    "source_kind": "synthetic_scope_variant",
+    "parent_fixture": "cos",
+    "calibration_note": "Explicit scope variant for calibration, not a verified replacement job description."
+  },
+  {
+    "key": "cariad_bridge_scope",
+    "company": "CARIAD",
+    "title": "Internal A.I. Reporting Specialist",
+    "description": "Berlin. Automotive reporting product, AI adoption, stakeholder coordination and program delivery are the core responsibilities. Collaborate with data-platform and DevOps specialists; platform engineering ownership is outside this product/adoption role.",
+    "before_score": 51.3,
+    "before_action": "WATCH",
+    "expected_actions": [
+      "WATCH"
+    ],
+    "role_evidence": {
+      "network": {
+        "relationship_level": "internal_team_access",
+        "status": "confirmed",
+        "evidence_source": "User-provided career strategy revision, 2026-09-15"
+      }
+    },
+    "fixture_version": 4,
+    "config_version": "career-calibration-v4",
+    "market_evidence": {},
+    "source_kind": "synthetic_scope_variant",
+    "calibration_note": "Explicit scope variant for calibration, not a verified replacement job description.",
+    "parent_fixture": "cariad"
+  }
+]

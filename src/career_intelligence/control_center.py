@@ -73,6 +73,7 @@ def _state_counts(records: list[Mapping[str, Any]]) -> dict[str, int]:
 def _record_sort_key(item: Mapping[str, Any]) -> tuple[object, ...]:
     return (
         -int(item.get("opportunity_score") or 0),
+        -int(item.get("berlin_preference") or 0),
         str(item.get("company") or "").casefold(),
         str(item.get("title") or "").casefold(),
         str(item.get("source_file") or "").casefold(),
@@ -148,6 +149,9 @@ def load_career_intelligence_control_center(
             "career_lane": opportunity["career_lane"],
             "career_lane_label": opportunity["career_lane_label"],
             "opportunity_score": opportunity["opportunity_score"],
+            "berlin_preference": opportunity.get("explanation", {}).get(
+                "location", {}
+            ).get("berlin_preference", 0),
             "recommendation": opportunity["recommendation"],
             "constraint_action": opportunity["constraint_action"],
             "risks": list(opportunity["risks"]),

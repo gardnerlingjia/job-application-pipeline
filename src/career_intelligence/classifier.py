@@ -119,6 +119,21 @@ def strategy_context(title: str, description: str, access: str = "cold") -> dict
     delivery = matches("delivery_terms")
     executive = matches("executive_terms", title.lower())
     engineering = matches("engineering_title_terms", title.lower())
+    # Research leadership can require specialist practice despite generic adoption language.
+    import re
+    research_scope = re.search(r'data science|ai research|machine learning', title.lower())
+    research_requirement_pattern = (
+        r'(?:strong|excellent|advanced).{0,25}(?:python|programming)|'
+        r'(?:mehrjährig|several years).{0,85}(?:machine learning|data science)|'
+        r'sehr gute programmierkenntnisse|hands-on.{0,25}(?:model|ml)'
+    )
+    research_requirements = any(
+        re.search(research_requirement_pattern, clause)
+        and not re.search(r"\b(?:no|not|optional|kein\w*|nicht)\b", clause)
+        for clause in re.split(r"[.;\n]", description.lower())
+    )
+    if research_scope and research_requirements:
+        engineering.append("specialist_ml_research_requirements")
     unsupported = matches("unsupported_leadership_terms")
     bridge_support = domain or matches("bridge_support_terms") or access != "cold"
     if engineering or unsupported:

@@ -98,6 +98,7 @@ def _sort_opportunities(opportunities: list[dict[str, Any]]) -> None:
     opportunities.sort(
         key=lambda item: (
             -item["opportunity_score"],
+            -item.get("explanation", {}).get("location", {}).get("berlin_preference", 0),
             item["company"].casefold(),
             item["title"].casefold(),
         )

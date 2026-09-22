@@ -13,15 +13,15 @@ from src.career_intelligence.recommender import recommend_strategy_action, recom
 from src.career_intelligence.scoring import calculate_candidate_strength
 
 FIXTURES = Path("tests/fixtures/career_intelligence")
-ROWS = json.loads((FIXTURES / "strategy_calibration.v3.json").read_text())
+ROWS = json.loads((FIXTURES / "strategy_calibration.v4.json").read_text())
 
 
-def assess_row(key, *, evidence=None):
+def assess_row(key, *, evidence=None, travel_confirmed=False):
     row = next(row for row in ROWS if row["key"] == key)
     return assess_opportunity(
         row["company"],
         row["title"],
-        row["description"],
+        row["description"] + (" No travel required." if travel_confirmed else ""),
         role_evidence=evidence or row.get("role_evidence"),
     )
 
@@ -35,7 +35,7 @@ def test_network_first_invariant(access, strength, blocked):
         strength,
         "CLEAR",
         context,
-        {"location_matches": ["berlin"]},
+        {"location_matches": ["berlin"], "compatibility": "confirmed"},
         access,
         {"core_technical_gap": "Missing ownership"} if blocked else {},
         "not_applicable",
@@ -123,7 +123,7 @@ def test_amr_requires_confirmed_sourced_boolean_scope(value, status, source):
 
 def test_amr_no_mention_is_not_confirmation():
     assert assess_row("amr")["recommendation"] == "WATCH"
-    assert assess_row("amr_confirmed_delivery")["recommendation"] == "APPLY_NOW"
+    assert assess_row("amr_confirmed_delivery", travel_confirmed=True)["recommendation"] == "APPLY_NOW"
     assert assess_row("amr_core_commissioning")["recommendation"] == "WATCH"
 
 
@@ -194,7 +194,7 @@ def test_insufficient_strategy_blocks_network_even_with_strong_candidate():
     context = strategy_context("Program Manager", "Generic administration.")
     assert (
         recommend_strategy_action(
-            100, "CLEAR", context, {"location_matches": ["berlin"]}, "cold", {}, "not_applicable"
+            100, "CLEAR", context, {"location_matches": ["berlin"], "compatibility": "confirmed"}, "cold", {}, "not_applicable"
         )
         == "SKIP"
     )
@@ -239,8 +239,8 @@ def test_batch_retains_referred_dx_decision_and_strength(tmp_path):
     assert result["explanation"]["candidate_strength"]["score"] == 40
 
 
-def test_exact_v3_assessment_snapshots():
-    expected = json.loads((FIXTURES / "strategy_calibration.v3.results.json").read_text())
+def test_exact_v4_assessment_snapshots():
+    expected = json.loads((FIXTURES / "strategy_calibration.v4.results.json").read_text())
     assert [{"key": row["key"], "assessment": assess_row(row["key"])} for row in ROWS] == expected
 
 
@@ -288,7 +288,7 @@ def test_adjacent_anchor_cannot_become_direct_by_repeating_keywords():
 
 
 def test_direct_anchor_requires_supported_professional_role_and_domain():
-    result = assess_row("here")
+    result = assess_row("here", travel_confirmed=True)
     anchor = result["candidate_strength"]["anchors"]
     assert anchor["basis"] == "direct"
     assert anchor["direct_role_evidence"] and anchor["direct_domain_evidence"]
@@ -321,7 +321,7 @@ def test_material_ownership_or_experience_gap_is_watch_not_network(key, gap):
 
 def test_cariad_bridge_variant_does_not_erase_historical_required_depth():
     strict = assess_row("cariad")
-    bridge = assess_row("cariad_bridge_scope")
+    bridge = assess_row("cariad_bridge_scope", travel_confirmed=True)
     assert strict["recommendation"] == "WATCH"
     assert bridge["recommendation"] == "APPLY_NOW"
     assert bridge["opportunity_score"] <= 75

@@ -11,7 +11,7 @@ from src.career_intelligence.network_matcher import match_network
 from src.career_intelligence.batch import _load_job
 
 ROWS = json.loads(
-    Path("tests/fixtures/career_intelligence/strategy_calibration.v3.json").read_text()
+    Path("tests/fixtures/career_intelligence/strategy_calibration.v4.json").read_text()
 )
 
 

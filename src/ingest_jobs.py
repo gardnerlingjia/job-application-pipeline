@@ -309,6 +309,9 @@ def run_profile(
     *,
     recurring_health_enabled: bool = False,
 ) -> None:
+    from src.career_intelligence.discovery_profile_sync import assert_profile_intent
+
+    assert_profile_intent(repository, profile)
     connector = create_connector(source_name=profile.source_name)
 
     health_repository = None

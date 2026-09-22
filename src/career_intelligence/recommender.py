@@ -41,7 +41,7 @@ def recommend_strategy_action(
             if context["autonomy_matches"] or context["domain_advantage_matches"]
             else "SKIP"
         )
-    if not location["location_matches"]:
+    if not location["location_matches"] or location.get("compatibility", "unknown") == "unknown":
         return "WATCH"
     if commissioning_status in {"unknown", "core_required"}:
         return "WATCH"
