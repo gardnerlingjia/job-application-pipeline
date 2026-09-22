@@ -239,6 +239,13 @@ def detect_constraints(title: str, description: str) -> List[Dict]:
 
 def evaluate_constraints(title: str, description: str) -> Dict:
     detected = detect_constraints(title, description)
+    from src.career_intelligence.location_matcher import match_location
+
+    location = match_location(title, description)
+    if not location.get("hard_conflict"):
+        detected = [item for item in detected if item["constraint"] not in {
+            "relocation_required", "china_based_role", "munich_only"
+        }]
 
     hard_skips = [
         item for item in detected if item["action"] == "SKIP"

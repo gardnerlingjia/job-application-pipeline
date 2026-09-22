@@ -29,6 +29,25 @@ network_model:
       score: 85
       description: The company or relevant person proactively approached the candidate.
 
+    internal_team_access:
+      score: 80
+      description: Documented direct access to the internal team.
+    employee_referral:
+      score: 90
+      description: Documented employee referral.
+    hiring_manager_access:
+      score: 90
+      description: Documented direct hiring-manager access.
+    internal_sponsor:
+      score: 95
+      description: Documented internal sponsor.
+    warm_introduction:
+      score: 70
+      description: Credible warm introduction.
+    prior_working_relationship:
+      score: 75
+      description: Documented prior working relationship.
+
     internal_advocate:
       score: 95
       description: A trusted person inside the company is actively supporting or referring the candidate.
@@ -163,4 +182,5 @@ network_scoring_rules:
     - Recent interaction is more valuable than an old dormant contact.
     - Strategic company relevance can modestly increase network opportunity quality.
     - Network strength should influence recommended action but must not override hard capability or location constraints.
-    - A strong network can support NETWORK_FIRST or APPLY_NOW, but cannot convert a poor role fit into a strong opportunity.
+    - NETWORK_FIRST requires sufficient strategic/capability fit and cold access; documented referrals or hiring-manager relationships prevent it.
+    - Core capability gaps require WATCH or SKIP; network access never compensates for them.

@@ -199,7 +199,7 @@ def test_operator_state_does_not_modify_opportunities_schema(tmp_path):
     )
 
     persisted = json.loads(opportunities_path.read_text(encoding="utf-8"))
-    assert set(persisted[0]) == RESULT_FIELDS
+    assert set(persisted[0]) == RESULT_FIELDS - {"explanation"}
     assert rows[0]["operator_state"] == "INTERESTED"
 
 

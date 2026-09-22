@@ -21,16 +21,16 @@ def score_lane(text: str, lane_config: dict) -> Tuple[int, List[str]]:
     score = 0
 
     for keyword in lane_config.get("role_keywords", []):
-        if keyword.lower() in text:
+        if contains_term(text, keyword):
             score += 2
             matches.append(keyword)
 
     for keyword in lane_config.get("domain_keywords", []):
-        if keyword.lower() in text:
+        if contains_term(text, keyword):
             score += 1
             matches.append(keyword)
 
-    return score, matches
+    return round(score * lane_config.get("classification_multiplier", 1)), matches
 
 
 def classify_job(title: str, description: str) -> Dict:
@@ -97,3 +97,53 @@ if __name__ == "__main__":
     print("Runner-up score:", result["runner_up_score"])
     print("Confidence:", result["confidence"])
     print("Matches:", result["matches"])
+
+
+def contains_term(text: str, term: str) -> bool:
+    """Match complete terms, avoiding AI in 'chair' and AD in 'lead'."""
+    import re
+
+    return bool(re.search(r"(?<!\w)" + re.escape(term.lower()) + r"(?!\w)", text.lower()))
+
+
+def strategy_context(title: str, description: str, access: str = "cold") -> dict:
+    policy = load_career_profile().get("strategy_policy", {})
+    text = normalize_text(title, description)
+
+    def matches(key, value=text):
+        return [term for term in policy.get(key, []) if contains_term(value, term)]
+
+    autonomy = matches("autonomy_terms")
+    domain = matches("domain_advantage_terms")
+    ai_data = matches("ai_data_terms")
+    delivery = matches("delivery_terms")
+    executive = matches("executive_terms", title.lower())
+    engineering = matches("engineering_title_terms", title.lower())
+    unsupported = matches("unsupported_leadership_terms")
+    bridge_support = domain or matches("bridge_support_terms") or access != "cold"
+    if engineering or unsupported:
+        transition = "unrealistic"
+    elif executive:
+        transition = "adjacent" if autonomy and delivery else "unrealistic"
+    elif ai_data and delivery:
+        transition = "bridge" if bridge_support else "unrealistic"
+    elif autonomy and delivery:
+        transition = "adjacent"
+    elif domain and delivery and matches("secondary_relevance_terms"):
+        transition = "direct"
+    else:
+        transition = "unknown"
+    return {
+        "transition": transition,
+        "autonomy_matches": autonomy,
+        "domain_advantage_matches": domain,
+        "delivery_matches": delivery,
+        "bridge_support": bool(bridge_support),
+        "executive_role": bool(executive),
+        "cold_access_review": bool(matches("cold_access_review_terms")),
+        "commissioning_review_required": bool(autonomy)
+        and bool(matches("commissioning_review_title_terms", title.lower())),
+        "engineering_mismatch": engineering,
+        "unsupported_leadership": unsupported,
+        "policy": policy,
+    }

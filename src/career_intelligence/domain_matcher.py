@@ -3,6 +3,8 @@ from typing import Dict, List
 
 import yaml
 
+from src.career_intelligence.classifier import contains_term
+
 
 CONFIG_PATH = Path("config/career_profile.yaml")
 
@@ -23,11 +25,7 @@ def match_domain(title: str, description: str, career_lane: str) -> Dict:
     lane_config = profile["career_lanes"][career_lane]
     domain_keywords = lane_config.get("domain_keywords", [])
 
-    matches: List[str] = [
-        keyword
-        for keyword in domain_keywords
-        if keyword.lower() in text
-    ]
+    matches: List[str] = [keyword for keyword in domain_keywords if contains_term(text, keyword)]
 
     unique_matches = sorted(set(matches))
 

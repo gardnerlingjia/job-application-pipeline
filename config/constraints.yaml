@@ -211,7 +211,7 @@ constraints:
     ai_transformation:
       severity: positive
       default_action: BOOST
-      reason: Strong match with transformation and program execution.
+      reason: Selective bridge only with domain, access, product/adoption or delivery support.
 
     ai_product_operations:
       severity: positive
@@ -401,3 +401,7 @@ constraint_principles:
   - AI roles should be differentiated between transformation/program roles and production engineering/research roles.
   - Germany-China experience should be treated as a strategic differentiator when relevant, not as a universal requirement.
   - Location preference should be enforced independently from role attractiveness.
+location_enforcement:
+  outside_region_daily_terms: [daily presence, daily on-site, daily onsite, five days on-site, 5 days onsite]
+  outside_region_cities: [Munich, München, Hamburg, Wolfsburg, Stuttgart, Frankfurt, Hannover, Cologne, Düsseldorf]
+  remote_terms: [remote Germany, remote in Germany, Germany remote]

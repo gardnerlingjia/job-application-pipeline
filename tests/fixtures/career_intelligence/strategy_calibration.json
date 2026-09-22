@@ -1,0 +1,166 @@
+[
+  {
+    "key": "robotics_tpm",
+    "company": "Example Robotics",
+    "title": "Robotics Technical Program Manager",
+    "description": "Berlin/hybrid. Lead deployment and systems integration, coordinate engineering and suppliers.",
+    "before_score": 63.6,
+    "before_action": "EXPLORE",
+    "expected_actions": [
+      "NETWORK_FIRST",
+      "APPLY_NOW"
+    ]
+  },
+  {
+    "key": "amr",
+    "company": "Example AMR",
+    "title": "AMR Customer Deployment Lead",
+    "description": "Remote Germany. Customer deployment, integration and program execution for mobile robotics.",
+    "before_score": 58.1,
+    "before_action": "WATCH",
+    "expected_actions": [
+      "APPLY_NOW"
+    ]
+  },
+  {
+    "key": "perception",
+    "company": "Example Robotics",
+    "title": "Robotics Perception Engineer",
+    "description": "Berlin. Requires C++, production ROS 2 and perception algorithms.",
+    "before_score": 58.7,
+    "before_action": "WATCH",
+    "expected_actions": [
+      "SKIP"
+    ]
+  },
+  {
+    "key": "architect",
+    "company": "Example Robotics",
+    "title": "Senior Robotics Architect",
+    "description": "Berlin. Requires controls, embedded systems and hardware ownership.",
+    "before_score": 56.1,
+    "before_action": "WATCH",
+    "expected_actions": [
+      "SKIP"
+    ]
+  },
+  {
+    "key": "here",
+    "company": "HERE",
+    "title": "Solution Lead Professional Services ADAS/AD EMEA",
+    "description": "Berlin. Customer-facing ADAS solution delivery, integration and program execution. Pre-sales support.",
+    "before_score": 52.6,
+    "before_action": "WATCH",
+    "expected_actions": [
+      "NETWORK_FIRST",
+      "APPLY_NOW"
+    ]
+  },
+  {
+    "key": "cariad",
+    "company": "CARIAD",
+    "title": "Internal A.I. Reporting Specialist",
+    "description": "Berlin. Automotive reporting product, AI adoption and stakeholder delivery. Data-platform and DevOps depth required.",
+    "before_score": 51.3,
+    "before_action": "WATCH",
+    "expected_actions": [
+      "APPLY_NOW"
+    ],
+    "role_evidence": {
+      "network": {
+        "relationship_level": "internal_team_access",
+        "status": "confirmed",
+        "evidence_source": "User-provided career strategy revision, 2026-09-15"
+      }
+    }
+  },
+  {
+    "key": "enterprise_ai",
+    "company": "Example Retail",
+    "title": "Head of Enterprise AI Transformation",
+    "description": "Berlin. Unrelated retail industry. Requires multiple production AI transformations.",
+    "before_score": 52.8,
+    "before_action": "WATCH",
+    "expected_actions": [
+      "SKIP",
+      "WATCH"
+    ]
+  },
+  {
+    "key": "founder",
+    "company": "Example Retail",
+    "title": "Founder\u2019s Associate",
+    "description": "Berlin. General administrative support at an unrelated startup.",
+    "before_score": 10.0,
+    "before_action": "SKIP",
+    "expected_actions": [
+      "SKIP"
+    ]
+  },
+  {
+    "key": "cos",
+    "company": "Example Robotics",
+    "title": "Chief of Staff Autonomous Systems",
+    "description": "Berlin. Deep-tech technical program execution and founder-priority delivery.",
+    "before_score": 52.6,
+    "before_action": "WATCH",
+    "expected_actions": [
+      "WATCH",
+      "NETWORK_FIRST"
+    ]
+  },
+  {
+    "key": "munich",
+    "company": "Example Mobility",
+    "title": "ADAS Program Lead",
+    "description": "Munich on-site. Relocation required.",
+    "before_score": 46.1,
+    "before_action": "SKIP",
+    "expected_actions": [
+      "SKIP"
+    ]
+  },
+  {
+    "key": "china",
+    "company": "Example Mobility",
+    "title": "ADAS Leadership",
+    "description": "Based in China. Relocation required.",
+    "before_score": 45.3,
+    "before_action": "SKIP",
+    "expected_actions": [
+      "SKIP"
+    ]
+  },
+  {
+    "key": "dx",
+    "company": "dx.one",
+    "title": "Product Owner - Vehicle & Customer Analytics",
+    "description": "Own data-driven vehicle and customer analytics use cases. Work with cloud-based platforms, data services and external development teams. Define product requirements and priorities. Several years of Product Owner experience in data-related use cases and strong cloud technology fundamentals are expected. Location: Berlin or Wolfsburg.",
+    "before_score": 48.3,
+    "before_action": "WATCH",
+    "expected_actions": [
+      "NETWORK_FIRST",
+      "WATCH",
+      "APPLY_NOW"
+    ],
+    "role_evidence": {
+      "network": {
+        "relationship_level": "employee_referral",
+        "status": "confirmed",
+        "evidence_source": "User-provided career strategy revision, 2026-09-15"
+      }
+    }
+  },
+  {
+    "key": "freenow",
+    "company": "FREENOW",
+    "title": "Senior Autonomous Vehicle Partnership Manager",
+    "description": "Build partnerships with autonomous vehicle companies. Develop commercial relationships, negotiate business agreements, support autonomous mobility market launches and mobility operations. Commercial ownership and business development experience are important. Location: Germany.",
+    "before_score": 64.1,
+    "before_action": "WATCH",
+    "expected_actions": [
+      "WATCH",
+      "NETWORK_FIRST"
+    ]
+  }
+]

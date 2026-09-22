@@ -19,7 +19,6 @@ from src.career_intelligence.batch import (
     _write_temporary,
 )
 from src.career_intelligence.freshness import apply_freshness_penalty
-from src.career_intelligence.recommender import recommend_action
 from src.career_intelligence.scoring import calculate_opportunity_score
 from src.career_intelligence.silver_adapter import (
     ATS_PROVIDER_IDENTITY_DESCRIPTION_QUALITY,
@@ -89,6 +88,8 @@ def _remove_missing_description_evidence(
     scores["capability_fit"] = 0
     scores["domain_fit"] = 0
     scores["evidence_strength"] = 0
+    if assessment.get("explanation", {}).get("semantics_version", 0) >= 3:
+        scores["career_lane_fit"] = 0
 
     adjusted = dict(assessment)
     adjusted["scores"] = scores
@@ -96,6 +97,26 @@ def _remove_missing_description_evidence(
     adjusted["domain_matches"] = []
     adjusted["evidence_details"] = []
     adjusted["opportunity_score"] = calculate_opportunity_score(scores)
+    adjusted["recommendation"] = "SKIP" if assessment["recommendation"] == "SKIP" else "WATCH"
+    if "explanation" in adjusted:
+        adjusted["explanation"] = dict(adjusted["explanation"])
+        adjusted["explanation"]["recommended_action"] = adjusted["recommendation"]
+        adjusted["explanation"]["supporting_capabilities"] = []
+        adjusted["explanation"]["scores"] = scores
+        adjusted["explanation"]["gates"] = [
+            {
+                "gate": "description_missing",
+                "reason": "No requirement evidence; candidate score is zero.",
+            }
+        ]
+        adjusted["explanation"]["candidate_strength"] = {
+            "score": 0,
+            "blocking_gaps": {"description_missing": "No role requirement evidence."},
+        }
+    adjusted["candidate_strength"] = {
+        "score": 0,
+        "blocking_gaps": {"description_missing": "No role requirement evidence."},
+    }
     item.provenance["missing_description_evidence_policy"] = (
         "ats_provider_identity_only_no_capability_or_domain_evidence"
     )
@@ -131,9 +152,7 @@ def _prepare_json_payloads(
 ) -> tuple[str, str, str]:
     validated_opportunities = [_validate_result_record(record) for record in opportunities]
     validated_provenance = [_validate_provenance_record(record) for record in provenance]
-    opportunities_content = (
-        json.dumps(validated_opportunities, indent=2, ensure_ascii=False) + "\n"
-    )
+    opportunities_content = json.dumps(validated_opportunities, indent=2, ensure_ascii=False) + "\n"
     radar_content = _render_radar(validated_opportunities)
     provenance_content = (
         json.dumps(validated_provenance, indent=2, ensure_ascii=False, sort_keys=True) + "\n"
@@ -150,17 +169,33 @@ def _apply_freshness_to_assessment(
 ) -> dict[str, Any]:
     base_score = assessment["opportunity_score"]
     adjusted = apply_freshness_penalty(assessment, item.freshness)
-    adjusted["recommendation"] = recommend_action(
-        opportunity_score=adjusted["opportunity_score"],
-        constraint_action=adjusted.get("constraint_action", "REVIEW"),
-        network_access=int(adjusted.get("network_access") or 0),
-        high_risks=list(adjusted.get("high_risks") or []),
-        reviews=list(adjusted.get("reviews") or []),
-    )
+    # Freshness affects ranking, never creates a new access/capability recommendation.
+    # In particular it cannot turn WATCH or a warm/referral APPLY into NETWORK FIRST.
+    if item.freshness.ranking_penalty and assessment["recommendation"] in {
+        "APPLY_NOW",
+        "NETWORK_FIRST",
+    }:
+        adjusted["recommendation"] = "WATCH"
+    if "explanation" in adjusted:
+        adjusted["explanation"] = dict(adjusted["explanation"])
+        adjusted["explanation"]["recommended_action"] = {
+            "APPLY_NOW": "APPLY",
+            "NETWORK_FIRST": "NETWORK FIRST",
+        }.get(adjusted["recommendation"], adjusted["recommendation"])
     item.provenance["base_opportunity_score"] = base_score
-    item.provenance["freshness_adjusted_opportunity_score"] = adjusted[
-        "opportunity_score"
-    ]
+    item.provenance["freshness_adjusted_opportunity_score"] = adjusted["opportunity_score"]
+    if adjusted.get("explanation", {}).get("semantics_version", 0) >= 3:
+        adjusted["explanation"]["freshness_ranking_score"] = adjusted["opportunity_score"]
+        adjusted["opportunity_score"] = base_score
+        if item.freshness.ranking_penalty:
+            adjusted["explanation"]["gates"] = [
+                *adjusted["explanation"].get("gates", []),
+                {
+                    "gate": "freshness_review",
+                    "reason": "Age changes ranking/action, not candidate evidence.",
+                    "ranking_penalty": item.freshness.ranking_penalty,
+                },
+            ]
     return adjusted
 
 
@@ -177,9 +212,27 @@ def _refresh_existing_freshness(
     existing_provenance: dict[str, Any] | None,
     item: SilverCareerInput,
 ) -> bool:
-    previous_penalty = _number(
-        (existing_provenance or {}).get("freshness_ranking_penalty")
-    ) or 0
+    if opportunity.get("explanation", {}).get("semantics_version", 0) >= 3:
+        base = opportunity["opportunity_score"]
+        ranking = max(0, int(round(base)) - item.freshness.ranking_penalty)
+        explanation = opportunity["explanation"]
+        changed = explanation.get("freshness_ranking_score") != ranking
+        explanation["freshness_ranking_score"] = ranking
+        if item.freshness.ranking_penalty and opportunity["recommendation"] in {
+            "APPLY_NOW",
+            "NETWORK_FIRST",
+        }:
+            opportunity["recommendation"] = "WATCH"
+            explanation["recommended_action"] = "WATCH"
+            explanation["gates"] = [
+                *explanation.get("gates", []),
+                {"gate": "freshness_review", "reason": "Age review; candidate score unchanged."},
+            ]
+            changed = True
+        item.provenance["base_opportunity_score"] = base
+        item.provenance["freshness_adjusted_opportunity_score"] = ranking
+        return changed
+    previous_penalty = _number((existing_provenance or {}).get("freshness_ranking_penalty")) or 0
     base_score = _number((existing_provenance or {}).get("base_opportunity_score"))
     if base_score is None:
         current_score = _number(opportunity.get("opportunity_score"))
@@ -374,12 +427,7 @@ def assess_silver_inputs(
         ],
     )
     _sort_opportunities(opportunities)
-    if (
-        assessed
-        or skipped_provenance
-        or refreshed_provenance
-        or not opportunities_path.exists()
-    ):
+    if assessed or skipped_provenance or refreshed_provenance or not opportunities_path.exists():
         _write_output_pair(
             results,
             opportunities=opportunities,
@@ -443,8 +491,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--source",
         help=(
-            "Optional exact source name or source-family filter, "
-            "e.g. personio:target or personio."
+            "Optional exact source name or source-family filter, e.g. personio:target or personio."
         ),
     )
     parser.add_argument("--limit", type=positive_integer, default=100)

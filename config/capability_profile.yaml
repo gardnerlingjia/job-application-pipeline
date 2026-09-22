@@ -90,6 +90,7 @@ capabilities:
       - intelligent mobility
 
   automotive_mobility:
+    match_keywords: [automotive, vehicle software, infotainment, vehicle]
     strength: 5
     category: domain
     evidence:
@@ -178,6 +179,9 @@ capabilities:
       - product development
       - product requirements
     evidence:
+      - requirements and dependency management
+      - software–physical-product integration and safety-critical software delivery
+      - human-machine interaction and validation readiness
       - proof-of-concept delivery
       - Scrum Master experience
       - technical program execution
@@ -195,7 +199,7 @@ capabilities:
     category: transferable
     evidence:
       - mobility and autonomous-driving program experience
-      - interest in deployment and operationalization
+      - vehicle integration, validation and deployment-readiness experience
       - understanding of service and system readiness
       - experience connecting technical maturity with operational decisions
     transferable_to:
@@ -220,7 +224,8 @@ capabilities:
       - AI and machine-learning upskilling
       - MLOps projects
       - data-science pipeline projects
-      - AI transformation projects
+      - CarLover, HR knowledge agent and AI-reporting architecture prototypes
+      - Python/Pandas and ML pipeline projects
       - generative-AI experimentation
     transferable_to:
       - AI program management
@@ -420,3 +425,21 @@ assessment_principles:
   - Germany-China experience should increase fit when the role includes international, cross-border or APAC responsibilities.
   - High domain fit must not override a major capability gap.
   - Roles with high-risk gaps should be flagged even if overall semantic similarity is high.
+
+candidate_strength_model:
+  automotive_adas_vehicle_delivery: very_strong
+  autonomous_mobility_deployment: strong
+  autonomous_systems_programs: credible_adjacency
+  robotics_product_programs: developing_adjacency
+  automotive_ai_transformation: selective_bridge
+  enterprise_ai_transformation: weak_to_moderate
+  ai_engineering_architecture: weak
+  robotics_engineering: weak
+project_evidence:
+  ai_data_prototypes:
+    status: prototype
+    scope: Technical literacy, learning velocity and prototype execution only.
+  ros2_amr:
+    status: in_development
+    professional_experience: false
+    evidence: []

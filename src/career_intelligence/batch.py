@@ -28,6 +28,7 @@ RESULT_FIELDS = frozenset(
         "constraint_action",
         "risks",
         "key_matched_capabilities",
+        "explanation",
     }
 )
 RECOMMENDATION_GROUPS = (
@@ -39,7 +40,7 @@ RECOMMENDATION_GROUPS = (
 )
 
 
-def _load_job(path: Path) -> dict[str, str]:
+def _load_job(path: Path) -> dict[str, Any]:
     payload = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
         raise ValueError("job must be a JSON object")
@@ -53,11 +54,19 @@ def _load_job(path: Path) -> dict[str, str]:
     if missing:
         raise ValueError(f"missing or empty required fields: {', '.join(missing)}")
 
-    return {field: payload[field].strip() for field in required}
+    job = {field: payload[field].strip() for field in required}
+    for field in ("role_evidence", "market_evidence"):
+        if field in payload:
+            if not isinstance(payload[field], dict):
+                raise ValueError(f"{field} must be an object")
+            job[field] = payload[field]
+    return job
 
 
 def _validate_result_record(record: Any) -> dict[str, Any]:
-    if not isinstance(record, dict) or set(record) != RESULT_FIELDS:
+    if not isinstance(record, dict) or set(record) not in (
+        RESULT_FIELDS, RESULT_FIELDS - {"explanation"}
+    ):
         raise ValueError("opportunity result does not match schema version 1")
     if record["schema_version"] != SCHEMA_VERSION:
         raise ValueError(f"unsupported opportunity schema version: {record['schema_version']}")
@@ -80,6 +89,7 @@ def _result_record(assessment: dict[str, Any], source_file: str) -> dict[str, An
         "constraint_action": assessment["constraint_action"],
         "risks": risks,
         "key_matched_capabilities": assessment["matched_capabilities"],
+        "explanation": assessment.get("explanation", {}),
     }
     return _validate_result_record(record)
 
@@ -211,7 +221,10 @@ def process_batch(
             if path.name in existing_sources:
                 raise FileExistsError(f"source file already exists in results: {path.name}")
             job = _load_job(path)
-            assessment = assess_opportunity(job["company"], job["title"], job["description"])
+            assessment = assess_opportunity(
+                job["company"], job["title"], job["description"],
+                **{key: job[key] for key in ("role_evidence", "market_evidence") if key in job},
+            )
             record = _result_record(assessment, path.name)
             _move_no_clobber(path, destination)
             opportunities.append(record)

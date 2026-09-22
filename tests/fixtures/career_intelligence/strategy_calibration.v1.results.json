@@ -1,0 +1,3012 @@
+[
+  {
+    "key": "robotics_tpm",
+    "assessment": {
+      "transition": "adjacent",
+      "access_type": "cold",
+      "market_evidence": {
+        "employer_segment": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "traditional_automotive_exposure": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "autonomy_or_robotics_relevance": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "hiring_intent_strength": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "funding_or_budget_signal": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        }
+      },
+      "explanation": {
+        "fit": "adjacent",
+        "supporting_capabilities": [
+          "technical_program_leadership",
+          "adas_autonomous_driving"
+        ],
+        "fit_signals": {
+          "autonomy_matches": [
+            "robotics"
+          ],
+          "domain_advantage_matches": [],
+          "delivery_matches": [
+            "program",
+            "deployment",
+            "integration"
+          ],
+          "engineering_mismatch": [],
+          "unsupported_leadership": []
+        },
+        "gaps": {
+          "direct_professional_robotics_missing": "Direct professional robotics experience is not evidenced; vehicle integration is transferable.",
+          "cold_access": "No documented referral, hiring-manager contact or warm access."
+        },
+        "location": {
+          "location_fit": 100.0,
+          "location_matches": [
+            "berlin"
+          ]
+        },
+        "access": "cold",
+        "traditional_automotive_exposure": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "missing_market_evidence": [
+          "employer_segment",
+          "traditional_automotive_exposure",
+          "autonomy_or_robotics_relevance",
+          "hiring_intent_strength",
+          "funding_or_budget_signal"
+        ],
+        "recommended_action": "NETWORK FIRST"
+      },
+      "title": "Robotics Technical Program Manager",
+      "career_lane": "autonomy_robotics",
+      "career_lane_label": "Autonomous Systems Deployment & Technical Program Leadership",
+      "domain_matches": [
+        "robotics"
+      ],
+      "location_matches": [
+        "berlin"
+      ],
+      "lane_score": 9,
+      "lane_confidence": "high",
+      "runner_up_lane": "technology_programs",
+      "runner_up_score": 4,
+      "constraint_action": "CLEAR",
+      "boosters": [
+        {
+          "constraint": "berlin_or_remote_germany",
+          "section": "location",
+          "severity": "positive",
+          "action": "BOOST",
+          "reason": "Strong location fit.",
+          "matches": [
+            "berlin"
+          ]
+        },
+        {
+          "constraint": "robotics",
+          "section": "industry",
+          "severity": "positive",
+          "action": "BOOST",
+          "reason": "Strategic target industry when role content matches transferable capabilities.",
+          "matches": [
+            "robotics"
+          ]
+        }
+      ],
+      "company_name": "Example Robotics",
+      "network_access": 0.0,
+      "relationship_level": "none",
+      "strategic_relevance": "unknown",
+      "known_company": false,
+      "high_risks": [],
+      "hard_skips": [],
+      "reviews": [
+        {
+          "constraint": "direct_professional_robotics_missing",
+          "reason": "Direct professional robotics experience is not evidenced; vehicle integration is transferable.",
+          "severity": "medium",
+          "action": "REVIEW",
+          "matches": [],
+          "section": "career_strategy"
+        },
+        {
+          "constraint": "cold_access",
+          "reason": "No documented referral, hiring-manager contact or warm access.",
+          "severity": "medium",
+          "action": "REVIEW",
+          "matches": [],
+          "section": "career_strategy"
+        }
+      ],
+      "scores": {
+        "career_lane_fit": 85,
+        "capability_fit": 100.0,
+        "domain_fit": 85,
+        "location_fit": 100.0,
+        "network_access": 0.0,
+        "evidence_strength": 90.0
+      },
+      "matched_capabilities": [
+        {
+          "capability": "technical_program_leadership",
+          "strength": 5,
+          "category": "core",
+          "evidence": [
+            "20+ years of experience in complex automotive and technology programs",
+            "program leadership across Germany, Europe and China",
+            "coordination of engineering, suppliers, brands and corporate functions",
+            "milestone, risk, action and delivery management",
+            "executive steering and decision preparation"
+          ],
+          "matches": [
+            "program manager",
+            "robotics",
+            "technical program"
+          ]
+        },
+        {
+          "capability": "adas_autonomous_driving",
+          "strength": 5,
+          "category": "transferable",
+          "evidence": [
+            "ADAS and automated-driving programs",
+            "automated parking",
+            "vehicle software",
+            "autonomous-driving proof-of-concept work",
+            "coordination across architecture, engineering, testing and suppliers"
+          ],
+          "matches": [
+            "robotics"
+          ]
+        }
+      ],
+      "opportunity_score": 82.5,
+      "evidence_details": [
+        {
+          "capability": "technical_program_leadership",
+          "strength": 5,
+          "category": "core",
+          "category_weight": 1.0,
+          "weighted_strength": 100.0
+        },
+        {
+          "capability": "adas_autonomous_driving",
+          "strength": 5,
+          "category": "transferable",
+          "category_weight": 0.8,
+          "weighted_strength": 80.0
+        }
+      ],
+      "recommendation": "NETWORK_FIRST"
+    }
+  },
+  {
+    "key": "amr",
+    "assessment": {
+      "transition": "adjacent",
+      "access_type": "cold",
+      "market_evidence": {
+        "employer_segment": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "traditional_automotive_exposure": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "autonomy_or_robotics_relevance": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "hiring_intent_strength": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "funding_or_budget_signal": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        }
+      },
+      "explanation": {
+        "fit": "adjacent",
+        "supporting_capabilities": [
+          "technical_program_leadership",
+          "adas_autonomous_driving",
+          "international_cross_border"
+        ],
+        "fit_signals": {
+          "autonomy_matches": [
+            "robotics",
+            "AMR"
+          ],
+          "domain_advantage_matches": [],
+          "delivery_matches": [
+            "program",
+            "deployment",
+            "integration",
+            "customer deployment"
+          ],
+          "engineering_mismatch": [],
+          "unsupported_leadership": []
+        },
+        "gaps": {
+          "direct_professional_robotics_missing": "Direct professional robotics experience is not evidenced; vehicle integration is transferable.",
+          "cold_access": "No documented referral, hiring-manager contact or warm access."
+        },
+        "location": {
+          "location_fit": 100.0,
+          "location_matches": [
+            "remote germany"
+          ]
+        },
+        "access": "cold",
+        "traditional_automotive_exposure": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "missing_market_evidence": [
+          "employer_segment",
+          "traditional_automotive_exposure",
+          "autonomy_or_robotics_relevance",
+          "hiring_intent_strength",
+          "funding_or_budget_signal"
+        ],
+        "recommended_action": "APPLY"
+      },
+      "title": "AMR Customer Deployment Lead",
+      "career_lane": "autonomy_robotics",
+      "career_lane_label": "Autonomous Systems Deployment & Technical Program Leadership",
+      "domain_matches": [
+        "AMR",
+        "robotics"
+      ],
+      "location_matches": [
+        "remote germany"
+      ],
+      "lane_score": 6,
+      "lane_confidence": "medium",
+      "runner_up_lane": "technology_programs",
+      "runner_up_score": 2,
+      "constraint_action": "CLEAR",
+      "boosters": [
+        {
+          "constraint": "berlin_or_remote_germany",
+          "section": "location",
+          "severity": "positive",
+          "action": "BOOST",
+          "reason": "Strong location fit.",
+          "matches": [
+            "remote germany"
+          ]
+        },
+        {
+          "constraint": "robotics",
+          "section": "industry",
+          "severity": "positive",
+          "action": "BOOST",
+          "reason": "Strategic target industry when role content matches transferable capabilities.",
+          "matches": [
+            "robotics"
+          ]
+        }
+      ],
+      "company_name": "Example AMR",
+      "network_access": 0.0,
+      "relationship_level": "none",
+      "strategic_relevance": "unknown",
+      "known_company": false,
+      "high_risks": [],
+      "hard_skips": [],
+      "reviews": [
+        {
+          "constraint": "direct_professional_robotics_missing",
+          "reason": "Direct professional robotics experience is not evidenced; vehicle integration is transferable.",
+          "severity": "medium",
+          "action": "REVIEW",
+          "matches": [],
+          "section": "career_strategy"
+        },
+        {
+          "constraint": "cold_access",
+          "reason": "No documented referral, hiring-manager contact or warm access.",
+          "severity": "medium",
+          "action": "REVIEW",
+          "matches": [],
+          "section": "career_strategy"
+        }
+      ],
+      "scores": {
+        "career_lane_fit": 85,
+        "capability_fit": 100.0,
+        "domain_fit": 85,
+        "location_fit": 100.0,
+        "network_access": 0.0,
+        "evidence_strength": 83.3
+      },
+      "matched_capabilities": [
+        {
+          "capability": "technical_program_leadership",
+          "strength": 5,
+          "category": "transferable",
+          "evidence": [
+            "20+ years of experience in complex automotive and technology programs",
+            "program leadership across Germany, Europe and China",
+            "coordination of engineering, suppliers, brands and corporate functions",
+            "milestone, risk, action and delivery management",
+            "executive steering and decision preparation"
+          ],
+          "matches": [
+            "robotics"
+          ]
+        },
+        {
+          "capability": "adas_autonomous_driving",
+          "strength": 5,
+          "category": "transferable",
+          "evidence": [
+            "ADAS and automated-driving programs",
+            "automated parking",
+            "vehicle software",
+            "autonomous-driving proof-of-concept work",
+            "coordination across architecture, engineering, testing and suppliers"
+          ],
+          "matches": [
+            "robotics"
+          ]
+        },
+        {
+          "capability": "international_cross_border",
+          "strength": 5,
+          "category": "differentiator",
+          "evidence": [
+            "professional experience in Germany and China",
+            "work across European and Chinese organizations",
+            "Germany-China stakeholder coordination",
+            "cross-cultural communication",
+            "international program execution"
+          ],
+          "matches": [
+            "germany"
+          ]
+        }
+      ],
+      "opportunity_score": 81.5,
+      "evidence_details": [
+        {
+          "capability": "technical_program_leadership",
+          "strength": 5,
+          "category": "transferable",
+          "category_weight": 0.8,
+          "weighted_strength": 80.0
+        },
+        {
+          "capability": "adas_autonomous_driving",
+          "strength": 5,
+          "category": "transferable",
+          "category_weight": 0.8,
+          "weighted_strength": 80.0
+        },
+        {
+          "capability": "international_cross_border",
+          "strength": 5,
+          "category": "differentiator",
+          "category_weight": 0.9,
+          "weighted_strength": 90.0
+        }
+      ],
+      "recommendation": "APPLY_NOW"
+    }
+  },
+  {
+    "key": "perception",
+    "assessment": {
+      "transition": "unrealistic",
+      "access_type": "cold",
+      "market_evidence": {
+        "employer_segment": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "traditional_automotive_exposure": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "autonomy_or_robotics_relevance": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "hiring_intent_strength": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "funding_or_budget_signal": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        }
+      },
+      "explanation": {
+        "fit": "unrealistic",
+        "supporting_capabilities": [
+          "technical_program_leadership",
+          "adas_autonomous_driving"
+        ],
+        "fit_signals": {
+          "autonomy_matches": [
+            "robotics"
+          ],
+          "domain_advantage_matches": [],
+          "delivery_matches": [],
+          "engineering_mismatch": [
+            "perception engineer"
+          ],
+          "unsupported_leadership": []
+        },
+        "gaps": {
+          "direct_professional_robotics_missing": "Direct professional robotics experience is not evidenced; vehicle integration is transferable.",
+          "production_ros2_missing": "Production ROS 2 experience is missing; planned AMR work remains evidence in development.",
+          "perception_planning_control_missing": "Specialist perception/planning/control engineering is not evidenced.",
+          "engineering_heavy_role": "Role requires specialist engineering beyond supported evidence.",
+          "cold_access": "No documented referral, hiring-manager contact or warm access.",
+          "unsupported_role_transition": "Role requirements lack a supported direct, adjacent or selective bridge.",
+          "perception_engineer": "Perception engineering requires specialist hands-on technical depth."
+        },
+        "location": {
+          "location_fit": 100.0,
+          "location_matches": [
+            "berlin"
+          ]
+        },
+        "access": "cold",
+        "traditional_automotive_exposure": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "missing_market_evidence": [
+          "employer_segment",
+          "traditional_automotive_exposure",
+          "autonomy_or_robotics_relevance",
+          "hiring_intent_strength",
+          "funding_or_budget_signal"
+        ],
+        "recommended_action": "SKIP"
+      },
+      "title": "Robotics Perception Engineer",
+      "career_lane": "autonomy_robotics",
+      "career_lane_label": "Autonomous Systems Deployment & Technical Program Leadership",
+      "domain_matches": [
+        "robotics"
+      ],
+      "location_matches": [
+        "berlin"
+      ],
+      "lane_score": 1,
+      "lane_confidence": "low",
+      "runner_up_lane": "technology_programs",
+      "runner_up_score": 0,
+      "constraint_action": "SKIP",
+      "boosters": [
+        {
+          "constraint": "berlin_or_remote_germany",
+          "section": "location",
+          "severity": "positive",
+          "action": "BOOST",
+          "reason": "Strong location fit.",
+          "matches": [
+            "berlin"
+          ]
+        },
+        {
+          "constraint": "robotics",
+          "section": "industry",
+          "severity": "positive",
+          "action": "BOOST",
+          "reason": "Strategic target industry when role content matches transferable capabilities.",
+          "matches": [
+            "robotics"
+          ]
+        }
+      ],
+      "company_name": "Example Robotics",
+      "network_access": 0.0,
+      "relationship_level": "none",
+      "strategic_relevance": "unknown",
+      "known_company": false,
+      "high_risks": [
+        {
+          "constraint": "perception_engineer",
+          "section": "autonomy_robotics",
+          "severity": "high",
+          "action": "HIGH_RISK",
+          "reason": "Perception engineering requires specialist hands-on technical depth.",
+          "matches": [
+            "perception engineer"
+          ]
+        }
+      ],
+      "hard_skips": [
+        {
+          "constraint": "unsupported_role_transition",
+          "reason": "Role requirements lack a supported direct, adjacent or selective bridge.",
+          "severity": "high",
+          "action": "SKIP",
+          "section": "career_strategy",
+          "matches": []
+        }
+      ],
+      "reviews": [
+        {
+          "constraint": "direct_professional_robotics_missing",
+          "reason": "Direct professional robotics experience is not evidenced; vehicle integration is transferable.",
+          "severity": "medium",
+          "action": "REVIEW",
+          "matches": [],
+          "section": "career_strategy"
+        },
+        {
+          "constraint": "production_ros2_missing",
+          "reason": "Production ROS 2 experience is missing; planned AMR work remains evidence in development.",
+          "severity": "medium",
+          "action": "REVIEW",
+          "matches": [],
+          "section": "career_strategy"
+        },
+        {
+          "constraint": "perception_planning_control_missing",
+          "reason": "Specialist perception/planning/control engineering is not evidenced.",
+          "severity": "medium",
+          "action": "REVIEW",
+          "matches": [],
+          "section": "career_strategy"
+        },
+        {
+          "constraint": "engineering_heavy_role",
+          "reason": "Role requires specialist engineering beyond supported evidence.",
+          "severity": "medium",
+          "action": "REVIEW",
+          "matches": [],
+          "section": "career_strategy"
+        },
+        {
+          "constraint": "cold_access",
+          "reason": "No documented referral, hiring-manager contact or warm access.",
+          "severity": "medium",
+          "action": "REVIEW",
+          "matches": [],
+          "section": "career_strategy"
+        }
+      ],
+      "scores": {
+        "career_lane_fit": 5,
+        "capability_fit": 25,
+        "domain_fit": 20.8,
+        "location_fit": 100.0,
+        "network_access": 0.0,
+        "evidence_strength": 25
+      },
+      "matched_capabilities": [
+        {
+          "capability": "technical_program_leadership",
+          "strength": 5,
+          "category": "transferable",
+          "evidence": [
+            "20+ years of experience in complex automotive and technology programs",
+            "program leadership across Germany, Europe and China",
+            "coordination of engineering, suppliers, brands and corporate functions",
+            "milestone, risk, action and delivery management",
+            "executive steering and decision preparation"
+          ],
+          "matches": [
+            "robotics"
+          ]
+        },
+        {
+          "capability": "adas_autonomous_driving",
+          "strength": 5,
+          "category": "transferable",
+          "evidence": [
+            "ADAS and automated-driving programs",
+            "automated parking",
+            "vehicle software",
+            "autonomous-driving proof-of-concept work",
+            "coordination across architecture, engineering, testing and suppliers"
+          ],
+          "matches": [
+            "robotics"
+          ]
+        }
+      ],
+      "opportunity_score": 24.4,
+      "evidence_details": [
+        {
+          "capability": "technical_program_leadership",
+          "strength": 5,
+          "category": "transferable",
+          "category_weight": 0.8,
+          "weighted_strength": 80.0
+        },
+        {
+          "capability": "adas_autonomous_driving",
+          "strength": 5,
+          "category": "transferable",
+          "category_weight": 0.8,
+          "weighted_strength": 80.0
+        }
+      ],
+      "recommendation": "SKIP"
+    }
+  },
+  {
+    "key": "architect",
+    "assessment": {
+      "transition": "unrealistic",
+      "access_type": "cold",
+      "market_evidence": {
+        "employer_segment": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "traditional_automotive_exposure": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "autonomy_or_robotics_relevance": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "hiring_intent_strength": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "funding_or_budget_signal": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        }
+      },
+      "explanation": {
+        "fit": "unrealistic",
+        "supporting_capabilities": [
+          "technical_program_leadership",
+          "adas_autonomous_driving"
+        ],
+        "fit_signals": {
+          "autonomy_matches": [
+            "robotics"
+          ],
+          "domain_advantage_matches": [],
+          "delivery_matches": [],
+          "engineering_mismatch": [
+            "robotics architect"
+          ],
+          "unsupported_leadership": []
+        },
+        "gaps": {
+          "direct_professional_robotics_missing": "Direct professional robotics experience is not evidenced; vehicle integration is transferable.",
+          "perception_planning_control_missing": "Specialist perception/planning/control engineering is not evidenced.",
+          "robot_hardware_missing": "Robot hardware or mechatronics engineering ownership is not evidenced.",
+          "engineering_heavy_role": "Role requires specialist engineering beyond supported evidence.",
+          "cold_access": "No documented referral, hiring-manager contact or warm access.",
+          "unsupported_role_transition": "Role requirements lack a supported direct, adjacent or selective bridge."
+        },
+        "location": {
+          "location_fit": 100.0,
+          "location_matches": [
+            "berlin"
+          ]
+        },
+        "access": "cold",
+        "traditional_automotive_exposure": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "missing_market_evidence": [
+          "employer_segment",
+          "traditional_automotive_exposure",
+          "autonomy_or_robotics_relevance",
+          "hiring_intent_strength",
+          "funding_or_budget_signal"
+        ],
+        "recommended_action": "SKIP"
+      },
+      "title": "Senior Robotics Architect",
+      "career_lane": "autonomy_robotics",
+      "career_lane_label": "Autonomous Systems Deployment & Technical Program Leadership",
+      "domain_matches": [
+        "robotics"
+      ],
+      "location_matches": [
+        "berlin"
+      ],
+      "lane_score": 1,
+      "lane_confidence": "low",
+      "runner_up_lane": "technology_programs",
+      "runner_up_score": 0,
+      "constraint_action": "SKIP",
+      "boosters": [
+        {
+          "constraint": "berlin_or_remote_germany",
+          "section": "location",
+          "severity": "positive",
+          "action": "BOOST",
+          "reason": "Strong location fit.",
+          "matches": [
+            "berlin"
+          ]
+        },
+        {
+          "constraint": "robotics",
+          "section": "industry",
+          "severity": "positive",
+          "action": "BOOST",
+          "reason": "Strategic target industry when role content matches transferable capabilities.",
+          "matches": [
+            "robotics"
+          ]
+        }
+      ],
+      "company_name": "Example Robotics",
+      "network_access": 0.0,
+      "relationship_level": "none",
+      "strategic_relevance": "unknown",
+      "known_company": false,
+      "high_risks": [],
+      "hard_skips": [
+        {
+          "constraint": "unsupported_role_transition",
+          "reason": "Role requirements lack a supported direct, adjacent or selective bridge.",
+          "severity": "high",
+          "action": "SKIP",
+          "section": "career_strategy",
+          "matches": []
+        }
+      ],
+      "reviews": [
+        {
+          "constraint": "direct_professional_robotics_missing",
+          "reason": "Direct professional robotics experience is not evidenced; vehicle integration is transferable.",
+          "severity": "medium",
+          "action": "REVIEW",
+          "matches": [],
+          "section": "career_strategy"
+        },
+        {
+          "constraint": "perception_planning_control_missing",
+          "reason": "Specialist perception/planning/control engineering is not evidenced.",
+          "severity": "medium",
+          "action": "REVIEW",
+          "matches": [],
+          "section": "career_strategy"
+        },
+        {
+          "constraint": "robot_hardware_missing",
+          "reason": "Robot hardware or mechatronics engineering ownership is not evidenced.",
+          "severity": "medium",
+          "action": "REVIEW",
+          "matches": [],
+          "section": "career_strategy"
+        },
+        {
+          "constraint": "engineering_heavy_role",
+          "reason": "Role requires specialist engineering beyond supported evidence.",
+          "severity": "medium",
+          "action": "REVIEW",
+          "matches": [],
+          "section": "career_strategy"
+        },
+        {
+          "constraint": "cold_access",
+          "reason": "No documented referral, hiring-manager contact or warm access.",
+          "severity": "medium",
+          "action": "REVIEW",
+          "matches": [],
+          "section": "career_strategy"
+        }
+      ],
+      "scores": {
+        "career_lane_fit": 5,
+        "capability_fit": 25,
+        "domain_fit": 20.8,
+        "location_fit": 100.0,
+        "network_access": 0.0,
+        "evidence_strength": 25
+      },
+      "matched_capabilities": [
+        {
+          "capability": "technical_program_leadership",
+          "strength": 5,
+          "category": "transferable",
+          "evidence": [
+            "20+ years of experience in complex automotive and technology programs",
+            "program leadership across Germany, Europe and China",
+            "coordination of engineering, suppliers, brands and corporate functions",
+            "milestone, risk, action and delivery management",
+            "executive steering and decision preparation"
+          ],
+          "matches": [
+            "robotics"
+          ]
+        },
+        {
+          "capability": "adas_autonomous_driving",
+          "strength": 5,
+          "category": "transferable",
+          "evidence": [
+            "ADAS and automated-driving programs",
+            "automated parking",
+            "vehicle software",
+            "autonomous-driving proof-of-concept work",
+            "coordination across architecture, engineering, testing and suppliers"
+          ],
+          "matches": [
+            "robotics"
+          ]
+        }
+      ],
+      "opportunity_score": 24.4,
+      "evidence_details": [
+        {
+          "capability": "technical_program_leadership",
+          "strength": 5,
+          "category": "transferable",
+          "category_weight": 0.8,
+          "weighted_strength": 80.0
+        },
+        {
+          "capability": "adas_autonomous_driving",
+          "strength": 5,
+          "category": "transferable",
+          "category_weight": 0.8,
+          "weighted_strength": 80.0
+        }
+      ],
+      "recommendation": "SKIP"
+    }
+  },
+  {
+    "key": "here",
+    "assessment": {
+      "transition": "direct",
+      "access_type": "cold",
+      "market_evidence": {
+        "employer_segment": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "traditional_automotive_exposure": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "autonomy_or_robotics_relevance": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "hiring_intent_strength": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "funding_or_budget_signal": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        }
+      },
+      "explanation": {
+        "fit": "direct",
+        "supporting_capabilities": [
+          "technical_program_leadership",
+          "adas_autonomous_driving",
+          "product_delivery"
+        ],
+        "fit_signals": {
+          "autonomy_matches": [],
+          "domain_advantage_matches": [
+            "ADAS"
+          ],
+          "delivery_matches": [
+            "program",
+            "integration",
+            "delivery",
+            "solution lead"
+          ],
+          "engineering_mismatch": [],
+          "unsupported_leadership": []
+        },
+        "gaps": {
+          "commercial_ownership_needs_evidence": "Commercial/pre-sales ownership needs evidence; stakeholder coordination is not sales ownership.",
+          "cold_access": "No documented referral, hiring-manager contact or warm access."
+        },
+        "location": {
+          "location_fit": 100.0,
+          "location_matches": [
+            "berlin"
+          ]
+        },
+        "access": "cold",
+        "traditional_automotive_exposure": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "missing_market_evidence": [
+          "employer_segment",
+          "traditional_automotive_exposure",
+          "autonomy_or_robotics_relevance",
+          "hiring_intent_strength",
+          "funding_or_budget_signal"
+        ],
+        "recommended_action": "NETWORK FIRST"
+      },
+      "title": "Solution Lead Professional Services ADAS/AD EMEA",
+      "career_lane": "technology_programs",
+      "career_lane_label": "ADAS/AD, Vehicle Software & Mobility Solution Delivery",
+      "domain_matches": [
+        "AD",
+        "ADAS"
+      ],
+      "location_matches": [
+        "berlin"
+      ],
+      "lane_score": 6,
+      "lane_confidence": "high",
+      "runner_up_lane": "autonomy_robotics",
+      "runner_up_score": 0,
+      "constraint_action": "CLEAR",
+      "boosters": [
+        {
+          "constraint": "berlin_or_remote_germany",
+          "section": "location",
+          "severity": "positive",
+          "action": "BOOST",
+          "reason": "Strong location fit.",
+          "matches": [
+            "berlin"
+          ]
+        },
+        {
+          "constraint": "adas_automated_driving",
+          "section": "autonomy_robotics",
+          "severity": "positive",
+          "action": "BOOST",
+          "reason": "Direct professional experience.",
+          "matches": [
+            "adas"
+          ]
+        }
+      ],
+      "company_name": "HERE",
+      "network_access": 0.0,
+      "relationship_level": "none",
+      "strategic_relevance": "unknown",
+      "known_company": false,
+      "high_risks": [],
+      "hard_skips": [],
+      "reviews": [
+        {
+          "constraint": "commercial_ownership_needs_evidence",
+          "reason": "Commercial/pre-sales ownership needs evidence; stakeholder coordination is not sales ownership.",
+          "severity": "medium",
+          "action": "REVIEW",
+          "matches": [],
+          "section": "career_strategy"
+        },
+        {
+          "constraint": "cold_access",
+          "reason": "No documented referral, hiring-manager contact or warm access.",
+          "severity": "medium",
+          "action": "REVIEW",
+          "matches": [],
+          "section": "career_strategy"
+        }
+      ],
+      "scores": {
+        "career_lane_fit": 85,
+        "capability_fit": 93.3,
+        "domain_fit": 85,
+        "location_fit": 100.0,
+        "network_access": 0.0,
+        "evidence_strength": 88.0
+      },
+      "matched_capabilities": [
+        {
+          "capability": "technical_program_leadership",
+          "strength": 5,
+          "category": "core",
+          "evidence": [
+            "20+ years of experience in complex automotive and technology programs",
+            "program leadership across Germany, Europe and China",
+            "coordination of engineering, suppliers, brands and corporate functions",
+            "milestone, risk, action and delivery management",
+            "executive steering and decision preparation"
+          ],
+          "matches": [
+            "delivery"
+          ]
+        },
+        {
+          "capability": "adas_autonomous_driving",
+          "strength": 5,
+          "category": "domain",
+          "evidence": [
+            "ADAS and automated-driving programs",
+            "automated parking",
+            "vehicle software",
+            "autonomous-driving proof-of-concept work",
+            "coordination across architecture, engineering, testing and suppliers"
+          ],
+          "matches": [
+            "adas"
+          ]
+        },
+        {
+          "capability": "product_delivery",
+          "strength": 4,
+          "category": "transferable",
+          "evidence": [
+            "requirements and dependency management",
+            "software\u2013physical-product integration and safety-critical software delivery",
+            "human-machine interaction and validation readiness",
+            "proof-of-concept delivery",
+            "Scrum Master experience",
+            "technical program execution",
+            "cross-functional delivery",
+            "coordination of product and engineering stakeholders"
+          ],
+          "matches": [
+            "solution delivery"
+          ]
+        }
+      ],
+      "opportunity_score": 80.5,
+      "evidence_details": [
+        {
+          "capability": "technical_program_leadership",
+          "strength": 5,
+          "category": "core",
+          "category_weight": 1.0,
+          "weighted_strength": 100.0
+        },
+        {
+          "capability": "adas_autonomous_driving",
+          "strength": 5,
+          "category": "domain",
+          "category_weight": 1.0,
+          "weighted_strength": 100.0
+        },
+        {
+          "capability": "product_delivery",
+          "strength": 4,
+          "category": "transferable",
+          "category_weight": 0.8,
+          "weighted_strength": 64.0
+        }
+      ],
+      "recommendation": "NETWORK_FIRST"
+    }
+  },
+  {
+    "key": "cariad",
+    "assessment": {
+      "transition": "bridge",
+      "access_type": "warm",
+      "market_evidence": {
+        "employer_segment": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "traditional_automotive_exposure": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "autonomy_or_robotics_relevance": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "hiring_intent_strength": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "funding_or_budget_signal": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        }
+      },
+      "explanation": {
+        "fit": "bridge",
+        "supporting_capabilities": [
+          "technical_program_leadership",
+          "product_delivery",
+          "ai_data_transformation"
+        ],
+        "fit_signals": {
+          "autonomy_matches": [],
+          "domain_advantage_matches": [
+            "automotive"
+          ],
+          "delivery_matches": [
+            "delivery",
+            "reporting specialist",
+            "adoption"
+          ],
+          "engineering_mismatch": [],
+          "unsupported_leadership": []
+        },
+        "gaps": {
+          "production_ai_platform_missing": "Production AI/data-platform ownership is not evidenced.",
+          "cloud_mlops_depth_missing": "Deep DevOps/MLOps/cloud architecture experience is not evidenced."
+        },
+        "location": {
+          "location_fit": 100.0,
+          "location_matches": [
+            "berlin"
+          ]
+        },
+        "access": "warm",
+        "traditional_automotive_exposure": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "missing_market_evidence": [
+          "employer_segment",
+          "traditional_automotive_exposure",
+          "autonomy_or_robotics_relevance",
+          "hiring_intent_strength",
+          "funding_or_budget_signal"
+        ],
+        "recommended_action": "APPLY"
+      },
+      "title": "Internal A.I. Reporting Specialist",
+      "career_lane": "ai_data_transformation",
+      "career_lane_label": "AI-Enabled Transformation, Reporting & Data Products",
+      "domain_matches": [
+        "A.I.",
+        "AI",
+        "data",
+        "reporting"
+      ],
+      "location_matches": [
+        "berlin"
+      ],
+      "lane_score": 10,
+      "lane_confidence": "high",
+      "runner_up_lane": "technology_programs",
+      "runner_up_score": 1,
+      "constraint_action": "CLEAR",
+      "boosters": [
+        {
+          "constraint": "berlin_or_remote_germany",
+          "section": "location",
+          "severity": "positive",
+          "action": "BOOST",
+          "reason": "Strong location fit.",
+          "matches": [
+            "berlin"
+          ]
+        },
+        {
+          "constraint": "ai_transformation",
+          "section": "ai_data",
+          "severity": "positive",
+          "action": "BOOST",
+          "reason": "Selective bridge only with domain, access, product/adoption or delivery support.",
+          "matches": [
+            "ai adoption"
+          ]
+        }
+      ],
+      "company_name": "CARIAD",
+      "network_access": 80.0,
+      "relationship_level": "internal_team_access",
+      "strategic_relevance": "low",
+      "known_company": true,
+      "high_risks": [],
+      "hard_skips": [],
+      "reviews": [
+        {
+          "constraint": "production_ai_platform_missing",
+          "reason": "Production AI/data-platform ownership is not evidenced.",
+          "severity": "medium",
+          "action": "REVIEW",
+          "matches": [],
+          "section": "career_strategy"
+        },
+        {
+          "constraint": "cloud_mlops_depth_missing",
+          "reason": "Deep DevOps/MLOps/cloud architecture experience is not evidenced.",
+          "severity": "medium",
+          "action": "REVIEW",
+          "matches": [],
+          "section": "career_strategy"
+        }
+      ],
+      "scores": {
+        "career_lane_fit": 85,
+        "capability_fit": 80.0,
+        "domain_fit": 100,
+        "location_fit": 100.0,
+        "network_access": 80.0,
+        "evidence_strength": 66.7
+      },
+      "matched_capabilities": [
+        {
+          "capability": "technical_program_leadership",
+          "strength": 5,
+          "category": "core",
+          "evidence": [
+            "20+ years of experience in complex automotive and technology programs",
+            "program leadership across Germany, Europe and China",
+            "coordination of engineering, suppliers, brands and corporate functions",
+            "milestone, risk, action and delivery management",
+            "executive steering and decision preparation"
+          ],
+          "matches": [
+            "ai",
+            "delivery"
+          ]
+        },
+        {
+          "capability": "product_delivery",
+          "strength": 4,
+          "category": "transferable",
+          "evidence": [
+            "requirements and dependency management",
+            "software\u2013physical-product integration and safety-critical software delivery",
+            "human-machine interaction and validation readiness",
+            "proof-of-concept delivery",
+            "Scrum Master experience",
+            "technical program execution",
+            "cross-functional delivery",
+            "coordination of product and engineering stakeholders"
+          ],
+          "matches": [
+            "product"
+          ]
+        },
+        {
+          "capability": "ai_data_transformation",
+          "strength": 3,
+          "category": "emerging",
+          "evidence": [
+            "AI and machine-learning upskilling",
+            "MLOps projects",
+            "data-science pipeline projects",
+            "CarLover, HR knowledge agent and AI-reporting architecture prototypes",
+            "Python/Pandas and ML pipeline projects",
+            "generative-AI experimentation"
+          ],
+          "matches": [
+            "ai",
+            "ai adoption",
+            "data"
+          ]
+        }
+      ],
+      "opportunity_score": 84.3,
+      "evidence_details": [
+        {
+          "capability": "technical_program_leadership",
+          "strength": 5,
+          "category": "core",
+          "category_weight": 1.0,
+          "weighted_strength": 100.0
+        },
+        {
+          "capability": "product_delivery",
+          "strength": 4,
+          "category": "transferable",
+          "category_weight": 0.8,
+          "weighted_strength": 64.0
+        },
+        {
+          "capability": "ai_data_transformation",
+          "strength": 3,
+          "category": "emerging",
+          "category_weight": 0.6,
+          "weighted_strength": 36.0
+        }
+      ],
+      "recommendation": "APPLY_NOW"
+    }
+  },
+  {
+    "key": "enterprise_ai",
+    "assessment": {
+      "transition": "unrealistic",
+      "access_type": "cold",
+      "market_evidence": {
+        "employer_segment": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "traditional_automotive_exposure": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "autonomy_or_robotics_relevance": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "hiring_intent_strength": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "funding_or_budget_signal": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        }
+      },
+      "explanation": {
+        "fit": "unrealistic",
+        "supporting_capabilities": [
+          "technical_program_leadership",
+          "executive_stakeholder_management",
+          "technical_business_translation",
+          "transformation_execution",
+          "ai_data_transformation",
+          "mlops",
+          "strategy"
+        ],
+        "fit_signals": {
+          "autonomy_matches": [],
+          "domain_advantage_matches": [],
+          "delivery_matches": [],
+          "engineering_mismatch": [],
+          "unsupported_leadership": [
+            "head of enterprise AI",
+            "production AI transformations"
+          ]
+        },
+        "gaps": {
+          "enterprise_ai_ownership_missing": "Commercial enterprise AI transformation ownership is not evidenced.",
+          "cold_access": "No documented referral, hiring-manager contact or warm access.",
+          "unsupported_role_transition": "Role requirements lack a supported direct, adjacent or selective bridge."
+        },
+        "location": {
+          "location_fit": 100.0,
+          "location_matches": [
+            "berlin"
+          ]
+        },
+        "access": "cold",
+        "traditional_automotive_exposure": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "missing_market_evidence": [
+          "employer_segment",
+          "traditional_automotive_exposure",
+          "autonomy_or_robotics_relevance",
+          "hiring_intent_strength",
+          "funding_or_budget_signal"
+        ],
+        "recommended_action": "SKIP"
+      },
+      "title": "Head of Enterprise AI Transformation",
+      "career_lane": "ai_data_transformation",
+      "career_lane_label": "AI-Enabled Transformation, Reporting & Data Products",
+      "domain_matches": [
+        "AI"
+      ],
+      "location_matches": [
+        "berlin"
+      ],
+      "lane_score": 3,
+      "lane_confidence": "medium",
+      "runner_up_lane": "strategy_operations",
+      "runner_up_score": 1,
+      "constraint_action": "SKIP",
+      "boosters": [
+        {
+          "constraint": "berlin_or_remote_germany",
+          "section": "location",
+          "severity": "positive",
+          "action": "BOOST",
+          "reason": "Strong location fit.",
+          "matches": [
+            "berlin"
+          ]
+        },
+        {
+          "constraint": "ai_transformation",
+          "section": "ai_data",
+          "severity": "positive",
+          "action": "BOOST",
+          "reason": "Selective bridge only with domain, access, product/adoption or delivery support.",
+          "matches": [
+            "ai transformation"
+          ]
+        }
+      ],
+      "company_name": "Example Retail",
+      "network_access": 0.0,
+      "relationship_level": "none",
+      "strategic_relevance": "unknown",
+      "known_company": false,
+      "high_risks": [],
+      "hard_skips": [
+        {
+          "constraint": "unsupported_role_transition",
+          "reason": "Role requirements lack a supported direct, adjacent or selective bridge.",
+          "severity": "high",
+          "action": "SKIP",
+          "section": "career_strategy",
+          "matches": []
+        }
+      ],
+      "reviews": [
+        {
+          "constraint": "enterprise_ai_ownership_missing",
+          "reason": "Commercial enterprise AI transformation ownership is not evidenced.",
+          "severity": "medium",
+          "action": "REVIEW",
+          "matches": [],
+          "section": "career_strategy"
+        },
+        {
+          "constraint": "cold_access",
+          "reason": "No documented referral, hiring-manager contact or warm access.",
+          "severity": "medium",
+          "action": "REVIEW",
+          "matches": [],
+          "section": "career_strategy"
+        }
+      ],
+      "scores": {
+        "career_lane_fit": 15,
+        "capability_fit": 25,
+        "domain_fit": 41.7,
+        "location_fit": 100.0,
+        "network_access": 0.0,
+        "evidence_strength": 25
+      },
+      "matched_capabilities": [
+        {
+          "capability": "technical_program_leadership",
+          "strength": 5,
+          "category": "transferable",
+          "evidence": [
+            "20+ years of experience in complex automotive and technology programs",
+            "program leadership across Germany, Europe and China",
+            "coordination of engineering, suppliers, brands and corporate functions",
+            "milestone, risk, action and delivery management",
+            "executive steering and decision preparation"
+          ],
+          "matches": [
+            "ai"
+          ]
+        },
+        {
+          "capability": "executive_stakeholder_management",
+          "strength": 5,
+          "category": "transferable",
+          "evidence": [
+            "senior management communication",
+            "executive briefings and decision-ready reporting",
+            "cross-functional stakeholder alignment",
+            "collaboration across engineering, suppliers and corporate functions",
+            "management of complex organizational interfaces"
+          ],
+          "matches": [
+            "transformation"
+          ]
+        },
+        {
+          "capability": "technical_business_translation",
+          "strength": 5,
+          "category": "transferable",
+          "evidence": [
+            "translating technical topics into management-ready decisions",
+            "executive presentations",
+            "structuring complex information",
+            "aligning business and engineering stakeholders",
+            "decision and action tracking"
+          ],
+          "matches": [
+            "transformation"
+          ]
+        },
+        {
+          "capability": "transformation_execution",
+          "strength": 4,
+          "category": "transferable",
+          "evidence": [
+            "organizational transformation",
+            "process improvement",
+            "governance design",
+            "cross-functional implementation",
+            "driving actions from decision to execution"
+          ],
+          "matches": [
+            "ai transformation"
+          ]
+        },
+        {
+          "capability": "ai_data_transformation",
+          "strength": 3,
+          "category": "emerging",
+          "evidence": [
+            "AI and machine-learning upskilling",
+            "MLOps projects",
+            "data-science pipeline projects",
+            "CarLover, HR knowledge agent and AI-reporting architecture prototypes",
+            "Python/Pandas and ML pipeline projects",
+            "generative-AI experimentation"
+          ],
+          "matches": [
+            "ai",
+            "ai transformation"
+          ]
+        },
+        {
+          "capability": "mlops",
+          "strength": 3,
+          "category": "emerging",
+          "evidence": [
+            "MLOps coursework and projects",
+            "model-pipeline experience",
+            "production-oriented ML learning"
+          ],
+          "matches": [
+            "ai transformation"
+          ]
+        },
+        {
+          "capability": "strategy",
+          "strength": 4,
+          "category": "transferable",
+          "evidence": [
+            "executive decision preparation",
+            "strategic program governance",
+            "management communication",
+            "transformation work"
+          ],
+          "matches": [
+            "transformation"
+          ]
+        }
+      ],
+      "opportunity_score": 30.0,
+      "evidence_details": [
+        {
+          "capability": "technical_program_leadership",
+          "strength": 5,
+          "category": "transferable",
+          "category_weight": 0.8,
+          "weighted_strength": 80.0
+        },
+        {
+          "capability": "executive_stakeholder_management",
+          "strength": 5,
+          "category": "transferable",
+          "category_weight": 0.8,
+          "weighted_strength": 80.0
+        },
+        {
+          "capability": "technical_business_translation",
+          "strength": 5,
+          "category": "transferable",
+          "category_weight": 0.8,
+          "weighted_strength": 80.0
+        },
+        {
+          "capability": "transformation_execution",
+          "strength": 4,
+          "category": "transferable",
+          "category_weight": 0.8,
+          "weighted_strength": 64.0
+        },
+        {
+          "capability": "ai_data_transformation",
+          "strength": 3,
+          "category": "emerging",
+          "category_weight": 0.6,
+          "weighted_strength": 36.0
+        },
+        {
+          "capability": "mlops",
+          "strength": 3,
+          "category": "emerging",
+          "category_weight": 0.6,
+          "weighted_strength": 36.0
+        },
+        {
+          "capability": "strategy",
+          "strength": 4,
+          "category": "transferable",
+          "category_weight": 0.8,
+          "weighted_strength": 64.0
+        }
+      ],
+      "recommendation": "SKIP"
+    }
+  },
+  {
+    "key": "founder",
+    "assessment": {
+      "transition": "unrealistic",
+      "access_type": "cold",
+      "market_evidence": {
+        "employer_segment": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "traditional_automotive_exposure": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "autonomy_or_robotics_relevance": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "hiring_intent_strength": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "funding_or_budget_signal": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        }
+      },
+      "explanation": {
+        "fit": "unrealistic",
+        "supporting_capabilities": [],
+        "fit_signals": {
+          "autonomy_matches": [],
+          "domain_advantage_matches": [],
+          "delivery_matches": [],
+          "engineering_mismatch": [],
+          "unsupported_leadership": []
+        },
+        "gaps": {
+          "seniority_mismatch": "Role may undervalue 20+ years of seniority.",
+          "cold_access": "No documented referral, hiring-manager contact or warm access.",
+          "unsupported_role_transition": "Role requirements lack a supported direct, adjacent or selective bridge."
+        },
+        "location": {
+          "location_fit": 100.0,
+          "location_matches": [
+            "berlin"
+          ]
+        },
+        "access": "cold",
+        "traditional_automotive_exposure": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "missing_market_evidence": [
+          "employer_segment",
+          "traditional_automotive_exposure",
+          "autonomy_or_robotics_relevance",
+          "hiring_intent_strength",
+          "funding_or_budget_signal"
+        ],
+        "recommended_action": "SKIP"
+      },
+      "title": "Founder\u2019s Associate",
+      "career_lane": "autonomy_robotics",
+      "career_lane_label": "Autonomous Systems Deployment & Technical Program Leadership",
+      "domain_matches": [],
+      "location_matches": [
+        "berlin"
+      ],
+      "lane_score": 0,
+      "lane_confidence": "low",
+      "runner_up_lane": "technology_programs",
+      "runner_up_score": 0,
+      "constraint_action": "SKIP",
+      "boosters": [
+        {
+          "constraint": "berlin_or_remote_germany",
+          "section": "location",
+          "severity": "positive",
+          "action": "BOOST",
+          "reason": "Strong location fit.",
+          "matches": [
+            "berlin"
+          ]
+        }
+      ],
+      "company_name": "Example Retail",
+      "network_access": 0.0,
+      "relationship_level": "none",
+      "strategic_relevance": "unknown",
+      "known_company": false,
+      "high_risks": [],
+      "hard_skips": [
+        {
+          "constraint": "unsupported_role_transition",
+          "reason": "Role requirements lack a supported direct, adjacent or selective bridge.",
+          "severity": "high",
+          "action": "SKIP",
+          "section": "career_strategy",
+          "matches": []
+        }
+      ],
+      "reviews": [
+        {
+          "constraint": "seniority_mismatch",
+          "reason": "Role may undervalue 20+ years of seniority.",
+          "severity": "medium",
+          "action": "REVIEW",
+          "matches": [],
+          "section": "career_strategy"
+        },
+        {
+          "constraint": "cold_access",
+          "reason": "No documented referral, hiring-manager contact or warm access.",
+          "severity": "medium",
+          "action": "REVIEW",
+          "matches": [],
+          "section": "career_strategy"
+        }
+      ],
+      "scores": {
+        "career_lane_fit": 0,
+        "capability_fit": 0,
+        "domain_fit": 0.0,
+        "location_fit": 100.0,
+        "network_access": 0.0,
+        "evidence_strength": 0.0
+      },
+      "matched_capabilities": [],
+      "opportunity_score": 10.0,
+      "evidence_details": [],
+      "recommendation": "SKIP"
+    }
+  },
+  {
+    "key": "cos",
+    "assessment": {
+      "transition": "adjacent",
+      "access_type": "cold",
+      "market_evidence": {
+        "employer_segment": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "traditional_automotive_exposure": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "autonomy_or_robotics_relevance": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "hiring_intent_strength": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "funding_or_budget_signal": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        }
+      },
+      "explanation": {
+        "fit": "adjacent",
+        "supporting_capabilities": [
+          "technical_program_leadership",
+          "adas_autonomous_driving",
+          "strategy"
+        ],
+        "fit_signals": {
+          "autonomy_matches": [
+            "autonomous"
+          ],
+          "domain_advantage_matches": [],
+          "delivery_matches": [
+            "program",
+            "delivery"
+          ],
+          "engineering_mismatch": [],
+          "unsupported_leadership": []
+        },
+        "gaps": {
+          "cold_access": "No documented referral, hiring-manager contact or warm access."
+        },
+        "location": {
+          "location_fit": 100.0,
+          "location_matches": [
+            "berlin"
+          ]
+        },
+        "access": "cold",
+        "traditional_automotive_exposure": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "missing_market_evidence": [
+          "employer_segment",
+          "traditional_automotive_exposure",
+          "autonomy_or_robotics_relevance",
+          "hiring_intent_strength",
+          "funding_or_budget_signal"
+        ],
+        "recommended_action": "NETWORK FIRST"
+      },
+      "title": "Chief of Staff Autonomous Systems",
+      "career_lane": "autonomy_robotics",
+      "career_lane_label": "Autonomous Systems Deployment & Technical Program Leadership",
+      "domain_matches": [
+        "autonomous"
+      ],
+      "location_matches": [
+        "berlin"
+      ],
+      "lane_score": 3,
+      "lane_confidence": "low",
+      "runner_up_lane": "ai_data_transformation",
+      "runner_up_score": 2,
+      "constraint_action": "CLEAR",
+      "boosters": [
+        {
+          "constraint": "berlin_or_remote_germany",
+          "section": "location",
+          "severity": "positive",
+          "action": "BOOST",
+          "reason": "Strong location fit.",
+          "matches": [
+            "berlin"
+          ]
+        },
+        {
+          "constraint": "chief_of_staff_technical",
+          "section": "strategy_operations",
+          "severity": "positive",
+          "action": "BOOST",
+          "reason": "Strong potential fit when connected to technology, transformation or engineering organizations.",
+          "matches": [
+            "chief of staff"
+          ]
+        }
+      ],
+      "company_name": "Example Robotics",
+      "network_access": 0.0,
+      "relationship_level": "none",
+      "strategic_relevance": "unknown",
+      "known_company": false,
+      "high_risks": [],
+      "hard_skips": [],
+      "reviews": [
+        {
+          "constraint": "cold_access",
+          "reason": "No documented referral, hiring-manager contact or warm access.",
+          "severity": "medium",
+          "action": "REVIEW",
+          "matches": [],
+          "section": "career_strategy"
+        }
+      ],
+      "scores": {
+        "career_lane_fit": 85,
+        "capability_fit": 93.3,
+        "domain_fit": 85,
+        "location_fit": 100.0,
+        "network_access": 0.0,
+        "evidence_strength": 81.3
+      },
+      "matched_capabilities": [
+        {
+          "capability": "technical_program_leadership",
+          "strength": 5,
+          "category": "core",
+          "evidence": [
+            "20+ years of experience in complex automotive and technology programs",
+            "program leadership across Germany, Europe and China",
+            "coordination of engineering, suppliers, brands and corporate functions",
+            "milestone, risk, action and delivery management",
+            "executive steering and decision preparation"
+          ],
+          "matches": [
+            "delivery",
+            "technical program"
+          ]
+        },
+        {
+          "capability": "adas_autonomous_driving",
+          "strength": 5,
+          "category": "transferable",
+          "evidence": [
+            "ADAS and automated-driving programs",
+            "automated parking",
+            "vehicle software",
+            "autonomous-driving proof-of-concept work",
+            "coordination across architecture, engineering, testing and suppliers"
+          ],
+          "matches": [
+            "autonomous systems"
+          ]
+        },
+        {
+          "capability": "strategy",
+          "strength": 4,
+          "category": "transferable",
+          "evidence": [
+            "executive decision preparation",
+            "strategic program governance",
+            "management communication",
+            "transformation work"
+          ],
+          "matches": [
+            "chief of staff"
+          ]
+        }
+      ],
+      "opportunity_score": 79.5,
+      "evidence_details": [
+        {
+          "capability": "technical_program_leadership",
+          "strength": 5,
+          "category": "core",
+          "category_weight": 1.0,
+          "weighted_strength": 100.0
+        },
+        {
+          "capability": "adas_autonomous_driving",
+          "strength": 5,
+          "category": "transferable",
+          "category_weight": 0.8,
+          "weighted_strength": 80.0
+        },
+        {
+          "capability": "strategy",
+          "strength": 4,
+          "category": "transferable",
+          "category_weight": 0.8,
+          "weighted_strength": 64.0
+        }
+      ],
+      "recommendation": "NETWORK_FIRST"
+    }
+  },
+  {
+    "key": "munich",
+    "assessment": {
+      "transition": "direct",
+      "access_type": "cold",
+      "market_evidence": {
+        "employer_segment": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "traditional_automotive_exposure": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "autonomy_or_robotics_relevance": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "hiring_intent_strength": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "funding_or_budget_signal": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        }
+      },
+      "explanation": {
+        "fit": "direct",
+        "supporting_capabilities": [
+          "technical_program_leadership",
+          "adas_autonomous_driving"
+        ],
+        "fit_signals": {
+          "autonomy_matches": [],
+          "domain_advantage_matches": [
+            "ADAS"
+          ],
+          "delivery_matches": [
+            "program"
+          ],
+          "engineering_mismatch": [],
+          "unsupported_leadership": []
+        },
+        "gaps": {
+          "cold_access": "No documented referral, hiring-manager contact or warm access.",
+          "relocation_conflict": "Required presence conflicts with Berlin-region constraints.",
+          "relocation_required": "Candidate does not currently want to relocate.",
+          "location_conflict": "Required presence conflicts with location constraints."
+        },
+        "location": {
+          "location_fit": 0.0,
+          "location_matches": [
+            "location_conflict"
+          ],
+          "hard_conflict": true
+        },
+        "access": "cold",
+        "traditional_automotive_exposure": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "missing_market_evidence": [
+          "employer_segment",
+          "traditional_automotive_exposure",
+          "autonomy_or_robotics_relevance",
+          "hiring_intent_strength",
+          "funding_or_budget_signal"
+        ],
+        "recommended_action": "SKIP"
+      },
+      "title": "ADAS Program Lead",
+      "career_lane": "autonomy_robotics",
+      "career_lane_label": "Autonomous Systems Deployment & Technical Program Leadership",
+      "domain_matches": [],
+      "location_matches": [
+        "location_conflict"
+      ],
+      "lane_score": 2,
+      "lane_confidence": "low",
+      "runner_up_lane": "technology_programs",
+      "runner_up_score": 1,
+      "constraint_action": "SKIP",
+      "boosters": [
+        {
+          "constraint": "adas_automated_driving",
+          "section": "autonomy_robotics",
+          "severity": "positive",
+          "action": "BOOST",
+          "reason": "Direct professional experience.",
+          "matches": [
+            "adas"
+          ]
+        }
+      ],
+      "company_name": "Example Mobility",
+      "network_access": 0.0,
+      "relationship_level": "none",
+      "strategic_relevance": "unknown",
+      "known_company": false,
+      "high_risks": [],
+      "hard_skips": [
+        {
+          "constraint": "relocation_required",
+          "section": "location",
+          "severity": "high",
+          "action": "SKIP",
+          "reason": "Candidate does not currently want to relocate.",
+          "matches": [
+            "relocation required"
+          ]
+        },
+        {
+          "constraint": "location_conflict",
+          "reason": "Required presence conflicts with location constraints.",
+          "severity": "high",
+          "action": "SKIP",
+          "section": "career_strategy",
+          "matches": []
+        }
+      ],
+      "reviews": [
+        {
+          "constraint": "cold_access",
+          "reason": "No documented referral, hiring-manager contact or warm access.",
+          "severity": "medium",
+          "action": "REVIEW",
+          "matches": [],
+          "section": "career_strategy"
+        },
+        {
+          "constraint": "relocation_conflict",
+          "reason": "Required presence conflicts with Berlin-region constraints.",
+          "severity": "medium",
+          "action": "REVIEW",
+          "matches": [],
+          "section": "career_strategy"
+        }
+      ],
+      "scores": {
+        "career_lane_fit": 85,
+        "capability_fit": 100.0,
+        "domain_fit": 85,
+        "location_fit": 0.0,
+        "network_access": 0.0,
+        "evidence_strength": 100.0
+      },
+      "matched_capabilities": [
+        {
+          "capability": "technical_program_leadership",
+          "strength": 5,
+          "category": "core",
+          "evidence": [
+            "20+ years of experience in complex automotive and technology programs",
+            "program leadership across Germany, Europe and China",
+            "coordination of engineering, suppliers, brands and corporate functions",
+            "milestone, risk, action and delivery management",
+            "executive steering and decision preparation"
+          ],
+          "matches": [
+            "program lead"
+          ]
+        },
+        {
+          "capability": "adas_autonomous_driving",
+          "strength": 5,
+          "category": "domain",
+          "evidence": [
+            "ADAS and automated-driving programs",
+            "automated parking",
+            "vehicle software",
+            "autonomous-driving proof-of-concept work",
+            "coordination across architecture, engineering, testing and suppliers"
+          ],
+          "matches": [
+            "adas"
+          ]
+        }
+      ],
+      "opportunity_score": 74.0,
+      "evidence_details": [
+        {
+          "capability": "technical_program_leadership",
+          "strength": 5,
+          "category": "core",
+          "category_weight": 1.0,
+          "weighted_strength": 100.0
+        },
+        {
+          "capability": "adas_autonomous_driving",
+          "strength": 5,
+          "category": "domain",
+          "category_weight": 1.0,
+          "weighted_strength": 100.0
+        }
+      ],
+      "recommendation": "SKIP"
+    }
+  },
+  {
+    "key": "china",
+    "assessment": {
+      "transition": "unknown",
+      "access_type": "cold",
+      "market_evidence": {
+        "employer_segment": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "traditional_automotive_exposure": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "autonomy_or_robotics_relevance": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "hiring_intent_strength": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "funding_or_budget_signal": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        }
+      },
+      "explanation": {
+        "fit": "unknown",
+        "supporting_capabilities": [
+          "adas_autonomous_driving",
+          "international_cross_border"
+        ],
+        "fit_signals": {
+          "autonomy_matches": [],
+          "domain_advantage_matches": [
+            "ADAS"
+          ],
+          "delivery_matches": [],
+          "engineering_mismatch": [],
+          "unsupported_leadership": []
+        },
+        "gaps": {
+          "cold_access": "No documented referral, hiring-manager contact or warm access.",
+          "relocation_conflict": "Required presence conflicts with Berlin-region constraints.",
+          "relocation_required": "Candidate does not currently want to relocate.",
+          "china_based_role": "China-based relocation is currently not preferred.",
+          "location_conflict": "Required presence conflicts with location constraints."
+        },
+        "location": {
+          "location_fit": 0.0,
+          "location_matches": [
+            "location_conflict"
+          ],
+          "hard_conflict": true
+        },
+        "access": "cold",
+        "traditional_automotive_exposure": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "missing_market_evidence": [
+          "employer_segment",
+          "traditional_automotive_exposure",
+          "autonomy_or_robotics_relevance",
+          "hiring_intent_strength",
+          "funding_or_budget_signal"
+        ],
+        "recommended_action": "SKIP"
+      },
+      "title": "ADAS Leadership",
+      "career_lane": "technology_programs",
+      "career_lane_label": "ADAS/AD, Vehicle Software & Mobility Solution Delivery",
+      "domain_matches": [
+        "ADAS"
+      ],
+      "location_matches": [
+        "location_conflict"
+      ],
+      "lane_score": 1,
+      "lane_confidence": "low",
+      "runner_up_lane": "autonomy_robotics",
+      "runner_up_score": 0,
+      "constraint_action": "SKIP",
+      "boosters": [
+        {
+          "constraint": "adas_automated_driving",
+          "section": "autonomy_robotics",
+          "severity": "positive",
+          "action": "BOOST",
+          "reason": "Direct professional experience.",
+          "matches": [
+            "adas"
+          ]
+        }
+      ],
+      "company_name": "Example Mobility",
+      "network_access": 0.0,
+      "relationship_level": "none",
+      "strategic_relevance": "unknown",
+      "known_company": false,
+      "high_risks": [],
+      "hard_skips": [
+        {
+          "constraint": "relocation_required",
+          "section": "location",
+          "severity": "high",
+          "action": "SKIP",
+          "reason": "Candidate does not currently want to relocate.",
+          "matches": [
+            "relocation required"
+          ]
+        },
+        {
+          "constraint": "china_based_role",
+          "section": "location",
+          "severity": "high",
+          "action": "SKIP",
+          "reason": "China-based relocation is currently not preferred.",
+          "matches": [
+            "based in china"
+          ]
+        },
+        {
+          "constraint": "location_conflict",
+          "reason": "Required presence conflicts with location constraints.",
+          "severity": "high",
+          "action": "SKIP",
+          "section": "career_strategy",
+          "matches": []
+        }
+      ],
+      "reviews": [
+        {
+          "constraint": "cold_access",
+          "reason": "No documented referral, hiring-manager contact or warm access.",
+          "severity": "medium",
+          "action": "REVIEW",
+          "matches": [],
+          "section": "career_strategy"
+        },
+        {
+          "constraint": "relocation_conflict",
+          "reason": "Required presence conflicts with Berlin-region constraints.",
+          "severity": "medium",
+          "action": "REVIEW",
+          "matches": [],
+          "section": "career_strategy"
+        }
+      ],
+      "scores": {
+        "career_lane_fit": 5,
+        "capability_fit": 100.0,
+        "domain_fit": 35.7,
+        "location_fit": 0.0,
+        "network_access": 0.0,
+        "evidence_strength": 95.0
+      },
+      "matched_capabilities": [
+        {
+          "capability": "adas_autonomous_driving",
+          "strength": 5,
+          "category": "domain",
+          "evidence": [
+            "ADAS and automated-driving programs",
+            "automated parking",
+            "vehicle software",
+            "autonomous-driving proof-of-concept work",
+            "coordination across architecture, engineering, testing and suppliers"
+          ],
+          "matches": [
+            "adas"
+          ]
+        },
+        {
+          "capability": "international_cross_border",
+          "strength": 5,
+          "category": "differentiator",
+          "evidence": [
+            "professional experience in Germany and China",
+            "work across European and Chinese organizations",
+            "Germany-China stakeholder coordination",
+            "cross-cultural communication",
+            "international program execution"
+          ],
+          "matches": [
+            "china"
+          ]
+        }
+      ],
+      "opportunity_score": 45.9,
+      "evidence_details": [
+        {
+          "capability": "adas_autonomous_driving",
+          "strength": 5,
+          "category": "domain",
+          "category_weight": 1.0,
+          "weighted_strength": 100.0
+        },
+        {
+          "capability": "international_cross_border",
+          "strength": 5,
+          "category": "differentiator",
+          "category_weight": 0.9,
+          "weighted_strength": 90.0
+        }
+      ],
+      "recommendation": "SKIP"
+    }
+  },
+  {
+    "key": "dx",
+    "assessment": {
+      "transition": "bridge",
+      "access_type": "referral-based",
+      "market_evidence": {
+        "employer_segment": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "traditional_automotive_exposure": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "autonomy_or_robotics_relevance": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "hiring_intent_strength": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "funding_or_budget_signal": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        }
+      },
+      "explanation": {
+        "fit": "bridge",
+        "supporting_capabilities": [
+          "product_delivery",
+          "ai_data_transformation",
+          "product_owner"
+        ],
+        "fit_signals": {
+          "autonomy_matches": [],
+          "domain_advantage_matches": [
+            "vehicle"
+          ],
+          "delivery_matches": [
+            "product owner"
+          ],
+          "engineering_mismatch": [],
+          "unsupported_leadership": []
+        },
+        "gaps": {
+          "several_years_formal_product_owner_required": "Candidate has product-adjacent experience but not a long formal PO track record."
+        },
+        "location": {
+          "location_fit": 100.0,
+          "location_matches": [
+            "berlin"
+          ]
+        },
+        "access": "referral-based",
+        "traditional_automotive_exposure": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "missing_market_evidence": [
+          "employer_segment",
+          "traditional_automotive_exposure",
+          "autonomy_or_robotics_relevance",
+          "hiring_intent_strength",
+          "funding_or_budget_signal"
+        ],
+        "recommended_action": "NETWORK FIRST"
+      },
+      "title": "Product Owner - Vehicle & Customer Analytics",
+      "career_lane": "ai_data_transformation",
+      "career_lane_label": "AI-Enabled Transformation, Reporting & Data Products",
+      "domain_matches": [
+        "analytics",
+        "data"
+      ],
+      "location_matches": [
+        "berlin"
+      ],
+      "lane_score": 4,
+      "lane_confidence": "medium",
+      "runner_up_lane": "autonomy_robotics",
+      "runner_up_score": 0,
+      "constraint_action": "HIGH_RISK",
+      "boosters": [
+        {
+          "constraint": "berlin_or_remote_germany",
+          "section": "location",
+          "severity": "positive",
+          "action": "BOOST",
+          "reason": "Strong location fit.",
+          "matches": [
+            "berlin"
+          ]
+        }
+      ],
+      "company_name": "dx.one",
+      "network_access": 90.0,
+      "relationship_level": "employee_referral",
+      "strategic_relevance": "low",
+      "known_company": true,
+      "high_risks": [
+        {
+          "constraint": "several_years_formal_product_owner_required",
+          "section": "product",
+          "severity": "high",
+          "action": "HIGH_RISK",
+          "reason": "Candidate has product-adjacent experience but not a long formal PO track record.",
+          "matches": [
+            "years of product owner experience"
+          ]
+        }
+      ],
+      "hard_skips": [],
+      "reviews": [],
+      "scores": {
+        "career_lane_fit": 85,
+        "capability_fit": 60.0,
+        "domain_fit": 85,
+        "location_fit": 100.0,
+        "network_access": 90.0,
+        "evidence_strength": 38.7
+      },
+      "matched_capabilities": [
+        {
+          "capability": "product_delivery",
+          "strength": 4,
+          "category": "transferable",
+          "evidence": [
+            "requirements and dependency management",
+            "software\u2013physical-product integration and safety-critical software delivery",
+            "human-machine interaction and validation readiness",
+            "proof-of-concept delivery",
+            "Scrum Master experience",
+            "technical program execution",
+            "cross-functional delivery",
+            "coordination of product and engineering stakeholders"
+          ],
+          "matches": [
+            "product",
+            "product requirements",
+            "requirements"
+          ]
+        },
+        {
+          "capability": "ai_data_transformation",
+          "strength": 3,
+          "category": "emerging",
+          "evidence": [
+            "AI and machine-learning upskilling",
+            "MLOps projects",
+            "data-science pipeline projects",
+            "CarLover, HR knowledge agent and AI-reporting architecture prototypes",
+            "Python/Pandas and ML pipeline projects",
+            "generative-AI experimentation"
+          ],
+          "matches": [
+            "analytics",
+            "customer analytics",
+            "data",
+            "data-driven"
+          ]
+        },
+        {
+          "capability": "product_owner",
+          "strength": 2,
+          "category": "adjacent",
+          "evidence": [
+            "experience working in agile and product environments",
+            "Scrum Master experience",
+            "cross-functional product delivery"
+          ],
+          "matches": [
+            "customer analytics",
+            "priorities",
+            "product owner",
+            "product requirements",
+            "use cases"
+          ]
+        }
+      ],
+      "opportunity_score": 73.8,
+      "evidence_details": [
+        {
+          "capability": "product_delivery",
+          "strength": 4,
+          "category": "transferable",
+          "category_weight": 0.8,
+          "weighted_strength": 64.0
+        },
+        {
+          "capability": "ai_data_transformation",
+          "strength": 3,
+          "category": "emerging",
+          "category_weight": 0.6,
+          "weighted_strength": 36.0
+        },
+        {
+          "capability": "product_owner",
+          "strength": 2,
+          "category": "adjacent",
+          "category_weight": 0.4,
+          "weighted_strength": 16.0
+        }
+      ],
+      "recommendation": "NETWORK_FIRST"
+    }
+  },
+  {
+    "key": "freenow",
+    "assessment": {
+      "transition": "adjacent",
+      "access_type": "warm",
+      "market_evidence": {
+        "employer_segment": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "traditional_automotive_exposure": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "autonomy_or_robotics_relevance": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "hiring_intent_strength": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "funding_or_budget_signal": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        }
+      },
+      "explanation": {
+        "fit": "adjacent",
+        "supporting_capabilities": [
+          "technical_program_leadership",
+          "adas_autonomous_driving",
+          "automotive_mobility",
+          "international_cross_border",
+          "mobility_service_deployment"
+        ],
+        "fit_signals": {
+          "autonomy_matches": [
+            "autonomous"
+          ],
+          "domain_advantage_matches": [
+            "mobility",
+            "vehicle"
+          ],
+          "delivery_matches": [
+            "partnership manager"
+          ],
+          "engineering_mismatch": [],
+          "unsupported_leadership": []
+        },
+        "gaps": {
+          "commercial_ownership_needs_evidence": "Commercial/pre-sales ownership needs evidence; stakeholder coordination is not sales ownership.",
+          "location_unknown": "Confirm Berlin-compatible presence and travel requirements."
+        },
+        "location": {
+          "location_fit": 60.0,
+          "location_matches": []
+        },
+        "access": "warm",
+        "traditional_automotive_exposure": {
+          "value": null,
+          "status": "unknown",
+          "evidence_source": null,
+          "evidence_freshness": null
+        },
+        "missing_market_evidence": [
+          "employer_segment",
+          "traditional_automotive_exposure",
+          "autonomy_or_robotics_relevance",
+          "hiring_intent_strength",
+          "funding_or_budget_signal"
+        ],
+        "recommended_action": "NETWORK FIRST"
+      },
+      "title": "Senior Autonomous Vehicle Partnership Manager",
+      "career_lane": "mobility_ecosystem",
+      "career_lane_label": "Mobility Ecosystem, Smart Mobility & Transport Technology",
+      "domain_matches": [
+        "autonomous mobility",
+        "mobility"
+      ],
+      "location_matches": [],
+      "lane_score": 2,
+      "lane_confidence": "low",
+      "runner_up_lane": "autonomy_robotics",
+      "runner_up_score": 1,
+      "constraint_action": "REVIEW",
+      "boosters": [
+        {
+          "constraint": "autonomous_mobility",
+          "section": "autonomy_robotics",
+          "severity": "positive",
+          "action": "BOOST",
+          "reason": "Strong domain and transferable capability fit.",
+          "matches": [
+            "autonomous mobility",
+            "autonomous vehicle"
+          ]
+        },
+        {
+          "constraint": "mobility",
+          "section": "industry",
+          "severity": "positive",
+          "action": "BOOST",
+          "reason": "Strong direct and transferable fit.",
+          "matches": [
+            "mobility"
+          ]
+        }
+      ],
+      "company_name": "FREENOW",
+      "network_access": 58.0,
+      "relationship_level": "warm_contact",
+      "strategic_relevance": "medium",
+      "known_company": true,
+      "high_risks": [],
+      "hard_skips": [],
+      "reviews": [
+        {
+          "constraint": "commercial_business_development",
+          "section": "commercial",
+          "severity": "high",
+          "action": "REVIEW",
+          "reason": "Role may be substantially more commercially oriented than the candidate's core program and operations background.",
+          "matches": [
+            "commercial ownership",
+            "business development",
+            "commercial relationships",
+            "negotiate business agreements"
+          ]
+        },
+        {
+          "constraint": "commercial_ownership_needs_evidence",
+          "reason": "Commercial/pre-sales ownership needs evidence; stakeholder coordination is not sales ownership.",
+          "severity": "medium",
+          "action": "REVIEW",
+          "matches": [],
+          "section": "career_strategy"
+        },
+        {
+          "constraint": "location_unknown",
+          "reason": "Confirm Berlin-compatible presence and travel requirements.",
+          "severity": "medium",
+          "action": "REVIEW",
+          "matches": [],
+          "section": "career_strategy"
+        }
+      ],
+      "scores": {
+        "career_lane_fit": 85,
+        "capability_fit": 96.0,
+        "domain_fit": 85,
+        "location_fit": 60.0,
+        "network_access": 58.0,
+        "evidence_strength": 82.8
+      },
+      "matched_capabilities": [
+        {
+          "capability": "technical_program_leadership",
+          "strength": 5,
+          "category": "transferable",
+          "evidence": [
+            "20+ years of experience in complex automotive and technology programs",
+            "program leadership across Germany, Europe and China",
+            "coordination of engineering, suppliers, brands and corporate functions",
+            "milestone, risk, action and delivery management",
+            "executive steering and decision preparation"
+          ],
+          "matches": [
+            "mobility"
+          ]
+        },
+        {
+          "capability": "adas_autonomous_driving",
+          "strength": 5,
+          "category": "domain",
+          "evidence": [
+            "ADAS and automated-driving programs",
+            "automated parking",
+            "vehicle software",
+            "autonomous-driving proof-of-concept work",
+            "coordination across architecture, engineering, testing and suppliers"
+          ],
+          "matches": [
+            "autonomous mobility",
+            "autonomous vehicle"
+          ]
+        },
+        {
+          "capability": "automotive_mobility",
+          "strength": 5,
+          "category": "transferable",
+          "evidence": [
+            "more than 20 years in automotive and mobility",
+            "experience across Germany, Europe and China",
+            "vehicle software and mobility programs",
+            "experience with OEM, supplier and brand interfaces"
+          ],
+          "matches": [
+            "autonomous mobility"
+          ]
+        },
+        {
+          "capability": "international_cross_border",
+          "strength": 5,
+          "category": "differentiator",
+          "evidence": [
+            "professional experience in Germany and China",
+            "work across European and Chinese organizations",
+            "Germany-China stakeholder coordination",
+            "cross-cultural communication",
+            "international program execution"
+          ],
+          "matches": [
+            "germany"
+          ]
+        },
+        {
+          "capability": "mobility_service_deployment",
+          "strength": 4,
+          "category": "transferable",
+          "evidence": [
+            "mobility and autonomous-driving program experience",
+            "vehicle integration, validation and deployment-readiness experience",
+            "understanding of service and system readiness",
+            "experience connecting technical maturity with operational decisions"
+          ],
+          "matches": [
+            "mobility operations"
+          ]
+        }
+      ],
+      "opportunity_score": 82.2,
+      "evidence_details": [
+        {
+          "capability": "technical_program_leadership",
+          "strength": 5,
+          "category": "transferable",
+          "category_weight": 0.8,
+          "weighted_strength": 80.0
+        },
+        {
+          "capability": "adas_autonomous_driving",
+          "strength": 5,
+          "category": "domain",
+          "category_weight": 1.0,
+          "weighted_strength": 100.0
+        },
+        {
+          "capability": "automotive_mobility",
+          "strength": 5,
+          "category": "transferable",
+          "category_weight": 0.8,
+          "weighted_strength": 80.0
+        },
+        {
+          "capability": "international_cross_border",
+          "strength": 5,
+          "category": "differentiator",
+          "category_weight": 0.9,
+          "weighted_strength": 90.0
+        },
+        {
+          "capability": "mobility_service_deployment",
+          "strength": 4,
+          "category": "transferable",
+          "category_weight": 0.8,
+          "weighted_strength": 64.0
+        }
+      ],
+      "recommendation": "NETWORK_FIRST"
+    }
+  }
+]

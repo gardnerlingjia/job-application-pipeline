@@ -21,212 +21,151 @@ location:
     - China-based roles should not be treated as preferred unless explicitly reviewed.
 
 career_lanes:
-
   autonomy_robotics:
-    label: Autonomy, Robotics & Intelligent Systems
+    label: Autonomous Systems Deployment & Technical Program Leadership
     priority: high
-
     role_keywords:
-      - technical program manager
-      - program manager
-      - senior program manager
-      - deployment
-      - deployment manager
-      - operations
-      - technical operations
-      - autonomous mobility
-      - autonomous vehicles
-      - autonomous driving
-      - ADAS
-      - automated driving
-      - autonomous systems
-      - robotics
-      - robotics deployment
-      - robot operations
-      - fleet operations
-      - fleet management
-      - field operations
-      - physical AI
-      - embodied AI
-      - intelligent systems
-      - perception
-      - simulation
-      - mobility service
-      - launch
-      - rollout
-      - implementation
-
+    - program manager
+    - technical program
+    - program lead
+    - deployment
+    - systems integration
+    - product delivery
+    - product operations
+    - fleet readiness
+    - fleet operations
+    - validation
+    - release program
+    - customer deployment
+    - technical solutions
     domain_keywords:
-      - autonomous vehicles
-      - autonomous mobility
-      - ADAS
-      - automated driving
-      - robotics
-      - humanoid robotics
-      - industrial robotics
-      - warehouse robotics
-      - logistics robotics
-      - autonomous systems
-      - physical AI
-      - embodied AI
-      - simulation
-      - perception
-      - fleet
-      - mobility
-
+    - autonomous
+    - robotics
+    - robot
+    - AMR
+    - warehouse automation
+    - logistics automation
+    - fleet orchestration
+    - simulation
+    - mapping
+    - sensor
+    - perception platform
+    - intelligent transportation
+    allocation_percent: 55
   technology_programs:
-    label: Technology Program, Product & Operations
+    label: ADAS/AD, Vehicle Software & Mobility Solution Delivery
     priority: high
-
     role_keywords:
-      - technical program manager
-      - senior technical program manager
-      - program manager
-      - senior program manager
-      - program lead
-      - product operations
-      - technical operations
-      - business operations
-      - delivery lead
-      - delivery manager
-      - transformation lead
-      - portfolio manager
-      - portfolio lead
-      - platform operations
-      - technology operations
-      - implementation lead
-      - implementation manager
-      - customer solutions
-      - solutions program manager
-      - solution delivery
-      - product delivery
-      - operational excellence
-      - program governance
-
+    - technical program manager
+    - solution lead
+    - delivery lead
+    - deployment
+    - launch
+    - vehicle integration
+    - solution delivery
+    - product operations
     domain_keywords:
-      - software
-      - technology
-      - SaaS
-      - platform
-      - digital product
-      - enterprise technology
-      - cloud
-      - AI
-      - data
-      - digital transformation
-      - software platform
-      - technology services
-
+    - ADAS
+    - AD
+    - automated driving
+    - vehicle software
+    - automotive
+    - infotainment
+    - mobility
+    allocation_percent: 25
   ai_data_transformation:
-    label: AI, Data Transformation & Delivery
+    label: AI-Enabled Transformation, Reporting & Data Products
     priority: medium_high
-
     role_keywords:
-      - AI program manager
-      - AI transformation
-      - AI transformation lead
-      - AI product operations
-      - AI program lead
-      - AI delivery lead
-      - data program manager
-      - data transformation
-      - AI solutions
-      - AI adoption
-      - AI enablement
-      - AI operations
-      - AI governance
-      - AI product manager
-      - AI portfolio manager
-      - data product operations
-      - machine learning program manager
-      - digital transformation manager
-
+    - product owner
+    - reporting specialist
+    - reporting product
+    - analytics product
+    - AI transformation
+    - AI adoption
+    - process transformation
+    - decision intelligence
+    - data program
+    - technical program
     domain_keywords:
-      - artificial intelligence
-      - machine learning
-      - generative AI
-      - LLM
-      - data
-      - MLOps
-      - analytics
-      - AI platform
-      - AI transformation
-      - AI adoption
-      - AI governance
-      - enterprise AI
-
+    - AI
+    - A.I.
+    - data
+    - analytics
+    - reporting
+    - machine learning
+    allocation_percent: 20
   strategy_operations:
+    classification_multiplier: 0.4
     label: Strategy, Executive & Transformation Operations
     priority: medium_high
-
     role_keywords:
-      - strategy and operations
-      - strategy operations
-      - chief of staff
-      - executive operations
-      - executive program manager
-      - transformation
-      - transformation manager
-      - transformation lead
-      - governance
-      - program governance
-      - strategic program
-      - strategic program manager
-      - business transformation
-      - organizational transformation
-      - portfolio governance
-      - management office
-      - executive office
-      - strategic initiatives
-      - operating model
-
+    - strategy and operations
+    - strategy operations
+    - chief of staff
+    - executive operations
+    - executive program manager
+    - transformation
+    - transformation manager
+    - transformation lead
+    - governance
+    - program governance
+    - strategic program
+    - strategic program manager
+    - business transformation
+    - organizational transformation
+    - portfolio governance
+    - management office
+    - executive office
+    - strategic initiatives
+    - operating model
     domain_keywords:
-      - strategy
-      - transformation
-      - governance
-      - executive operations
-      - organizational change
-      - operating model
-      - portfolio management
-      - business transformation
-
+    - strategy
+    - transformation
+    - governance
+    - executive operations
+    - organizational change
+    - operating model
+    - portfolio management
+    - business transformation
+    allocation_percent: 0
   mobility_ecosystem:
+    classification_multiplier: 0.4
     label: Mobility Ecosystem, Smart Mobility & Transport Technology
     priority: medium_high
-
     role_keywords:
-      - smart mobility
-      - mobility planning
-      - transport technology
-      - mobility simulation
-      - transport modeling
-      - autonomous mobility service
-      - mobility operations
-      - mobility program manager
-      - mobility strategy
-      - deployment manager
-      - service design
-      - fleet operations
-      - urban mobility
-      - transport operations
-      - mobility platform
-      - partnerships
-      - mobility partnerships
-
+    - smart mobility
+    - mobility planning
+    - transport technology
+    - mobility simulation
+    - transport modeling
+    - autonomous mobility service
+    - mobility operations
+    - mobility program manager
+    - mobility strategy
+    - deployment manager
+    - service design
+    - fleet operations
+    - urban mobility
+    - transport operations
+    - mobility platform
+    - partnerships
+    - mobility partnerships
     domain_keywords:
-      - mobility
-      - autonomous mobility
-      - public transport
-      - urban mobility
-      - smart city
-      - transport technology
-      - mobility simulation
-      - mobility service
-      - fleet
-      - ride hailing
-      - shared mobility
-      - multimodal transport
-      - smart infrastructure
+    - mobility
+    - autonomous mobility
+    - public transport
+    - urban mobility
+    - smart city
+    - transport technology
+    - mobility simulation
+    - mobility service
+    - fleet
+    - ride hailing
+    - shared mobility
+    - multimodal transport
+    - smart infrastructure
+    allocation_percent: 0
 
 international_profile:
 
@@ -371,3 +310,81 @@ search_strategy:
     - Roles requiring quota-carrying sales should be treated cautiously.
     - Networking potential is part of opportunity quality.
     - Companies can be strategically relevant even when there is no current suitable vacancy.
+
+strategy_policy:
+  positioning: "From automated vehicles to autonomous machines: program, product-delivery, integration and deployment leadership for autonomous physical systems."
+  # Allocations guide search effort; they are not capability-score multipliers.
+  autonomy_terms: [autonomous, robotics, robot, AMR, warehouse automation, logistics automation, fleet orchestration, simulation, mapping, sensor, intelligent transportation]
+  domain_advantage_terms: [automotive, mobility, vehicle, ADAS, industrial, manufacturing]
+  secondary_relevance_terms: [ADAS, automated driving, vehicle software, software, infotainment, mobility, data, autonomy]
+  ai_data_terms: [AI, A.I., analytics, reporting, data, machine learning]
+  delivery_terms: [program, deployment, integration, delivery, product owner, product operations, fleet operations, fleet readiness, customer deployment, partnership manager, solution lead, solutions lead, reporting specialist, adoption, process transformation]
+  executive_terms: [chief of staff, founder’s associate, "founder's associate", executive assistant]
+  engineering_title_terms: [perception engineer, planning engineer, controls engineer, control engineer, mechatronics, robotics architect, robotics engineer, robotics software engineer, robotics hardware engineer, robotics software developer, robot software engineer, machine learning engineer, ML engineer, AI architect, data engineer, research scientist, AI researcher]
+  unsupported_leadership_terms: [head of enterprise AI, head of AI transformation, production AI transformations]
+  bridge_support_terms: [adoption, process transformation, stakeholder leadership, program delivery, product delivery]
+  candidate_apply_threshold: 65
+  candidate_network_threshold: 60
+  evidence_apply_threshold: 60
+  evidence_network_threshold: 60
+  cold_access_review_terms: [solution lead, professional services, technical solutions]
+  evidence_anchors:
+    direct: 85
+    adjacent: 75
+    unknown: 30
+    adjacent_total_cap: 75
+    high_anchor_transitions: [direct, adjacent]
+    direct_role_capabilities: [technical_program_leadership, mobility_service_deployment, program_governance]
+    direct_domain_capabilities: [adas_autonomous_driving, automotive_mobility]
+  candidacy_weights:
+    career_lane_fit: 0.20
+    capability_fit: 0.30
+    domain_fit: 0.20
+    evidence_strength: 0.30
+    location_fit: 0.0
+    network_access: 0.0
+  robotics_experience_patterns:
+    - '(?:multiple|several|\d+\+?) years (?:of )?(?:direct |professional )?robotics(?:[- ]product)? experience'
+  executive_requirement_terms:
+    founder_execution: [founder-facing, founder-priority delivery]
+    company_building: [company-building, build the company]
+    finance: [financial modeling, financial modelling, financial planning, finance ownership]
+    fundraising: [fundraising, investor relations, raise capital]
+    commercial: [commercial ownership, revenue ownership]
+    seniority: [junior, entry level, graduate, assistant]
+  core_gap_strength_cap: 40
+  decisive_mismatch_strength_cap: 25
+  commissioning_review_title_terms: [AMR, robotics deployment, robot deployment, customer deployment]
+  # Match explicit core requirements; optional technology exposure remains a review gap.
+  core_requirement_terms:
+    commercial: [commercial ownership, commercial heavy, commercially heavy, revenue ownership, sales quota]
+    engineering: [hands-on robotics engineering, hands-on commissioning, Linux commissioning, robot configuration, field-engineering ownership, robot commissioning, commission robots, production ROS 2, perception algorithms, controls ownership, hardware ownership]
+    technical: [DevOps depth required, data-platform depth required, deep cloud architecture required, production AI-platform ownership, production AI platform ownership]
+  gap_rules:
+    direct_professional_robotics_missing:
+      terms: [robotics, robot, AMR]
+      reason: Direct professional robotics experience is not evidenced; vehicle integration is transferable.
+    production_ros2_missing:
+      terms: [ROS 2, ROS2]
+      reason: Production ROS 2 experience is missing; planned AMR work remains evidence in development.
+    perception_planning_control_missing:
+      terms: [perception, planning algorithms, controls, control algorithms]
+      reason: Specialist perception/planning/control engineering is not evidenced.
+    robot_hardware_missing:
+      terms: [hardware, mechatronics, embedded systems]
+      reason: Robot hardware or mechatronics engineering ownership is not evidenced.
+    enterprise_ai_ownership_missing:
+      terms: [enterprise AI, production AI transformations]
+      reason: Commercial enterprise AI transformation ownership is not evidenced.
+    production_ai_platform_missing:
+      terms: [AI platform, data-platform, data platform]
+      reason: Production AI/data-platform ownership is not evidenced.
+    cloud_mlops_depth_missing:
+      terms: [DevOps, MLOps, cloud architecture, data-platform]
+      reason: Deep DevOps/MLOps/cloud architecture experience is not evidenced.
+    commercial_ownership_needs_evidence:
+      terms: [commercial, pre-sales, presales, business development, partnership manager]
+      reason: Commercial/pre-sales ownership needs evidence; stakeholder coordination is not sales ownership.
+    seniority_mismatch:
+      terms: [junior, entry level, assistant, associate]
+      reason: Role may undervalue 20+ years of seniority.

@@ -13,15 +13,10 @@ def load_network_profile() -> dict:
 
 
 def normalize_company_name(company_name: str) -> str:
-    return (
-        company_name.lower()
-        .replace(" ", "")
-        .replace("-", "")
-        .replace(".", "")
-    )
+    return company_name.lower().replace(" ", "").replace("-", "").replace(".", "")
 
 
-def match_network(company_name: str) -> Dict:
+def match_network(company_name: str, *, role_evidence: dict | None = None) -> Dict:
     profile = load_network_profile()
 
     relationship_levels = profile["network_model"]["relationship_levels"]
@@ -33,16 +28,27 @@ def match_network(company_name: str) -> Dict:
     matched_company = None
 
     for _, company in companies.items():
-        configured_name = normalize_company_name(
-            company["company_name"]
-        )
+        configured_name = normalize_company_name(company["company_name"])
 
         if configured_name == normalized_input:
             matched_company = company
             break
 
+    role_evidence = role_evidence or {}
+    access_fact = role_evidence.get("network", {})
+    if access_fact:
+        if not isinstance(access_fact, dict):
+            raise ValueError("network evidence must be a mapping")
+        level = access_fact.get("relationship_level")
+        if level not in relationship_levels:
+            raise ValueError("Unknown network relationship level")
+        if access_fact.get("status") == "confirmed" and access_fact.get("evidence_source"):
+            matched_company = dict(matched_company or {})
+            matched_company["relationship_level"] = level
+
     if not matched_company:
         return {
+            "access_type": "cold",
             "network_access": 0.0,
             "relationship_level": "none",
             "strategic_relevance": "unknown",
@@ -59,9 +65,7 @@ def match_network(company_name: str) -> Dict:
         "low",
     )
 
-    base_score = relationship_levels[
-        relationship_level
-    ]["score"]
+    base_score = relationship_levels[relationship_level]["score"]
 
     strategic_bonus = strategic_levels.get(
         strategic_relevance,
@@ -74,6 +78,15 @@ def match_network(company_name: str) -> Dict:
     )
 
     return {
+        "access_type": (
+            "sponsor-supported"
+            if relationship_level in {"internal_sponsor", "internal_advocate"}
+            else "referral-based"
+            if relationship_level == "employee_referral"
+            else "cold"
+            if relationship_level in {"none", "observed", "cold_connection"}
+            else "warm"
+        ),
         "network_access": float(network_access),
         "relationship_level": relationship_level,
         "strategic_relevance": strategic_relevance,

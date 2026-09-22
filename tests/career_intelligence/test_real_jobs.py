@@ -16,16 +16,20 @@ def test_dx_one_product_owner():
 
         Location: Berlin or Wolfsburg.
         """,
+        role_evidence={
+            "network": {
+                "relationship_level": "employee_referral",
+                "status": "confirmed",
+                "evidence_source": "User referral",
+            }
+        },
     )
 
     print("\nDX.ONE")
     print(result)
 
-    assert result["recommendation"] in {
-        "EXPLORE",
-        "WATCH",
-        "SKIP",
-    }
+    assert result["recommendation"] == "WATCH"
+    assert result["access_type"] == "referral-based"
 
     assert len(result["high_risks"]) > 0
 
@@ -56,12 +60,8 @@ def test_freenow_av_partnership_manager():
         "mobility_ecosystem",
     }
 
-    assert result["recommendation"] in {
-        "NETWORK_FIRST",
-        "EXPLORE",
-        "WATCH",
-        "SKIP",
-    }
+    assert result["recommendation"] == "WATCH"
+    assert "core_commercial_gap" in result["candidate_strength"]["blocking_gaps"]
 
 
 def test_vw_china_adas_role():
@@ -85,6 +85,7 @@ def test_vw_china_adas_role():
 
     assert result["recommendation"] == "SKIP"
     assert result["constraint_action"] == "SKIP"
+
 
 def test_strong_av_tpm_berlin():
     result = assess_opportunity(
@@ -115,7 +116,7 @@ def test_strong_av_tpm_berlin():
         "REVIEW",
     }
 
-    assert result["opportunity_score"] >= 70
+    assert result["candidate_strength"]["score"] >= 70
 
     assert result["recommendation"] in {
         "NETWORK_FIRST",

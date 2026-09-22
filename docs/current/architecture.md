@@ -117,3 +117,4 @@ The documentation structure is now stable enough for product work again, but the
 pipeline itself is not closed-loop yet. The biggest product blockers remain
 StepStone discovery rotation, candidate promotion quality, URL/detail evidence
 generics and repair/stop taxonomy. References live under `../reference/`.
+Career strategy: [55/25/20 lanes, independent candidate strength and access/requirement gates](../career-intelligence/strategy-calibration-2026-09-15.md); no migration or runtime ranking mutation.

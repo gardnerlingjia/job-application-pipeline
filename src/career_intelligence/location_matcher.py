@@ -17,7 +17,8 @@ def normalize_text(title: str, description: str) -> str:
 
 
 def match_location(title: str, description: str) -> Dict:
-    profile = load_career_profile()
+    with Path("config/constraints.yaml").open(encoding="utf-8") as file:
+        location_policy = yaml.safe_load(file).get("location_enforcement", {})
     text = normalize_text(title, description)
 
     matched_signals: List[str] = []
@@ -57,22 +58,31 @@ def match_location(title: str, description: str) -> Dict:
         "location: china",
     ]
 
-    if any(term in text for term in relocation_terms):
+    # Explicit remote Germany is compatible even if the employer HQ is elsewhere.
+    remote = any(term in text for term in preferred_terms[1:])
+    import re
+
+    required_relocation = (
+        any(re.search(r"(?<!no )(?<!not )" + re.escape(term), text) for term in relocation_terms)
+        or "requires relocation" in text
+    )
+    daily = any(
+        term.lower() in text for term in location_policy.get("outside_region_daily_terms", [])
+    )
+    outside = any(term.lower() in text for term in location_policy.get("outside_region_cities", []))
+    china_based = any(term in text for term in china_terms)
+    munich_onsite = any(term in text for term in munich_terms) and any(
+        term in text for term in ("on-site", "onsite", "based in munich", "based in münchen")
+    )
+    if (
+        required_relocation
+        or (daily and outside)
+        or (not remote and (china_based or munich_onsite))
+    ):
         return {
             "location_fit": 0.0,
-            "location_matches": ["relocation_required"],
-        }
-
-    if any(term in text for term in china_terms):
-        return {
-            "location_fit": 0.0,
-            "location_matches": ["china_based"],
-        }
-
-    if any(term in text for term in munich_terms):
-        return {
-            "location_fit": 20.0,
-            "location_matches": ["munich"],
+            "location_matches": ["location_conflict"],
+            "hard_conflict": True,
         }
 
     for term in preferred_terms:

@@ -177,3 +177,25 @@ business state. Repository/runtime evidence always wins over a chat handover.
 
 A re-entry record may identify the next safe action, but it never loosens a
 gate, converts unknown state to success or authorizes a side effect.
+
+
+## Revised career strategy (2026-09-15)
+
+Career Intelligence now prioritizes autonomous-systems program/deployment leadership (55%),
+ADAS/vehicle-software delivery (25%), and selective AI/data-product bridges (20%).
+Deterministic strategy gates distinguish delivery from specialist engineering, retain
+unknown evidence, enforce location conflicts, and expose role-specific access and gap reasons.
+Optional role/market evidence flows through batch inputs; explanations are additive to
+schema-v1 results, with legacy records still accepted. Provider activation and Product V1
+ranking authority are unchanged. Existing runtime assessments have not been regenerated.
+
+See [strategy, evidence contract and offline calibration](../career-intelligence/strategy-calibration-2026-09-15.md) for
+historical v1 thresholds, before/after examples and operator limitations.
+
+Historical rules: [recommendation semantics v2](../career-intelligence/recommendation-semantics-v2.md) separates current candidate strength
+from strategic attractiveness. NETWORK FIRST requires sufficient strength and cold access;
+referrals/hiring-manager access prevent it, and core capability gaps yield WATCH/SKIP.
+AMR APPLY requires confirmed non-core engineering/commissioning scope. Versioned fixtures
+preserve exact historical inputs/results; Silver freshness cannot bypass these gates.
+
+Current v3 calibration: [evidence-based candidacy, separate strategy/access and versioned fixtures](../career-intelligence/strategy-calibration-2026-09-15.md). Published totals exclude access, location and career priority; adjacency caps at 75. Full scope and validation are in that report.

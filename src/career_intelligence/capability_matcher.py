@@ -3,6 +3,8 @@ from typing import Dict, List
 
 import yaml
 
+from src.career_intelligence.classifier import contains_term
+
 
 CONFIG_PATH = Path("config/capability_profile.yaml")
 
@@ -26,19 +28,30 @@ def match_capabilities(title: str, description: str) -> Dict:
         match_keywords = capability.get("match_keywords", [])
         transferable_to = capability.get("transferable_to", [])
 
-        terms = [
-            str(item).lower()
-            for item in match_keywords + transferable_to
-        ]
+        terms = [str(item).lower() for item in match_keywords + transferable_to]
 
-        hits = [term for term in terms if term in text]
+        hits = [term for term in terms if contains_term(text, term)]
 
-        if hits:
+        if (
+            hits
+            and capability.get("evidence")
+            and capability.get("evidence_status") not in {"unknown", "in_development"}
+        ):
             matched.append(
                 {
                     "capability": capability_name,
                     "strength": capability["strength"],
-                    "category": capability["category"],
+                    "match_basis": "direct_terms"
+                    if any(contains_term(text, term) for term in match_keywords)
+                    else "transfer_context",
+                    "category": (
+                        capability["category"]
+                        if any(contains_term(text, term) for term in match_keywords)
+                        else "transferable"
+                        if capability["category"] in {"core", "domain"}
+                        else capability["category"]
+                    ),
+                    "evidence": capability.get("evidence", []),
                     "matches": sorted(set(hits)),
                 }
             )

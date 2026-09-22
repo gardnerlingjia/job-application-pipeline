@@ -107,7 +107,8 @@ profiles:
       - robotics program manager
       - robotics product manager
       - intelligent mobility systems
-      - ADAS strategy
+      - AMR customer deployment lead
+      - robotics systems integration program lead
   - key: technical_program_product
     label: Technical program and product leadership
     career_lanes:
@@ -120,7 +121,7 @@ profiles:
       - senior product manager platform
       - product operations manager
       - program manager data platform
-      - principal product manager AI
+      - vehicle software delivery lead
       - delivery lead technology
   - key: ai_data_transformation
     label: AI and data transformation
@@ -135,7 +136,7 @@ profiles:
       - AI product manager
       - data strategy lead
       - analytics platform manager
-      - machine learning platform lead
+      - automotive AI reporting product owner
   - key: strategy_operations
     label: Strategy and executive operations
     career_lanes:
@@ -148,7 +149,7 @@ profiles:
       - chief of staff technology
       - executive operations mobility
       - transformation program lead
-      - business operations AI
+      - chief of staff autonomous systems
       - strategic projects manager
   - key: mobility_platform_deployment
     label: Mobility platforms and deployment ecosystems
@@ -164,3 +165,8 @@ profiles:
       - deployment program manager
       - charging infrastructure product
       - transport data platform
+
+search_allocation_percent:
+  autonomy_robotics: 55
+  vehicle_software_mobility_delivery: 25
+  selective_ai_data_bridge: 20
