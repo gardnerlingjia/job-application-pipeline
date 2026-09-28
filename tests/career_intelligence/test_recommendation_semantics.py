@@ -239,9 +239,16 @@ def test_batch_retains_referred_dx_decision_and_strength(tmp_path):
     assert result["explanation"]["candidate_strength"]["score"] == 40
 
 
-def test_exact_v4_assessment_snapshots():
-    expected = json.loads((FIXTURES / "strategy_calibration.v4.results.json").read_text())
+def test_exact_v4_evidence_interpretation_snapshots():
+    expected = json.loads((FIXTURES / "strategy_calibration.v4.interpretation2.results.json").read_text())
     assert [{"key": row["key"], "assessment": assess_row(row["key"])} for row in ROWS] == expected
+
+
+def test_original_v4_inputs_results_and_config_remain_frozen():
+    manifest = json.loads((FIXTURES / 'strategy_calibration.v4.manifest.json').read_text())
+    for suffix in ('json', 'results.json', 'config.json'):
+        path = FIXTURES / f'strategy_calibration.v4.{suffix}'
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == manifest['sha256'][str(path)]
 
 
 def test_v2_fixtures_are_frozen():

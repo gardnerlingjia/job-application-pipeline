@@ -209,3 +209,53 @@ def test_overall_readiness_blocks_non_job_preview_records() -> None:
         )
         == "activation_readiness_blocked_non_job_preview_records"
     )
+
+
+def waymo_query_record(job_id=8063637, title='Program Manager, Germany Regulatory'):
+    # Actual connector structure: provider ID, ATS-supplied absolute_url, nested location,
+    # original content and decoded description. Query URL is on the employer's domain.
+    url = f'https://careers.withwaymo.com/jobs?gh_jid={job_id}'
+    return RawJobRecord(source_name='greenhouse:waymo', external_job_id=str(job_id),
+        source_url=url, raw_data={'board_token': 'waymo', 'job': {
+            'id': job_id, 'title': title, 'absolute_url': url,
+            'location': {'name': 'Munich, Bavaria, Germany'},
+            'content': '<p>Coordinate regulatory deployment programs.</p>',
+            'description': 'Coordinate regulatory deployment programs.'},
+            'acquisition_scope': 'germany_metadata_only',
+            'location_filter': {'decision': 'retained', 'reason': 'verified_germany'}})
+
+
+def test_waymo_actual_query_preview_structures_are_evaluable():
+    records = [waymo_query_record(i, t) for i, t in [
+        (8063637, 'Program Manager, Germany Regulatory'),
+        (8108104, 'Strategy & BizOps Lead, Germany'),
+        (8109449, 'Emergency Services Liaison, Germany'),
+        (7922569, 'Lead Diagnostic Technician')]]
+    assert non_job_preview_records(records,
+        origin_url='https://boards-api.greenhouse.io/v1/boards/waymo/jobs?content=true') == []
+
+
+def test_greenhouse_query_detail_identity_and_safety_fail_closed():
+    from dataclasses import replace
+    from copy import deepcopy
+    origin = 'https://boards-api.greenhouse.io/v1/boards/waymo/jobs?content=true'
+    base = waymo_query_record()
+    bad = [replace(base, external_job_id='999'), replace(base, source_name='other:waymo')]
+    for key, value in [('id', 999), ('absolute_url', 'https://evil.example/jobs?gh_jid=8063637'),
+                       ('title', 'Details'), ('description', ''), ('content', '')]:
+        raw = deepcopy(base.raw_data)
+        raw['job'][key] = value
+        if key in {'description', 'content'}:
+            raw['job']['description'] = raw['job']['content'] = ''
+        bad.append(replace(base, raw_data=raw))
+    for url in ['https://careers.withwaymo.com/jobs?gh_jid=999',
+                'https://careers.withwaymo.com/jobs?gh_jid=8063637&redirect=https://evil.example',
+                'https://careers.withwaymo.com/jobs?gh_jid=8063637&gh_jid=8063637',
+                'http://careers.withwaymo.com/jobs?gh_jid=8063637',
+                'https://careers.withwaymo.com/produkte/widget?gh_jid=8063637',
+                'https://127.0.0.1/jobs?gh_jid=8063637']:
+        raw = deepcopy(base.raw_data)
+        raw['job']['absolute_url'] = url
+        bad.append(replace(base, source_url=url, raw_data=raw))
+    assert non_job_preview_records(bad, origin_url=origin) == bad
+    assert non_job_preview_records([base], origin_url=origin.replace('/waymo/', '/other/')) == [base]

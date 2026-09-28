@@ -409,7 +409,12 @@ def assess_silver_inputs(
                 continue
 
         try:
-            assessment = assess_opportunity(item.company, item.title, item.description)
+            assessment = assess_opportunity(item.company, item.title, item.description,
+                                            structured_location=item.structured_location)
+            assessment.setdefault("explanation", {})["input_evidence"] = {
+                "schema_version": 1, "role_evidence": {}, "market_evidence": {},
+                "structured_location": item.structured_location,
+            }
             assessment = _remove_missing_description_evidence(assessment, item)
             assessment = _apply_freshness_to_assessment(assessment, item)
             opportunities.append(_result_record(assessment, item.source_file))

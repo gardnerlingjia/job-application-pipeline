@@ -41,7 +41,7 @@ def silver_row(**overrides):
     return row
 
 
-def fake_assessment(company, title, description):
+def fake_assessment(company, title, description, *, structured_location=None):
     return {
         "company_name": company,
         "title": title,
@@ -71,7 +71,8 @@ def fake_assessment(company, title, description):
 def test_integration_assesses_silver_rows_with_existing_result_schema(tmp_path, monkeypatch):
     calls = []
 
-    def assess(company, title, description):
+    def assess(company, title, description, *, structured_location=None):
+        assert structured_location == {'name': 'Hannover', 'source': 'silver.city'}
         calls.append((company, title, description))
         return fake_assessment(company, title, description)
 
@@ -98,7 +99,7 @@ def test_integration_assesses_silver_rows_with_existing_result_schema(tmp_path, 
 
 
 def test_old_silver_job_receives_freshness_ranking_penalty(tmp_path, monkeypatch):
-    def assess(company, title, description):
+    def assess(company, title, description, *, structured_location=None):
         result = fake_assessment(company, title, description)
         result["opportunity_score"] = 80
         result["recommendation"] = "APPLY_NOW"
@@ -167,7 +168,7 @@ def test_provenance_is_preserved_in_sidecar_without_changing_public_results(
 def test_profile_terms_only_record_is_not_scored(tmp_path, monkeypatch):
     calls = []
 
-    def assess(company, title, description):
+    def assess(company, title, description, *, structured_location=None):
         calls.append((company, title, description))
         return fake_assessment(company, title, description)
 
@@ -200,7 +201,7 @@ def test_profile_terms_only_record_is_not_scored(tmp_path, monkeypatch):
 def test_weak_listing_only_record_is_not_normally_scored(tmp_path, monkeypatch):
     calls = []
 
-    def assess(company, title, description):
+    def assess(company, title, description, *, structured_location=None):
         calls.append((company, title, description))
         return fake_assessment(company, title, description)
 
@@ -235,7 +236,7 @@ def test_weak_listing_only_record_is_not_normally_scored(tmp_path, monkeypatch):
 def test_strong_detail_description_record_is_scored(tmp_path, monkeypatch):
     calls = []
 
-    def assess(company, title, description):
+    def assess(company, title, description, *, structured_location=None):
         calls.append(description)
         return fake_assessment(company, title, description)
 
@@ -327,7 +328,7 @@ def test_ats_backed_missing_description_record_is_conservatively_scored(
 ):
     calls = []
 
-    def assess(company, title, description):
+    def assess(company, title, description, *, structured_location=None):
         calls.append((company, title, description))
         return fake_assessment(company, title, description)
 
@@ -361,7 +362,7 @@ def test_ats_backed_missing_description_record_is_conservatively_scored(
 def test_duplicate_records_in_same_run_are_reported_once(tmp_path, monkeypatch):
     calls = []
 
-    def assess(company, title, description):
+    def assess(company, title, description, *, structured_location=None):
         calls.append(company)
         return fake_assessment(company, title, description)
 
@@ -499,7 +500,7 @@ def test_paired_output_write_failure_leaves_final_files_uncreated(
 def test_stable_rerun_skips_existing_silver_identity(tmp_path, monkeypatch):
     calls = []
 
-    def assess(company, title, description):
+    def assess(company, title, description, *, structured_location=None):
         calls.append(company)
         return fake_assessment(company, title, description)
 
@@ -525,7 +526,7 @@ def test_stable_rerun_refreshes_freshness_penalty_without_reassessing(
 ):
     calls = []
 
-    def assess(company, title, description):
+    def assess(company, title, description, *, structured_location=None):
         calls.append(company)
         return fake_assessment(company, title, description)
 

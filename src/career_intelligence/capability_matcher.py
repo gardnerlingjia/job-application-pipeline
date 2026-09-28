@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 from typing import Dict, List
 
 import yaml
@@ -19,8 +20,14 @@ def normalize_text(title: str, description: str) -> str:
 
 
 def match_capabilities(title: str, description: str) -> Dict:
+    from src.career_intelligence.role_text import description_sections
+
     profile = load_capability_profile()
-    text = normalize_text(title, description)
+    text = normalize_text(title, description_sections(description)['role'])
+    # German inflection of an existing capability keyword, only inside role scope.
+    text = re.sub(r'\binternationale[nrms]?\b', 'international', text)
+    from src.career_intelligence.delivery_language import delivery_signals
+    delivery = delivery_signals(text)
 
     matched: List[Dict] = []
 
@@ -31,6 +38,16 @@ def match_capabilities(title: str, description: str) -> Dict:
         terms = [str(item).lower() for item in match_keywords + transferable_to]
 
         hits = [term for term in terms if contains_term(text, term)]
+        hits.extend(delivery.get(capability_name, []))
+        direct = any(contains_term(text, term) for term in match_keywords)
+        if capability_name == 'technical_program_leadership' and direct:
+            # Collaboration and timely delivery alone describe many specialist
+            # jobs. Direct TPM evidence needs identifiable program accountability.
+            direct = bool(re.search(
+                r'program (?:manager|management|lead)|technical program|global program|'
+                r'(?:delivery|deployment|solution) (?:lead|manager)|'
+                r'(?:lead|manage|own|coordinate).{0,60}(?:program|deployment|delivery)|'
+                r'roadmap ownership|milestone|risk management', text))
 
         if (
             hits
@@ -42,11 +59,11 @@ def match_capabilities(title: str, description: str) -> Dict:
                     "capability": capability_name,
                     "strength": capability["strength"],
                     "match_basis": "direct_terms"
-                    if any(contains_term(text, term) for term in match_keywords)
+                    if direct
                     else "transfer_context",
                     "category": (
                         capability["category"]
-                        if any(contains_term(text, term) for term in match_keywords)
+                        if direct
                         else "transferable"
                         if capability["category"] in {"core", "domain"}
                         else capability["category"]

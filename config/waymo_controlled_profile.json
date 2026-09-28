@@ -1,0 +1,14 @@
+{
+  "company_key": "waymo",
+  "source_name": "greenhouse:waymo",
+  "profile_name": "waymo_controlled_germany_mobility",
+  "search_location": "Germany",
+  "search_radius_km": null,
+  "page_size": 25,
+  "recurring_ingestion_enabled": false,
+  "search_terms": [
+    "deployment", "technical program", "program manager", "regulatory",
+    "fleet launch", "fleet operations", "mobility operations", "business operations",
+    "strategy", "bizops", "emergency services"
+  ]
+}

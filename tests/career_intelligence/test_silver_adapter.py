@@ -42,6 +42,7 @@ def test_valid_silver_record_conversion_preserves_required_fields_and_source_ide
     assert result.company == "Example GmbH"
     assert result.title == "Senior Data Engineer"
     assert result.description == "Build reliable Python and SQL data platforms."
+    assert result.structured_location == {'name': 'Hannover', 'source': 'silver.city'}
     assert result.source_file.startswith("silver-personio-example-")
     assert result.source_file.endswith(".json")
     assert result.provenance["silver_job_id"] == 42
@@ -55,6 +56,21 @@ def test_valid_silver_record_conversion_preserves_required_fields_and_source_ide
     assert result.provenance["freshness_bucket"] == "UNKNOWN"
     assert result.provenance["publication_date"] is None
     assert result.provenance["job_age_date_source"] is None
+
+
+def test_provider_location_survives_when_normalized_city_is_missing():
+    row = silver_row(city=None, raw_data={'job': {
+        'description': 'Lead delivery programs. Hybrid work schedule.',
+        'location': {'name': 'Munich, Bavaria, Germany'},
+    }})
+    result = adapt_silver_row(row)
+    assert result.structured_location == {
+        'name': 'Munich, Bavaria, Germany', 'source': 'job.location'}
+    assert result.description == row['raw_data']['job']['description']
+
+
+def test_historical_record_without_location_remains_usable():
+    assert adapt_silver_row(silver_row(city=None, country=None)).structured_location is None
 
 
 @pytest.mark.parametrize(

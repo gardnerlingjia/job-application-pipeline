@@ -34,13 +34,21 @@ def score_lane(text: str, lane_config: dict) -> Tuple[int, List[str]]:
 
 
 def classify_job(title: str, description: str) -> Dict:
+    from src.career_intelligence.role_text import description_sections
+
     profile = load_career_profile()
-    text = normalize_text(title, description)
+    text = normalize_text(title, description_sections(description)['role'])
+    domain_text = normalize_text(title, description)
 
     results = {}
 
     for lane_code, lane_config in profile["career_lanes"].items():
         score, matches = score_lane(text, lane_config)
+        # Employer context can locate a market lane, never supply role-keyword points.
+        context_matches = [term for term in lane_config.get('domain_keywords', [])
+                           if contains_term(domain_text, term) and not contains_term(text, term)]
+        score += round(len(context_matches) * lane_config.get('classification_multiplier', 1))
+        matches.extend(context_matches)
 
         results[lane_code] = {
             "label": lane_config["label"],
@@ -107,8 +115,12 @@ def contains_term(text: str, term: str) -> bool:
 
 
 def strategy_context(title: str, description: str, access: str = "cold") -> dict:
+    from src.career_intelligence.role_text import description_sections
+
     policy = load_career_profile().get("strategy_policy", {})
     text = normalize_text(title, description)
+    sections = description_sections(description)
+    role_text = normalize_text(title, sections['role'])
 
     def matches(key, value=text):
         return [term for term in policy.get(key, []) if contains_term(value, term)]
@@ -116,7 +128,10 @@ def strategy_context(title: str, description: str, access: str = "cold") -> dict
     autonomy = matches("autonomy_terms")
     domain = matches("domain_advantage_terms")
     ai_data = matches("ai_data_terms")
-    delivery = matches("delivery_terms")
+    delivery = matches("delivery_terms", role_text)
+    from src.career_intelligence.delivery_language import delivery_signals
+    german_delivery = delivery_signals(role_text)
+    delivery.extend(term for terms in german_delivery.values() for term in terms)
     executive = matches("executive_terms", title.lower())
     engineering = matches("engineering_title_terms", title.lower())
     # Research leadership can require specialist practice despite generic adoption language.
@@ -130,12 +145,14 @@ def strategy_context(title: str, description: str, access: str = "cold") -> dict
     research_requirements = any(
         re.search(research_requirement_pattern, clause)
         and not re.search(r"\b(?:no|not|optional|kein\w*|nicht)\b", clause)
-        for clause in re.split(r"[.;\n]", description.lower())
+        for clause in re.split(r"[.;\n]", '\n'.join(
+            sections[key] for key in ('duties', 'required', 'unstructured')).lower())
     )
     if research_scope and research_requirements:
         engineering.append("specialist_ml_research_requirements")
-    unsupported = matches("unsupported_leadership_terms")
-    bridge_support = domain or matches("bridge_support_terms") or access != "cold"
+    unsupported = matches("unsupported_leadership_terms", role_text)
+    bridge_support = (domain or matches("bridge_support_terms", role_text)
+                      or german_delivery or access != "cold")
     if engineering or unsupported:
         transition = "unrealistic"
     elif executive:
@@ -152,6 +169,8 @@ def strategy_context(title: str, description: str, access: str = "cold") -> dict
         "transition": transition,
         "autonomy_matches": autonomy,
         "domain_advantage_matches": domain,
+        "employer_context_matches": [term for term in autonomy + domain
+                                     if contains_term(sections['employer'], term)],
         "delivery_matches": delivery,
         "bridge_support": bool(bridge_support),
         "executive_role": bool(executive),

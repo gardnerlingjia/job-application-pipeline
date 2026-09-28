@@ -241,11 +241,14 @@ def detect_constraints(title: str, description: str) -> List[Dict]:
     return detected
 
 
-def evaluate_constraints(title: str, description: str) -> Dict:
+def evaluate_constraints(title: str, description: str, *,
+                         structured_location: dict | None = None) -> Dict:
     detected = detect_constraints(title, description)
     from src.career_intelligence.location_matcher import match_location
 
-    location = match_location(title, description)
+    location = match_location(title, description, structured_location=structured_location)
+    if not location.get('berlin_preference') and not location.get('workplace', {}).get('remote'):
+        detected = [item for item in detected if item['constraint'] != 'berlin_or_remote_germany']
     if location.get("travel_status", "").startswith("frequent"):
         detected.append({"constraint": "frequent_travel_required", "section": "location",
                          "severity": "high", "action": "SKIP",

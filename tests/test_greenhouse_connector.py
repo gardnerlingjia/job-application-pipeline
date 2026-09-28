@@ -46,9 +46,9 @@ def test_greenhouse_connector_fetches_board_jobs_without_live_network(monkeypatc
     )
 
     assert requested == [
-        ("https://boards-api.greenhouse.io/v1/boards/moia/jobs", 30)
+        ("https://boards-api.greenhouse.io/v1/boards/moia/jobs?content=true", 30)
     ]
-    assert source_url == "https://boards-api.greenhouse.io/v1/boards/moia/jobs"
+    assert source_url == "https://boards-api.greenhouse.io/v1/boards/moia/jobs?content=true"
     assert len(records) == 1
     assert records[0].source_name == "greenhouse:moia"
     assert records[0].external_job_id == "12345"

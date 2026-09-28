@@ -34,6 +34,7 @@ class SilverCareerInput:
     freshness: JobFreshness
     source_file: str
     provenance: dict[str, Any]
+    structured_location: dict[str, Any] | None = None
 
 
 class SilverAdaptationError(ValueError):
@@ -59,11 +60,19 @@ class SilverJobReadRepository:
         *,
         limit: int = 100,
         source_patterns: list[str] | None = None,
+        silver_job_ids: list[int] | None = None,
     ) -> list[dict[str, Any]]:
         source_patterns = source_patterns or []
         filters: list[str] = []
         params: list[object] = []
 
+        if silver_job_ids is not None:
+            if not silver_job_ids:
+                return []
+            if any(type(value) is not int or value <= 0 for value in silver_job_ids):
+                raise ValueError("Silver IDs must be positive integers")
+            filters.append("s.id = ANY(%s)")
+            params.append(silver_job_ids)
         if source_patterns:
             source_clauses = []
             for pattern in source_patterns:
@@ -78,7 +87,11 @@ class SilverJobReadRepository:
         if filters:
             filter_sql = "WHERE " + " AND ".join(filters)
 
+        limit_sql = "" if silver_job_ids is not None else "LIMIT %s"
+        if silver_job_ids is None:
+            params.append(limit)
         with self.get_connection() as conn:
+            conn.execute("SET TRANSACTION READ ONLY")
             with conn.cursor() as cur:
                 cur.execute(
                     f"""
@@ -108,9 +121,9 @@ class SilverJobReadRepository:
                      AND s.external_job_id IS NOT NULL
                     {filter_sql}
                     ORDER BY s.id
-                    LIMIT %s;
+                    {limit_sql};
                     """,
-                    (*params, limit),
+                    tuple(params),
                 )
                 return list(cur.fetchall())
 
@@ -152,6 +165,22 @@ def _nested(mapping: Mapping[str, Any], path: tuple[str, ...]) -> object:
             return None
         current = current.get(key)
     return current
+
+
+def structured_location_for_row(row: Mapping[str, Any]) -> dict | None:
+    """Keep captured provider metadata, falling back to normalized Silver fields."""
+    raw = row.get('raw_data')
+    if isinstance(raw, Mapping):
+        for path in (('job', 'location'), ('position', 'location')):
+            value = _nested(raw, path)
+            name = _clean_text(value.get('name')) if isinstance(value, Mapping) else _clean_text(value)
+            if name:
+                return {'name': name, 'source': '.'.join(path)}
+    for field in ('city', 'country'):
+        name = _clean_text(row.get(field))
+        if name:
+            return {'name': name, 'source': f'silver.{field}'}
+    return None
 
 
 STRONG_DESCRIPTION_PATHS: tuple[tuple[str, ...], ...] = (
@@ -358,6 +387,7 @@ def adapt_silver_row(row: Mapping[str, Any]) -> SilverCareerInput:
         freshness=freshness,
         source_file=source_file,
         provenance=provenance,
+        structured_location=structured_location_for_row(row),
     )
 
 

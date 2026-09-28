@@ -55,7 +55,7 @@ def _load_job(path: Path) -> dict[str, Any]:
         raise ValueError(f"missing or empty required fields: {', '.join(missing)}")
 
     job = {field: payload[field].strip() for field in required}
-    for field in ("role_evidence", "market_evidence"):
+    for field in ("role_evidence", "market_evidence", "structured_location"):
         if field in payload:
             if not isinstance(payload[field], dict):
                 raise ValueError(f"{field} must be an object")
@@ -224,8 +224,16 @@ def process_batch(
             job = _load_job(path)
             assessment = assess_opportunity(
                 job["company"], job["title"], job["description"],
-                **{key: job[key] for key in ("role_evidence", "market_evidence") if key in job},
+                **{key: job[key] for key in ("role_evidence", "market_evidence",
+                                          "structured_location") if key in job},
             )
+            assessment.setdefault("explanation", {})["input_evidence"] = {
+                "schema_version": 1,
+                "role_evidence": job.get("role_evidence", {}),
+                "market_evidence": job.get("market_evidence", {}),
+                **({'structured_location': job['structured_location']}
+                   if 'structured_location' in job else {}),
+            }
             record = _result_record(assessment, path.name)
             _move_no_clobber(path, destination)
             opportunities.append(record)

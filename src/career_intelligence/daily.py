@@ -10,7 +10,6 @@ import errno
 import json
 import os
 from pathlib import Path
-import sys
 from typing import Any, Callable
 
 from src.career_intelligence.batch import RECOMMENDATION_GROUPS
@@ -62,9 +61,36 @@ class DailyRunLock(AbstractContextManager["DailyRunLock"]):
         self.stale_seconds = stale_seconds
         self.now = now
         self.acquired = False
+        self.guard = None
 
     def __enter__(self) -> "DailyRunLock":
         self.path.parent.mkdir(parents=True, exist_ok=True)
+        # Persistent guard inode: flock survives malformed metadata and releases on crash.
+        self.guard = self.path.with_suffix(self.path.suffix + ".guard").open("a+b")
+        try:
+            if os.name == "nt":
+                import msvcrt
+                self.guard.seek(0, os.SEEK_END)
+                if not self.guard.tell():
+                    self.guard.write(b"\0")
+                    self.guard.flush()
+                self.guard.seek(0)
+                msvcrt.locking(self.guard.fileno(), msvcrt.LK_NBLCK, 1)
+            else:
+                import fcntl
+                fcntl.flock(self.guard, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError as exc:
+            self.guard.close()
+            self.guard = None
+            raise DailyRunAlreadyActive(f"Career Intelligence run already active: {self.path}") from exc
+        try:
+            return self._enter_metadata()
+        except BaseException:
+            self.guard.close()
+            self.guard = None
+            raise
+
+    def _enter_metadata(self) -> "DailyRunLock":
         payload = {
             "pid": os.getpid(),
             "created_at_utc": _iso(self.now()),
@@ -96,26 +122,27 @@ class DailyRunLock(AbstractContextManager["DailyRunLock"]):
             raw = self.path.read_text(encoding="utf-8")
             payload = json.loads(raw)
             pid = int(payload.get("pid"))
-            created_at = str(payload.get("created_at_utc"))
-            created = datetime.fromisoformat(created_at.replace("Z", "+00:00"))
+            if pid <= 0:
+                return
         except Exception:
-            self.path.unlink(missing_ok=True)
+            # Never steal a possibly active writer's incomplete lock metadata.
             return
 
-        age = (self.now() - created).total_seconds()
-        if age >= self.stale_seconds or not _pid_is_active(pid):
+        if not _pid_is_active(pid):
             self.path.unlink(missing_ok=True)
 
     def __exit__(self, exc_type, exc, traceback) -> None:
-        if not self.acquired:
-            return None
         try:
-            self.path.unlink()
-        except FileNotFoundError:
-            pass
+            if self.acquired:
+                self.path.unlink(missing_ok=True)
         except OSError as error:
             if error.errno != errno.ENOENT:
                 raise
+        finally:
+            self.acquired = False
+            if self.guard is not None:
+                self.guard.close()
+                self.guard = None
         return None
 
 
@@ -235,7 +262,7 @@ def run_daily(
     except DailyRunAlreadyActive as exc:
         lines = [
             "Career Intelligence daily refresh",
-            f"Errors: 1",
+            "Errors: 1",
             f"ERROR: {exc}",
             "Exit status: 2",
         ]
@@ -250,7 +277,7 @@ def run_daily(
     except Exception as exc:
         lines = [
             "Career Intelligence daily refresh",
-            f"Errors: 1",
+            "Errors: 1",
             f"ERROR: {exc}",
             "Exit status: 1",
         ]

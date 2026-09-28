@@ -16,17 +16,52 @@ def normalize_text(title: str, description: str) -> str:
     return f"{title} {description}".lower()
 
 
-def match_location(title: str, description: str) -> Dict:
+def match_location(title: str, description: str, *, structured_location: dict | None = None) -> Dict:
     from src.career_intelligence.practical_constraints import practical_evidence
 
-    practical = practical_evidence(normalize_text(title, description))
-    result = _match_location(title, description, practical)
+    practical = practical_evidence(description, structured_location)
+    workplace = practical['workplace']
+    location_text = workplace['name']
+    if workplace['remote']:
+        location_text += ' remote Germany' if workplace['germany'] else ' remote'
+    result = _match_location('', location_text, practical)
     result.update(practical)
+    import yaml
+    with Path('config/constraints.yaml').open(encoding='utf-8') as file:
+        outside_cities = yaml.safe_load(file)['location_enforcement']['outside_region_cities']
+    outside = any(city.lower() in workplace['name'].lower() for city in outside_cities)
+    if (outside and not workplace['berlin_preference'] and not workplace['remote']
+            and workplace['work_mode'] in {'hybrid', 'in_person'}):
+        result.update(hard_conflict=True, compatibility='incompatible', location_fit=0.0,
+                      location_matches=['outside_berlin_required_presence'],
+                      presence_reason='Hybrid/in-person work at the captured non-Berlin base.',
+                      presence_evidence=[workplace['name'], workplace['work_mode']])
+    import re
+
+    primary = re.split(r'diese jobs waren bei anderen|similar jobs|related jobs',
+                       description, flags=re.I)[0]
+    base = re.search(r'Job in (.*?) Jobs finden', primary, re.I)
+    mobile = re.search(r'bis zu (\d+)\s*%\s*mobil arbeiten', primary, re.I)
+    outside_region = bool(base and re.search(
+        r'norderstedt|hamburg|hannover|münchen|munich|frankfurt|stuttgart|düsseldorf',
+        base[1], re.I))
+    if outside_region and mobile and int(mobile[1]) < 100 and 'berlin' not in base[1].lower():
+        result.update(hard_conflict=True, compatibility='incompatible', location_fit=0.0,
+                      location_matches=['non_berlin_partial_mobile_work'],
+                      category='non_berlin_partial_mobile_work',
+                      presence_evidence=[base.group(0), mobile.group(0)],
+                      presence_reason='Non-Berlin role permits only partial mobile work; '
+                                      'Berlin-based remote employment is not established.')
     if result.get("hard_conflict"):
         result["compatibility"] = "incompatible"
+    elif outside and not workplace['berlin_preference'] and not workplace['remote']:
+        # A known non-Berlin city with no attendance arrangement is not evidence
+        # of Berlin-compatible work, even if the job explicitly requires no travel.
+        result['compatibility'] = 'unknown'
     if practical["compatibility"] == "incompatible":
-        result.update(location_fit=0.0, location_matches=["location_conflict"], hard_conflict=True)
-    if practical["compatibility"] == "confirmed" and not result["location_matches"]:
+        result.update(location_fit=0.0, location_matches=["location_conflict"],
+                      hard_conflict=True, compatibility='incompatible')
+    if result["compatibility"] == "confirmed" and not result["location_matches"]:
         result.update(location_fit=80.0, location_matches=[practical["category"]])
     return result
 

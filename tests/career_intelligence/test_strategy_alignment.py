@@ -220,7 +220,7 @@ def test_seed_contract_is_frozen_and_customizations_are_not_seed(monkeypatch):
     ('Berlin. No frequent travel required, but weekly European travel required.', 'incompatible'),
     ('Berlin. Occasional domestic travel. Not required to relocate to Munich.', 'confirmed'),
     ('Berlin. Optional frequent European travel.', 'unknown'),
-    ('Germany. Travel up to 10 days per month.', 'incompatible'),
+    ('Germany. Travel up to 10 days per month.', 'unknown'),
 ])
 def test_negation_and_optional_scope(text, status):
     assert match_location('Program Lead', text)['compatibility'] == status

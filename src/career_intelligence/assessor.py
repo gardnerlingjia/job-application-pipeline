@@ -21,10 +21,11 @@ def assess_opportunity(
     *,
     role_evidence: dict | None = None,
     market_evidence: dict | None = None,
+    structured_location: dict | None = None,
 ) -> Dict:
     role_evidence = role_evidence or {}
     classification = classify_job(title, description)
-    constraints = evaluate_constraints(title, description)
+    constraints = evaluate_constraints(title, description, structured_location=structured_location)
     capability_match = match_capabilities(title, description)
     evidence = calculate_evidence_strength(capability_match["matched_capabilities"])
     network_match = match_network(company_name, role_evidence=role_evidence)
@@ -41,6 +42,7 @@ def assess_opportunity(
     location_match = match_location(
         title,
         description,
+        structured_location=structured_location,
     )
 
     # Access may make a bridge worth pursuing, but never creates candidate evidence.
@@ -125,6 +127,7 @@ def assess_opportunity(
         "transition": context["transition"],
         "lane": classification["career_lane"],
         "domain_matches": context["autonomy_matches"] + context["domain_advantage_matches"],
+        "employer_context_matches": context['employer_context_matches'],
     }
     from src.career_intelligence.classifier import load_career_profile
 
@@ -200,6 +203,7 @@ def assess_opportunity(
     )
     explanation = {
         "semantics_version": 4,
+        "evidence_interpretation_version": 2,
         "score_semantics": "weighted_current_candidacy_after_caps",
         "strategic_value": strategic_value,
         "scores": scores,
@@ -344,6 +348,10 @@ def decision_gates(
 def assess_role_requirements(title: str, description: str, evidence: dict, context: dict) -> dict:
     """Require sourced boolean facts for negative scope confirmation; text can reveal risk."""
     import re
+    from src.career_intelligence.role_text import description_sections
+
+    sections = description_sections(description)
+    required_text = '\n'.join(sections[key] for key in ('duties', 'required', 'unstructured'))
 
     facts = evidence.get("requirements", {})
     if not isinstance(facts, dict):
@@ -365,7 +373,7 @@ def assess_role_requirements(title: str, description: str, evidence: dict, conte
             "evidence_source": fact.get("evidence_source"),
         }
     # Preserve A.I. punctuation; sentence boundaries require whitespace after the period.
-    clauses = re.split(r"[;\n]|\.\s+", f"{title}. {description}")
+    clauses = re.split(r"[;\n]|\.\s+", f"{title}. {required_text}")
     matches = {}
     for category, terms in context["policy"]["core_requirement_terms"].items():
         matches[category] = [
@@ -388,7 +396,9 @@ def assess_role_requirements(title: str, description: str, evidence: dict, conte
     robotics_experience = [
         match.group(0)
         for pattern in context["policy"].get("robotics_experience_patterns", [])
-        for match in re.finditer(pattern, description, re.IGNORECASE)
+        for clause in clauses
+        if not re.search(r'\b(?:optional|preferred|not required)\b', clause, re.I)
+        for match in re.finditer(pattern, clause, re.IGNORECASE)
     ]
     if robotics_experience:
         blocking["professional_robotics_years_missing"] = (
@@ -397,7 +407,7 @@ def assess_role_requirements(title: str, description: str, evidence: dict, conte
     executive_dimensions = (
         {
             key: {
-                "matches": [term for term in terms if contains_term(description, term)],
+                "matches": [term for term in terms if contains_term(required_text, term)],
                 "candidate_evidence": "unknown",
             }
             for key, terms in context["policy"].get("executive_requirement_terms", {}).items()
@@ -410,6 +420,12 @@ def assess_role_requirements(title: str, description: str, evidence: dict, conte
             blocking[f"executive_{key}_gap"] = (
                 f"Executive {key} responsibility needs direct evidence."
             )
+    from src.career_intelligence.specialist_requirements import evaluate_specialist_requirements
+
+    specialist = evaluate_specialist_requirements(description)
+    for name, requirement in specialist.items():
+        if requirement['blocking']:
+            blocking[f'specialist_{name}_gap'] = requirement['reason']
     status = "not_applicable"
     if context["commissioning_review_required"]:
         value = normalized["engineering_commissioning_core"]["value"]
@@ -420,6 +436,7 @@ def assess_role_requirements(title: str, description: str, evidence: dict, conte
         else:
             status = "unknown"
     return {
+        **({"specialist_requirements": specialist} if specialist else {}),
         "robotics_experience_requirements": robotics_experience,
         "executive_dimensions": executive_dimensions,
         "commissioning_status": status,
