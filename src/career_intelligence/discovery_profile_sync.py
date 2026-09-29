@@ -132,10 +132,12 @@ def assert_profile_intent(repository, profile):
     if not profile.profile_name.startswith(("lingjia_market_stepstone_", "lingjia_market_ba_")):
         return
     target = desired_profiles(load_market_discovery_config()).get(profile.profile_name)
+    # Runtime SearchProfile carries scope, not terms. The repository supplies
+    # SearchTerm objects; doctor/build_plan separately checks the legacy DB column.
     actual = sorted({term.search_term for _, term in
                      repository.load_active_search_terms(profile.profile_name)})
     if (target is None or profile.source_name != target["source_name"]
-            or actual != target["terms"] or profile.search_term):
+            or actual != target["terms"]):
         raise ValueError("Discovery search intent drift: review discovery_profile_sync before ingestion")
 
 

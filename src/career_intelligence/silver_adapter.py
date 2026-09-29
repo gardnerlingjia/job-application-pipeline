@@ -43,6 +43,10 @@ class SilverAdaptationError(ValueError):
         self.provenance = provenance
 
 
+class DiscoveryNeedsDetail(SilverAdaptationError):
+    """Expected unscored discovery outcome; never a replacement assessment."""
+
+
 class SilverJobReadRepository:
     """Read-only view over normalized Silver jobs and their linked raw evidence."""
 
@@ -368,7 +372,8 @@ def adapt_silver_row(row: Mapping[str, Any]) -> SilverCareerInput:
             provenance=base_provenance,
         )
     if description_quality not in {"strong", ATS_PROVIDER_IDENTITY_DESCRIPTION_QUALITY}:
-        raise SilverAdaptationError(
+        base_provenance["discovery_state"] = "DISCOVERED_NEEDS_DETAIL"
+        raise DiscoveryNeedsDetail(
             "insufficient description evidence: weak listing/card text is not scored",
             provenance=base_provenance,
         )
@@ -416,6 +421,8 @@ def adapt_silver_rows(
                 "index": str(index),
                 "error": str(exc),
             }
+            if isinstance(exc, DiscoveryNeedsDetail):
+                error["status"] = "DISCOVERED_NEEDS_DETAIL"
             provenance = getattr(exc, "provenance", None)
             if isinstance(provenance, dict):
                 error["provenance"] = provenance

@@ -224,7 +224,9 @@ def test_weak_listing_only_record_is_not_normally_scored(tmp_path, monkeypatch):
 
     assert calls == []
     assert summary["processed"] == 0
-    assert summary["errors"][0]["error"] == (
+    assert summary["errors"] == []
+    assert summary["needs_detail"][0]["status"] == "DISCOVERED_NEEDS_DETAIL"
+    assert summary["needs_detail"][0]["error"] == (
         "insufficient description evidence: weak listing/card text is not scored"
     )
     provenance = json.loads((tmp_path / PROVENANCE_FILE).read_text())
@@ -624,3 +626,44 @@ class FakeRepository:
     def load_silver_jobs(self, *, limit, source_patterns):
         self.calls.append({"limit": limit, "source_patterns": source_patterns})
         return self.rows
+
+
+@pytest.mark.parametrize('kind,expected_exit', [('weak', 0), ('enriched', 0),
+                                               ('adapter_exception', 1), ('runtime_exception', 1)])
+def test_daily_evidence_deferral_and_true_failures(tmp_path, monkeypatch, kind, expected_exit):
+    from src.career_intelligence.daily import run_daily
+    row = silver_row(source_name='stepstone', raw_data={
+        'source_specific': {'raw_card_text': 'Short listing teaser'}})
+    if kind == 'enriched':
+        row['raw_data']['detail_evidence'] = {
+            'text': 'Lead vehicle software delivery programs in Berlin.',
+            'description_quality': 'strong'}
+    elif kind == 'adapter_exception':
+        def broken_adapter(row):
+            raise RuntimeError('real adapter failure')
+        monkeypatch.setattr('src.career_intelligence.silver_adapter.adapt_silver_row', broken_adapter)
+    elif kind == 'runtime_exception':
+        row = silver_row()
+        def broken_assessor(*args, **kwargs):
+            raise RuntimeError('real runtime failure')
+        monkeypatch.setattr('src.career_intelligence.ingest_silver.assess_opportunity', broken_assessor)
+    summaries = []
+    def ingest(**kwargs):
+        result = process_silver(repository=FakeRepository([row]), **kwargs)
+        summaries.append(result)
+        return result
+    status, lines, _ = run_daily(results=tmp_path/'results', runtime_dir=tmp_path/'runtime',
+                                 state_path=tmp_path/'state.json', ingestion=ingest)
+    assert status == expected_exit
+    summary = summaries[0]
+    assert summary['processed'] == (1 if kind == 'enriched' else 0)
+    if kind == 'weak':
+        assert summary['opportunities'] == []
+        assert summary['errors'] == []
+        assert len(summary['needs_detail']) == 1
+        assert 'Discovered needs detail (unscored): 1' in lines
+    elif expected_exit:
+        assert len(summary['errors']) == 1
+        assert summary['needs_detail'] == []
+    else:
+        assert summary['needs_detail'] == summary['errors'] == []

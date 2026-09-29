@@ -476,6 +476,7 @@ def run_market_discovery(
     career_summary_prefixes = (
         "Silver jobs loaded:",
         "Converted:",
+        "Discovered needs detail (unscored):",
         "Newly assessed:",
         "Already known/skipped:",
         "Errors:",

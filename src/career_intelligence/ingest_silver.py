@@ -473,7 +473,10 @@ def process_silver(
         results=results,
         skipped_provenance=skipped_provenance,
     )
-    summary["errors"] = conversion_errors + summary["errors"]
+    summary["needs_detail"] = [e for e in conversion_errors
+                               if e.get("status") == "DISCOVERED_NEEDS_DETAIL"]
+    summary["errors"] = [e for e in conversion_errors
+                         if e.get("status") != "DISCOVERED_NEEDS_DETAIL"] + summary["errors"]
     summary["loaded"] = len(rows)
     summary["converted"] = len(inputs)
     return summary

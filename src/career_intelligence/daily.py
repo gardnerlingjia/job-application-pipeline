@@ -176,6 +176,7 @@ def summary_lines(
         "Career Intelligence daily refresh",
         f"Silver jobs loaded: {int(summary.get('loaded', 0))}",
         f"Converted: {int(summary.get('converted', 0))}",
+        f"Discovered needs detail (unscored): {len(summary.get('needs_detail', []))}",
         f"Newly assessed: {int(summary.get('processed', 0))}",
         f"Already known/skipped: {int(summary.get('skipped_existing', 0))}",
         f"Errors: {len(errors) if isinstance(errors, list) else 0}",
