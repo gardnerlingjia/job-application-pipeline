@@ -119,14 +119,21 @@ PY
   exit 1
 }
 
-mapfile -t CONTEXT_VALUES <<< "$CONTEXT_OUTPUT"
-if [ "${#CONTEXT_VALUES[@]}" -ne 2 ]; then
+CONTEXT_LINE_1=""
+CONTEXT_LINE_2=""
+CONTEXT_LINE_3=""
+{
+  IFS= read -r CONTEXT_LINE_1 || true
+  IFS= read -r CONTEXT_LINE_2 || true
+  IFS= read -r CONTEXT_LINE_3 || true
+} <<< "$CONTEXT_OUTPUT"
+if [ -z "$CONTEXT_LINE_1" ] || [ -z "$CONTEXT_LINE_2" ] || [ -n "$CONTEXT_LINE_3" ]; then
   log "ERROR RCC runtime context produced an invalid consumer projection"
   exit 1
 fi
 
-PROJECT_DIR="${CONTEXT_VALUES[0]}"
-RUNTIME_PYTHON="${CONTEXT_VALUES[1]}"
+PROJECT_DIR="$CONTEXT_LINE_1"
+RUNTIME_PYTHON="$CONTEXT_LINE_2"
 
 if [ ! -d "$PROJECT_DIR" ]; then
   log "ERROR RCC checkout unavailable: $PROJECT_DIR"

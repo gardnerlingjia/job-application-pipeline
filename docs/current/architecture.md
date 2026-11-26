@@ -82,3 +82,6 @@ generics and repair/stop taxonomy.
 
 Detailed references live under `../reference/`. Diagrams live in
 `system-diagrams.md`.
+
+
+Career Intelligence V3.4 operations: [handover](career-intelligence-v34-operations.md).

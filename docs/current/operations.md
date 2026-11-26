@@ -140,3 +140,6 @@ business state. Repository/runtime evidence always wins over a chat handover.
 
 A re-entry record may identify the next safe action, but it never loosens a
 gate, converts unknown state to success or authorizes a side effect.
+
+
+Career Intelligence V3.4 operations: [handover](career-intelligence-v34-operations.md).

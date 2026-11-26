@@ -1,0 +1,71 @@
+schema_version: career_intelligence.discovery_v3.v1
+strategy_version: v3.4
+request_budget:
+  max_requests_per_run: 120
+  max_pages_per_query: 2
+  page_size: 25
+  max_retries: 1
+  retry_backoff_seconds: 0.5
+  minimum_interval_seconds: 0.5
+geographic_scopes:
+  bundesagentur_fuer_arbeit:
+  - Berlin
+  - Deutschland
+  employer_boards:
+  - DE
+  - AT
+  - BE
+  - CH
+  - DK
+  - FR
+  - NL
+  - SE
+profiles:
+  A:
+  - Technical Program Manager
+  - Engineering Program Manager
+  - Engineering Transformation Manager
+  - Digital Delivery Manager
+  - Technology Transformation Manager
+  - Technical Product Delivery Manager
+  - International Technology Program Manager
+  - China Europe Program Lead
+  - Global Product Delivery Manager
+  - International Business Operations Manager
+  - Technology Partnership Manager
+  - Market Entry and Expansion Manager
+  - International Supplier Program Manager
+  - Global Transformation Manager
+  - Technisches Programmmanagement
+  - Internationale Programmleitung
+  - Deutsch Chinesisches Projektmanagement
+  - Global Engineering Program Manager
+  - International Technical Program Manager
+  B:
+  - AI Implementation Manager
+  - Intelligent Automation Manager
+  - AI Process Transformation Manager
+  - AI Enablement Manager
+  - AI Solution Delivery Manager
+  - Digital Process Transformation Manager
+  - AI Integration Program Manager
+  - KI Implementierungsmanager
+  - Prozessautomatisierung Projektleiter
+  - KI Transformation Manager
+  - International Technology Partnerships
+  - China Business Operations technology
+  C:
+  - AI Workflow Designer
+  - Decision Intelligence Manager
+  - AI Product Manager
+  - Agentic Workflow Specialist
+  - AI Application Product Owner
+  - KI Workflow Designer
+  - Produktmanager KI Anwendungen
+role_attention_percent:
+  A: 50
+  B: 35
+  C: 15
+revision: 2026-11-24-role-calibration
+excluded_internal_employers:
+- CARIAD

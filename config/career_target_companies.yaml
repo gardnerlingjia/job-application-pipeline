@@ -1,0 +1,150 @@
+# Watch intent only. This file never activates a source or changes profile scope.
+schema_version: 1
+companies:
+- company_key: waymo
+  company_name: Waymo
+  group: autonomous_mobility
+  status: connector_available
+  reason: Existing controlled profile; runtime checks current gates before reuse
+  source_name: greenhouse:waymo
+  profile_name: waymo_controlled_germany_mobility
+- company_key: moia
+  company_name: MOIA
+  group: autonomous_mobility
+  status: connector_available
+  reason: Existing controlled profile; runtime checks current gates before reuse
+  source_name: greenhouse:moia
+  profile_name: moia_controlled_hannover_precision
+- company_key: vay
+  company_name: Vay
+  group: autonomous_mobility
+  status: not_evaluated
+  reason: No verified employer-origin connector binding evaluated for this watchlist
+- company_key: motor_ai
+  company_name: MOTOR Ai
+  group: autonomous_mobility
+  status: candidate_source_gap
+  reason: Strategy intent exists, but no validated company-specific active profile;
+    do not infer availability from ATS family
+- company_key: weride
+  company_name: WeRide
+  group: autonomous_mobility
+  status: not_evaluated
+  reason: No verified employer-origin connector binding evaluated for this watchlist
+- company_key: pony_ai
+  company_name: Pony.ai
+  group: autonomous_mobility
+  status: not_evaluated
+  reason: No verified employer-origin connector binding evaluated for this watchlist
+- company_key: apollo_go_baidu
+  company_name: Apollo Go / Baidu
+  group: autonomous_mobility
+  status: not_evaluated
+  reason: No verified employer-origin connector binding evaluated for this watchlist
+- company_key: uber
+  company_name: Uber
+  group: autonomous_mobility
+  status: candidate_source_gap
+  reason: Strategy intent exists, but no validated company-specific active profile;
+    do not infer availability from ATS family
+- company_key: freenow_lyft
+  company_name: FREENOW / Lyft
+  group: autonomous_mobility
+  status: candidate_source_gap
+  reason: Strategy intent exists, but no validated company-specific active profile;
+    do not infer availability from ATS family
+- company_key: mobileye
+  company_name: Mobileye
+  group: autonomous_mobility
+  status: not_evaluated
+  reason: No verified employer-origin connector binding evaluated for this watchlist
+- company_key: nvidia_automotive
+  company_name: NVIDIA Automotive
+  group: autonomous_mobility
+  status: candidate_source_gap
+  reason: Strategy intent exists, but no validated company-specific active profile;
+    do not infer availability from ATS family
+- company_key: bosch_mobility
+  company_name: Bosch Mobility
+  group: autonomous_mobility
+  status: candidate_source_gap
+  reason: Strategy intent exists, but no validated company-specific active profile;
+    do not infer availability from ATS family
+- company_key: mercedes_benz
+  company_name: Mercedes-Benz
+  group: vehicle_adas_sdv
+  status: not_evaluated
+  reason: No verified employer-origin connector binding evaluated for this watchlist
+- company_key: bmw
+  company_name: BMW
+  group: vehicle_adas_sdv
+  status: not_evaluated
+  reason: No verified employer-origin connector binding evaluated for this watchlist
+- company_key: audi
+  company_name: Audi
+  group: vehicle_adas_sdv
+  status: not_evaluated
+  reason: No verified employer-origin connector binding evaluated for this watchlist
+- company_key: volkswagen_cariad
+  company_name: Volkswagen / CARIAD
+  group: vehicle_adas_sdv
+  status: not_evaluated
+  reason: No verified employer-origin connector binding evaluated for this watchlist
+- company_key: continental_aumovio
+  company_name: Continental / Aumovio
+  group: vehicle_adas_sdv
+  status: not_evaluated
+  reason: No verified employer-origin connector binding evaluated for this watchlist
+- company_key: zf
+  company_name: ZF
+  group: vehicle_adas_sdv
+  status: not_evaluated
+  reason: No verified employer-origin connector binding evaluated for this watchlist
+- company_key: qualcomm
+  company_name: Qualcomm
+  group: vehicle_adas_sdv
+  status: not_evaluated
+  reason: No verified employer-origin connector binding evaluated for this watchlist
+- company_key: aptiv
+  company_name: Aptiv
+  group: vehicle_adas_sdv
+  status: not_evaluated
+  reason: No verified employer-origin connector binding evaluated for this watchlist
+- company_key: harman
+  company_name: Harman
+  group: vehicle_adas_sdv
+  status: not_evaluated
+  reason: No verified employer-origin connector binding evaluated for this watchlist
+- company_key: valeo
+  company_name: Valeo
+  group: vehicle_adas_sdv
+  status: not_evaluated
+  reason: No verified employer-origin connector binding evaluated for this watchlist
+- company_key: quantum_systems
+  company_name: Quantum Systems
+  group: adjacent_physical_ai_mobility
+  status: not_evaluated
+  reason: No verified employer-origin connector binding evaluated for this watchlist
+- company_key: siemens_mobility
+  company_name: Siemens Mobility
+  group: adjacent_physical_ai_mobility
+  status: candidate_source_gap
+  reason: Strategy intent exists, but no validated company-specific active profile;
+    do not infer availability from ATS family
+- company_key: deutsche_bahn
+  company_name: Deutsche Bahn
+  group: adjacent_physical_ai_mobility
+  status: not_evaluated
+  reason: No verified employer-origin connector binding evaluated for this watchlist
+- company_key: abb
+  company_name: ABB
+  group: adjacent_physical_ai_mobility
+  status: candidate_source_gap
+  reason: Strategy intent exists, but no validated company-specific active profile;
+    do not infer availability from ATS family
+- company_key: amazon_robotics
+  company_name: Amazon Robotics
+  group: adjacent_physical_ai_mobility
+  status: candidate_source_gap
+  reason: Strategy intent exists, but no validated company-specific active profile;
+    do not infer availability from ATS family

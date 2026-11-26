@@ -1,0 +1,310 @@
+schema_version: career_intelligence.strategy.v1
+strategy_version: v3.4
+mode: preview
+production_default: false
+positioning: Senior Technology & Transformation Leader | Complex Program Delivery | Cross-Functional Execution
+  | AI-Enabled Innovation
+candidate_evidence:
+  capability_profile: config/capability_profile.yaml
+  career_profile: config/career_profile.yaml
+  verification_status: candidate_approved_cv_evidence
+  preview_review_file: .runtime/career_intelligence/v34/master_cv_review/candidate_fact_profile.draft.json
+  preview_review_enabled: true
+  supplementary_review_file: .runtime/career_intelligence/v34/master_cv_review/competency_evidence_review.json
+  approved_facts_file: .runtime/career_intelligence/v34/master_cv_review/candidate_fact_profile.approved.json
+assessment:
+  engine: existing_assess_opportunity
+  weights: unchanged
+  historical_outputs: preserve
+  require_strong_qualification: true
+  require_confirmed_location: true
+  require_verified_candidate_evidence: true
+industries:
+  energy_infrastructure:
+    label: Energy & Infrastructure
+    employers:
+    - Siemens Energy
+    - Hitachi Energy
+    - Schneider Electric
+    - GE Vernova
+    - E.ON
+    - 50Hertz
+    patterns:
+    - \b(?:energy|renewable|grid|power transmission|wind farm|energie|stromnetz|energienetz|infrastruktur)\b
+  industrial_technology:
+    label: Industrial Technology & Automation
+    employers:
+    - Siemens
+    - ABB
+    - Bosch Rexroth
+    - Festo
+    - KUKA
+    - Beckhoff Automation
+    patterns:
+    - \b(?:industrial|automation|robotics|manufacturing|iiot|industrie|automatisierung|fertigung|robotik)\b
+  enterprise_software:
+    label: Enterprise AI & Software
+    employers:
+    - SAP
+    - Microsoft
+    - IBM
+    - ServiceNow
+    - Salesforce
+    - Reply
+    - NTT DATA
+    - Delivery Hero
+    - IONOS
+    patterns:
+    - \b(?:enterprise|software|saas|data product|datenprodukt|ai adoption|ai transformation|digital transformation)\b
+  automotive_mobility:
+    label: Automotive & Autonomous Mobility
+    employers:
+    - Waymo
+    - MOIA
+    - Tesla
+    - AUMOVIO
+    - Continental
+    - CARIAD
+    - Mercedes-Benz
+    - BMW
+    patterns:
+    - \b(?:automotive|autonom\w*|adas|vehicle|fleet|mobility|fahrzeug\w*|mobilität|flotten\w*)\b
+role_families:
+  technical_program:
+    label: Technical program & engineering delivery
+    tier: 1
+    patterns:
+    - \b(?:(?:senior|technical|engineering|technology|strategic|enterprise ai|ai) )*(?:program|programme)
+      (?:manager|lead|director)\b
+    - \b(?:programmleitung|programmleiter\w*|programmmanager\w*|projektleiter\w*|projektmanager\w*)\b
+  transformation:
+    label: Technology & business transformation
+    tier: 2
+    patterns:
+    - \b(?:(?:digital|business|technology|ai|ki) )?transformation (?:program )?(?:manager|lead|director)\b
+    - \b(?:digitalisierungsmanager\w*|transformationsmanager\w*|leitung digitale services)\b
+  delivery:
+    label: Product, implementation & cross-functional delivery
+    tier: 2
+    patterns:
+    - \b(?:(?:technical|product|program|cross functional|technology) )?(?:delivery|deployment|implementation|launch|release)
+      (?:manager|lead|director)\b
+    - \b(?:product program|technology implementation|cross functional delivery|technical product delivery)\b
+  operations:
+    label: Strategic & technology operations
+    tier: 1
+    patterns:
+    - \b(?:strategic |technology |market |global |fleet )?operations (?:manager|lead|director)\b
+    - \b(?:head of operations|betriebsleitung|mobilitätsmanagement)\b
+  ai_adoption:
+    label: Selective AI adoption & data product leadership
+    tier: 3
+    patterns:
+    - \b(?:ai|ki) (?:adoption|product program|transformation|program) (?:manager|lead|director)\b
+    - \b(?:data domain manager|data product (?:manager|lead|owner)|datenprodukt\w*)\b
+    - \b(?:ai|ki|intelligent) (?:implementation|automation|enablement|solution delivery|integration|workflow|application
+      product)\b
+    - \b(?:decision intelligence|agentic workflow|digital process transformation)\b
+  international_business:
+    label: International business, market entry and partnerships
+    tier: 2
+    patterns:
+    - \b(?:international business|technology partnership|market entry|expansion|supplier program|china[-–
+      ]europe|cross[- ]regional)\b
+competencies:
+  technical_program_leadership:
+    patterns:
+    - \b(?:lead|manage|deliver|own|coordinate|orchestrate)\b.{0,90}\b(?:programs?|programmes?|projects?|delivery|deployment)\b
+    - \b(?:programm\w*|projekt\w*)\b.{0,80}\b(?:leit\w*|steuer\w*|verantwort\w*|umsetz\w*)\b
+    - \b(?:leit\w*|steuer\w*|verantwort\w*)\b.{0,80}\b(?:programm\w*|projekt\w*)\b
+    - \b(?:koordinierst|koordiniert|steuerst|leitest|verantwortest)\b.{0,120}\b(?:kundenauftrag|maßnahmen|projekt\w*|programm\w*)\b
+  executive_stakeholder_management:
+    patterns:
+    - \b(?:cross[- ]functional|multifunctional|stakeholder|executive|interdisciplinary|bereichsübergreifend\w*|interdisziplinär\w*|geschäftsführung)\b
+    - \b(?:funktionsübergreifend\w*|teamübergreifend\w*|schnittstelle\w*|fachbereich\w*)\b
+  program_governance:
+    patterns:
+    - \b(?:milestones?|dependencies|risks?|governance|readiness|meilenstein\w*|abhängigkeit\w*|risik\w*|reifegrad\w*)\b
+    - \b(?:projekttransparenz|projektmeetings|terminpläne|projektrelevanten kennzahlen)\b
+  product_delivery:
+    patterns:
+    - \b(?:product lifecycle|software delivery|release|roadmap|integration|validation|acceptance criteria|produktentwicklung|produktlebenszyklus|validierung|anforderungsmanagement)\b
+    - \b(?:übergabe|abnahme\w*|projektabwicklung|softwaremigration\w*)\b
+  international_cross_border:
+    patterns:
+    - \b(?:international|global|multicultural|cross[- ]border|interkulturell\w*|länderübergreifend\w*)\b
+  technical_business_translation:
+    patterns:
+    - \b(?:business requirements|technical requirements|engineering.{0,40}business|business.{0,40}engineering|technical.{0,30}stakeholders|geschäftsanforderungen|technisch\w*.{0,50}fachbereich\w*)\b
+    - \btechnisch\w*.{0,100}\b(?:vertrieb|anforderung\w*|realisierbarkeit)\b
+  transformation_execution:
+    patterns:
+    - \b(?:transformation|organizational change|process improvement|operating model|digitalisierung|veränderungsmanagement|prozessoptimierung)\b
+  international_business_development:
+    patterns:
+    - \b(?:business development|geschäftsentwicklung|customer engagement|kundenentwicklung)\b
+  market_strategy_execution:
+    patterns:
+    - \b(?:market strategy|market entry|expansion|go.to.market|markteintritt|marktstrategie)\b
+  international_supplier_management:
+    patterns:
+    - \b(?:supplier|sourcing|lieferant|beschaffung)\w*\b
+  process_quality_management:
+    patterns:
+    - \b(?:quality management|iso 9000|prozessmanagement|qualitätsmanagement)\b
+specialist_requirements:
+  production_ai:
+    patterns:
+    - \b(?:hands[- ]on|production|productive enterprise|produktive\w*|mehrjährig\w*).{0,90}\b(?:ai|ml|genai|llm|machine
+      learning)\b
+    - \b(?:ai|ml|genai).{0,100}\b(?:production|enterprise production|produktiv\w*)\b
+    reason: Professional production AI engineering/delivery is not established by prototype evidence.
+  cloud_sap_architecture:
+    patterns:
+    - \b(?:deep|proven|senior|extensive|fundiert\w*|mehrjährig\w*).{0,85}\b(?:cloud|sap|s/4hana|enterprise|solutions?|integration).{0,30}architect\w*\b
+    - \b(?:sap|cloud|erp).{0,50}\b(?:architecture expertise|architekturkenntnisse)\b
+    reason: Required specialist architecture practice is not documented.
+  professional_data:
+    patterns:
+    - \b(?:at least |minimum |mindestens )?(?:[3-9]|three|four|five)\+?\s*(?:years|jahre\w*).{0,60}\b(?:data|daten|salesforce)\b
+    - \b(?:deep|tiefgreifend\w*).{0,40}\b(?:data governance|datenmodellierung)\b
+    reason: Required professional data/platform tenure is not documented.
+  legal_operations:
+    patterns:
+    - \b(?:experience|years|expertise).{0,80}\b(?:outside counsel|legal operations|law firm)\b
+    reason: Specialist legal-operations practice is not documented.
+  sales_commercial:
+    patterns:
+    - \b(?:quota[- ]carrying|quota design|territory modelling|sales operations|banking industry experience|banking
+      experience)\b
+    - \b(?:own|drive|responsible for).{0,60}\b(?:revenue growth|revenue targets|sales pipeline)\b
+    reason: Required commercial/banking/revenue-operations practice is not documented.
+  speech_systems:
+    patterns:
+    - \b(?:hands[- ]on|demonstrated|solid).{0,90}\b(?:speech|voice assistant|asr|nlu|tts)\b
+    reason: Required professional speech-system practice is not documented.
+  disciplinary_it:
+    patterns:
+    - \b(?:disciplinary|disziplinarisch\w*).{0,50}\b(?:management|führung\w*)\b
+    - \b(?:führung\w*).{0,45}\b(?:disziplinarisch\w*)\b
+    reason: Formal disciplinary management is not established by program leadership alone.
+domain_requirements:
+- \b(?:required|mandatory|must have|erforderlich|voraussetzung).{0,80}\b(?:industry|sector|aerospace|nuclear|energy|banking|procurement)\b
+- \b(?:experience|track record).{0,70}\b(?:aerospace procurement|aerospace project procurement|data catalogue|data
+  catalog)\b
+- \bberufserfahrung.{0,100}\b(?:anlagen|energie|kraftwerk|bau).{0,40}technik\b
+qualification:
+  minimum_description_chars: 160
+  minimum_core_competencies: 3
+  strong_requires_execution: true
+  strong_requires_seniority: true
+  execution_patterns:
+  - \b(?:lead|own|manage|deliver|drive|orchestrate|verantwort\w*|leit\w*|steuer\w*)\b
+  seniority_patterns:
+  - \b(?:own|lead|accountable|end[- ]to[- ]end|program|programme|portfolio|budget|verantwort\w*|leitung|programm\w*)\b
+  mismatch_title_patterns:
+  - \b(?:junior|intern|internship|graduate|trainee|werkstudent\w*|praktikant\w*)\b
+  - \b(?:software engineer|software developer|ml researcher|research scientist|cloud architect|sap architect|erp
+    architect)\b
+  mismatch_duty_patterns:
+  - \b(?:employee relocation|relocation cases|outside counsel|law firm billing|quota[- ]carrying)\b
+  optional_markers: preferred|optional|nice to have|ideally|idealerweise|wünschenswert|not required|nicht
+    erforderlich
+  out_of_scope_roles:
+    early_career:
+      titles: \b(?:junior|intern|internship|praktikum|werkstudent\w*|trainee)\b
+      duties: \b(?:praktikum|internship|student|studium|supervision|immatrikulation)\b
+    technician:
+      titles: \b(?:techniker\w*|technician)\b
+      duties: \b(?:inbetriebnahme|parametrier\w*|commissioning|maintenance)\b
+    commercial:
+      titles: \b(?:sales specialist|presales|pre[- ]sales|account executive|sales operations|go[- ]to[-
+        ]market.{0,35}lead)\b
+      duties: \b(?:sales|revenue|selling|net new business|quota|pipeline)\b
+    labour_relations:
+      titles: \b(?:labou?r relations|employment counsel|employee relations)\b
+      duties: \b(?:employment law|labou?r|works council|legal)\b
+china_europe:
+  score_contribution: 0
+  professional_fact_tags:
+  - international_cross_border
+  - china_europe
+  - china_europe_stakeholder_management
+  - international_technical_program_delivery
+  - multinational_engineering_supplier_coordination
+  - cross_regional_collaboration
+  - china_market
+  china_pattern: \b(?:china|chinese|mandarin|chinesisch\w*|deutsch[- ]chinesisch\w*)\b
+  professional_pattern: \b(?:program\w*|project\w*|engineering|suppliers?|partners?|stakeholder\w*|market|geschäft\w*|projekt\w*|programm\w*|lieferant\w*|entwicklung\w*|zusammenarbeit)\b
+  international_pattern: \b(?:cross[- ]regional|cross[- ]border|multinational|international|global|international\w*|länderübergreifend\w*)\b
+  languages_pattern: \b(?:mandarin|german|english|deutsch|englisch|chinesisch)\b
+revision: 2026-11-24-role-calibration
+effective_date: '2026-11-24'
+supersedes: V3.4 industry 30/30/25/15 allocation and 80/20 working preference
+role_attention_percent:
+  A: 50
+  B: 35
+  C: 15
+working_preferences:
+  minimum_independent_work_orientation_percent: 50
+  hard_percentage_gate: false
+  infer_percentages_from_description: false
+  berlin_based: true
+  mandatory_relocation_allowed: false
+  travel: reasonable and occasional
+excluded_internal_employers:
+- CARIAD
+search_categories:
+  A:
+    label: Existing strengths with AI differentiator
+    patterns:
+    - \b(?:program|programme|projekt|engineering transformation|technical product|technology partnership|market
+      entry|supplier|international business|global transformation)\w*\b
+  B:
+    label: Emerging hybrid roles
+    patterns:
+    - \b(?:ai|ki|intelligent|digital process)\b.{0,35}\b(?:implementation|automation|process transformation|enablement|solution
+      delivery|integration|automatisierung)\b
+  C:
+    label: Future-oriented stretch roles
+    patterns:
+    - \b(?:ai|ki|agentic|decision intelligence)\b.{0,30}\b(?:workflow|product manager|product owner|designer|specialist|manager)\b
+preview_job_evidence_file: .runtime/career_intelligence/v34/calibration-job-evidence.json
+supplementary_competencies:
+  ai_workflow_design:
+    label: AI workflow design at prototype scope
+    patterns:
+    - \b(?:ai|ki|agentic).{0,30}workflow|workflow.{0,30}(?:ai|ki)|prozessautomatisierung
+  decision_support_systems:
+    label: Decision-support systems
+    patterns:
+    - decision.support|decision intelligence|entscheidungsunterstütz|evaluation rules|prioriti[sz]ation
+  ai_application_prototyping:
+    label: AI application prototyping
+    patterns:
+    - prototyp|vibe coding|rapid prototyping|ai application|ki.anwendung
+  product_owner:
+    label: AI product development fundamentals; not formal PO tenure
+    patterns:
+    - product discovery|product owner|product development|user journey|product requirements|backlog|produktentwicklung
+  agent_tool_calling:
+    label: Agent tool calling at prototype scope
+    patterns:
+    - tool.call|tool.us(?:e|ing)|agent.{0,25}(?:tools?|api)|werkzeugaufruf
+  computer_vision:
+    label: Computer vision at prototype/coursework scope
+    patterns:
+    - computer vision|image.classification|object.detect|yolov8|resnet|bildklassifikation|objekterkennung
+  mlops:
+    label: ML pipeline fundamentals; not production MLOps
+    patterns:
+    - ml pipeline|machine.learning pipeline|experiment.track|mlflow|reproducib|mlops
+  machine_learning:
+    label: Applied ML coursework and prototype fundamentals
+    patterns:
+    - machine.learning|model.evaluation|model.training|classification|scikit.learn|pytorch|bert|maschinelles
+      lernen
+  ai_data_transformation:
+    label: AI transformation qualifications and working knowledge
+    patterns:
+    - ai enablement|ai adoption|ai transformation|generative.ai|\bllm\b|\brag\b|ki.transformation

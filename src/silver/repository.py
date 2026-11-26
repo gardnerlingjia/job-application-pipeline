@@ -105,6 +105,55 @@ class SilverJobRepository:
         )
         return rows
 
+    def load_raw_jobs_by_ids(
+        self,
+        raw_job_ids: list[int],
+        source_patterns: list[str] | None = None,
+    ) -> list[dict]:
+        if not raw_job_ids:
+            return []
+
+        if any(raw_job_id <= 0 for raw_job_id in raw_job_ids):
+            raise ValueError("raw_job_ids must be positive integers")
+
+        source_patterns = source_patterns or []
+        filters: list[str] = ["r.id = ANY(%s::bigint[])"]
+        params: list[object] = [raw_job_ids]
+
+        if source_patterns:
+            source_clauses = []
+
+            for pattern in source_patterns:
+                if "%" in pattern:
+                    source_clauses.append("r.source_name LIKE %s")
+                else:
+                    source_clauses.append("r.source_name = %s")
+
+                params.append(pattern)
+
+            filters.append("(" + " OR ".join(source_clauses) + ")")
+
+        filter_sql = " AND ".join(filters)
+
+        with self.get_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    f"""
+                    SELECT
+                        r.id,
+                        r.source_name,
+                        r.external_job_id,
+                        r.source_url,
+                        r.raw_data
+                    FROM raw_jobs r
+                    WHERE {filter_sql}
+                    ORDER BY r.id;
+                    """,
+                    tuple(params),
+                )
+
+                return list(cur.fetchall())
+
     def preview_unprocessed_raw_jobs(
         self,
         limit: int = 100,

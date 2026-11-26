@@ -74,15 +74,21 @@ def build_preflight(
     *,
     conn: psycopg.Connection[Any],
     company_key: str,
+    profile_config: dict | None = None,
 ) -> tuple[dict[str, Any], ControlledActivationDecision, ConnectorAutonomyPolicy | None]:
+    if company_key == 'waymo' and profile_config is None:
+        raise ValueError('Waymo requires an explicit --profile-config; Hannover defaults prohibited')
     readiness = run_activation_readiness(
         conn=conn,
         candidate_id=None,
         company_key=company_key,
         output_dir=Path("docs/planning/active/source-candidates"),
         write=False,
-        page_size=DEFAULT_PAGE_SIZE,
+        page_size=profile_config['page_size'] if profile_config else DEFAULT_PAGE_SIZE,
+        **({'profile_config': profile_config} if profile_config else {}),
     )
+    if profile_config:
+        readiness['controlled_profile'] = profile_config
     candidate = readiness["candidate"]
     candidate_id = int(candidate["candidate_id"])
     validation_passed = gate_passed(
@@ -125,7 +131,13 @@ def apply_activation(
     candidate_id = int(candidate["candidate_id"])
     company_key = str(candidate["company_key"])
     source_name = str(candidate["source_name_candidate"])
-    profile_name = controlled_profile_name(company_key)
+    scope = readiness.get('controlled_profile')
+    if company_key == 'waymo' and scope is None:
+        raise ValueError('Explicit Waymo profile required')
+    if scope and scope['source_name'] != source_name:
+        raise ValueError('Controlled profile source mismatch')
+    profile_name = scope['profile_name'] if scope else controlled_profile_name(company_key)
+    terms = scope['search_terms'] if scope else [CONTROLLED_SEARCH_TERM]
 
     with conn.cursor(row_factory=dict_row) as cur:
         cur.execute(
@@ -159,23 +171,24 @@ def apply_activation(
             (
                 profile_name,
                 source_name,
-                CONTROLLED_SEARCH_TERM,
-                DEFAULT_LOCATION,
-                DEFAULT_RADIUS_KM,
+                terms[0],
+                scope['search_location'] if scope else DEFAULT_LOCATION,
+                scope['search_radius_km'] if scope else DEFAULT_RADIUS_KM,
                 DEFAULT_OFFER_TYPE,
-                DEFAULT_PAGE_SIZE,
+                scope["page_size"] if scope else DEFAULT_PAGE_SIZE,
             ),
         )
         profile = dict(cur.fetchone())
 
-        cur.execute(
-            """
-            INSERT INTO search_terms (search_profile_id, search_term, is_active)
-            VALUES (%s, %s, TRUE)
-            ON CONFLICT (search_profile_id, search_term) DO NOTHING
-            """,
-            (profile["id"], CONTROLLED_SEARCH_TERM),
-        )
+        for term in terms:
+            cur.execute(
+                """
+                INSERT INTO search_terms (search_profile_id, search_term, is_active)
+                VALUES (%s, %s, TRUE)
+                ON CONFLICT (search_profile_id, search_term) DO NOTHING
+                """,
+                (profile["id"], term),
+            )
 
         cur.execute(
             """
@@ -196,7 +209,8 @@ def apply_activation(
             "profile_name": profile_name,
             "source_name": source_name,
             "page_size": DEFAULT_PAGE_SIZE,
-            "search_term": CONTROLLED_SEARCH_TERM,
+            "search_term": terms[0],
+            "controlled_profile": scope,
             "recurring_ingestion_enabled": False,
             "boundary": {
                 "controlled_source_activation": True,
@@ -262,6 +276,7 @@ def build_manifest(
         "agent": "validated_connector_controlled_activation",
         "generated_at_utc": datetime.now(UTC).isoformat(),
         "candidate": candidate,
+        "controlled_profile": readiness.get("controlled_profile"),
         "fresh_s7u": {
             "overall_readiness": readiness["overall_readiness"],
             "candidate_count": readiness["candidate_count"],
@@ -303,6 +318,7 @@ def build_parser() -> argparse.ArgumentParser:
         )
     )
     parser.add_argument("--company-key", required=True)
+    parser.add_argument("--profile-config", type=Path)
     parser.add_argument("--apply", action="store_true")
     parser.add_argument("--print-json", action="store_true")
     return parser
@@ -311,11 +327,16 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> None:
     args = build_parser().parse_args()
 
+    from src.search_intelligence.controlled_profile import load_controlled_profile
+    scope = load_controlled_profile(args.profile_config, args.company_key) if args.profile_config else None
+    if args.company_key == 'waymo' and scope is None:
+        raise ValueError('Waymo requires --profile-config')
     with psycopg.connect(**get_database_config()) as conn:
         try:
             readiness, decision, policy = build_preflight(
                 conn=conn,
                 company_key=args.company_key,
+                **({"profile_config": scope} if scope else {}),
             )
             applied = None
             if args.apply:

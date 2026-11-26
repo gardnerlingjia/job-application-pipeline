@@ -7,9 +7,9 @@ services:
     environment:
       POSTGRES_DB: job_pipeline
       POSTGRES_USER: job_user
-      POSTGRES_PASSWORD: job_password
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in the private .env file}
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 

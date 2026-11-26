@@ -11,11 +11,11 @@ load_dotenv(dotenv_path=ENV_FILE, override=False)
 
 def get_database_config() -> dict:
     config = {
-        "host": os.getenv("POSTGRES_HOST"),
+        "host": os.getenv("POSTGRES_HOST", "localhost"),
         "port": int(os.getenv("POSTGRES_PORT", "5432")),
-        "dbname": os.getenv("POSTGRES_DB"),
-        "user": os.getenv("POSTGRES_USER"),
-        "password": os.getenv("POSTGRES_PASSWORD"),
+        "dbname": os.getenv("POSTGRES_DB", "job_pipeline"),
+        "user": os.getenv("POSTGRES_USER", "job_user"),
+        "password": os.getenv("POSTGRES_PASSWORD", "job_password"),
     }
     application_name = os.getenv("PGAPPNAME")
     if application_name:

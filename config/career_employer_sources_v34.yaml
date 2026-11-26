@@ -1,0 +1,361 @@
+# Explicit V3.4 preview registry only.
+schema_version: career_intelligence.employer_sources.v1
+sources:
+- employer: MOIA
+  ats: greenhouse
+  board_id: moia
+  regions:
+  - DE
+  access_status: public_board
+  active: true
+- employer: Waymo
+  ats: greenhouse
+  board_id: waymo
+  regions:
+  - DE
+  - EU
+  access_status: public_board
+  active: true
+- employer: Bosch Group
+  ats: smartrecruiters
+  board_id: BoschGroup
+  regions:
+  - DE
+  access_status: public_board
+  active: true
+  strategy_only: v3.4
+  industry_scope: industrial_technology
+  max_details: 6
+  validated_at: '2026-11-19'
+  validation_url: https://api.smartrecruiters.com/v1/companies/BoschGroup/postings?country=de&limit=1
+  access_evidence: https://developers.smartrecruiters.com/docs/authentication
+  operational_note: Public GET only; capped regional snapshot; no removal confirmation.
+  query: Projektleiter
+- employer: ServiceNow
+  ats: smartrecruiters
+  board_id: ServiceNow
+  regions:
+  - DE
+  access_status: public_board
+  active: true
+  strategy_only: v3.4
+  industry_scope: enterprise_software
+  max_details: 6
+  validated_at: '2026-11-19'
+  validation_url: https://api.smartrecruiters.com/v1/companies/ServiceNow/postings?country=de&limit=1
+  access_evidence: https://developers.smartrecruiters.com/docs/authentication
+  operational_note: Public GET only; capped regional snapshot; no removal confirmation.
+targets:
+- employer: MOTOR Ai
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  access_status: awaiting_board_verification
+- employer: Uber
+  ats: greenhouse
+  board_id: uber
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_live_validation
+- employer: FREENOW
+  ats: personio
+  board_id: freenow
+  regions:
+  - DE
+  access_status: provider_not_supported_by_v3
+- employer: HERE Technologies
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_board_verification
+- employer: NVIDIA
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_board_verification
+- employer: Siemens Mobility
+  ats: successfactors
+  board_id: siemens_mobility
+  regions:
+  - DE
+  - EU
+  access_status: provider_not_supported_by_v3
+- employer: DB Systel
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  access_status: awaiting_board_verification
+- employer: Bosch
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_board_verification
+- employer: ABB
+  ats: successfactors
+  board_id: abb
+  regions:
+  - DE
+  - EU
+  access_status: provider_not_supported_by_v3
+  industry_scope: industrial_technology
+- employer: SAP
+  ats: successfactors
+  board_id: sap
+  regions:
+  - DE
+  - EU
+  access_status: provider_not_supported_by_v3
+  industry_scope: enterprise_software
+- employer: Amazon / AWS
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_board_verification
+- employer: Microsoft
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_board_verification
+  industry_scope: enterprise_software
+- employer: AUTO1
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  access_status: awaiting_board_verification
+- employer: Delivery Hero
+  ats: greenhouse
+  board_id: deliveryhero
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_live_validation
+- employer: Zalando
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_board_verification
+- employer: Mobileye
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_board_verification
+- employer: Mercedes-Benz
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_board_verification
+- employer: BMW Group
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_board_verification
+- employer: Volkswagen / CARIAD
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_board_verification
+- employer: Continental / Aumovio
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_board_verification
+- employer: ZF
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_board_verification
+- employer: Qualcomm Automotive
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_board_verification
+- employer: Aptiv
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_board_verification
+- employer: Valeo
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_board_verification
+- employer: Quantum Systems
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  access_status: awaiting_board_verification
+- employer: Deutsche Bahn
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  access_status: awaiting_board_verification
+- employer: Amazon Robotics
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_board_verification
+- employer: Siemens Energy
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_public_access_validation
+  industry_scope: energy_infrastructure
+  active: false
+- employer: Hitachi Energy
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_public_access_validation
+  industry_scope: energy_infrastructure
+  active: false
+- employer: Schneider Electric
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_public_access_validation
+  industry_scope: energy_infrastructure
+  active: false
+- employer: GE Vernova
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_public_access_validation
+  industry_scope: energy_infrastructure
+  active: false
+- employer: E.ON
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_public_access_validation
+  industry_scope: energy_infrastructure
+  active: false
+- employer: 50Hertz
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_public_access_validation
+  industry_scope: energy_infrastructure
+  active: false
+- employer: Siemens
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_public_access_validation
+  industry_scope: industrial_technology
+  active: false
+- employer: Bosch Rexroth
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  - EU
+  access_status: covered_by_verified_group_board
+  industry_scope: industrial_technology
+  active: false
+- employer: Festo
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_public_access_validation
+  industry_scope: industrial_technology
+  active: false
+- employer: KUKA
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_public_access_validation
+  industry_scope: industrial_technology
+  active: false
+- employer: Beckhoff Automation
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_public_access_validation
+  industry_scope: industrial_technology
+  active: false
+- employer: IBM
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_public_access_validation
+  industry_scope: enterprise_software
+  active: false
+- employer: Salesforce
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_public_access_validation
+  industry_scope: enterprise_software
+  active: false
+- employer: Reply
+  ats: unknown
+  board_id: null
+  regions:
+  - DE
+  - EU
+  access_status: awaiting_public_access_validation
+  industry_scope: enterprise_software
+  active: false
+strategy_version: v3.4

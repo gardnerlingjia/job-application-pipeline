@@ -32,7 +32,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_market_evidence_observation_unique
         normalized_company_key,
         lower(title),
         coalesce(evidence_url, ''),
-        coalesce(source_seen_at::date, observed_at::date)
+        ((coalesce(source_seen_at, observed_at) AT TIME ZONE 'UTC')::date)
     );
 
 CREATE OR REPLACE VIEW candidate_market_evidence_summary AS

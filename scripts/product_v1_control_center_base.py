@@ -17,8 +17,8 @@ from urllib.parse import urlparse
 import psycopg
 from psycopg.rows import dict_row
 
-from scripts.run_employer_origin_candidate_queue_agent import DatabaseConfig
 from src.connectors.registry import build_default_connector_registry
+from src.config import get_database_config
 from src.search_intelligence.product_v1 import (
     OperatorDecisionRequired,
     ProductJob,
@@ -360,16 +360,12 @@ def _load_source_connector_overview(
 
 
 def load_source_connector_overview_payload() -> dict[str, object]:
-    with psycopg.connect(
-        DatabaseConfig.from_environment().dsn(), row_factory=dict_row
-    ) as conn:
+    with psycopg.connect(**get_database_config(), row_factory=dict_row) as conn:
         return _load_source_connector_overview(conn)
 
 
 def load_product_v1_payload() -> dict[str, object]:
-    with psycopg.connect(
-        DatabaseConfig.from_environment().dsn(), row_factory=dict_row
-    ) as conn:
+    with psycopg.connect(**get_database_config(), row_factory=dict_row) as conn:
         source_connector_overview = _load_source_connector_overview(conn)
         required_relations = {
             "search_term_cycle_state",

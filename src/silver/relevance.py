@@ -1,8 +1,12 @@
 import re
 from typing import Any
 
+from src.connectors.registry import SourceRole, source_role
+
 
 EMPLOYER_ORIGIN_CAREER_SITE_SOURCE_TYPE = "employer_origin_career_site"
+MIN_STRONG_DESCRIPTION_CHARS = 40
+ATS_BACKED_EMPLOYER_ORIGIN_FAMILIES = {"greenhouse", "successfactors"}
 
 ROLE_PHRASES = (
     # Canonical ML / AI / Reliability profile.
@@ -250,6 +254,133 @@ def build_relevance_text(raw_job: dict) -> str:
     )
 
 
+def _mapping(value: Any) -> dict:
+    return value if isinstance(value, dict) else {}
+
+
+def is_employer_origin_source(raw_job: dict) -> bool:
+    raw_data = _mapping(raw_job.get("raw_data"))
+    if raw_data.get("source_type") == EMPLOYER_ORIGIN_CAREER_SITE_SOURCE_TYPE:
+        return True
+
+    source_name = raw_job.get("source_name")
+    if not isinstance(source_name, str) or not source_name.strip():
+        return False
+
+    try:
+        return source_role(source_name) == SourceRole.EMPLOYER_ORIGIN
+    except ValueError:
+        return False
+
+
+def get_strong_employer_origin_description(raw_job: dict) -> str:
+    raw_data = _mapping(raw_job.get("raw_data"))
+    job_data = _mapping(raw_data.get("job")) or raw_data
+    detail_evidence = _mapping(raw_data.get("detail_evidence"))
+
+    description_fields = (
+        job_data.get("description"),
+        job_data.get("beschreibung"),
+        job_data.get("content"),
+        job_data.get("job_description"),
+        job_data.get("body"),
+        detail_evidence.get("description"),
+        detail_evidence.get("content"),
+        detail_evidence.get("job_description"),
+        detail_evidence.get("body"),
+        detail_evidence.get("text"),
+        detail_evidence.get("plain_text"),
+    )
+
+    for value in description_fields:
+        text = flatten_value(value)
+        if len(text) >= MIN_STRONG_DESCRIPTION_CHARS:
+            return text
+
+    return ""
+
+
+def _company_from_employer_origin_source_name(raw_job: dict) -> str:
+    source_name = raw_job.get("source_name")
+    if not isinstance(source_name, str) or ":" not in source_name:
+        return ""
+
+    family, target = source_name.split(":", 1)
+    if family in {"greenhouse", "personio", "successfactors"} and target.strip():
+        return target.replace("-", " ").replace("_", " ").strip()
+
+    return ""
+
+
+def _source_family(raw_job: dict) -> str:
+    source_name = raw_job.get("source_name")
+    if not isinstance(source_name, str) or ":" not in source_name:
+        return ""
+
+    family, _ = source_name.split(":", 1)
+    return family
+
+
+def has_ats_backed_provider_identity(raw_job: dict) -> bool:
+    if _source_family(raw_job) not in ATS_BACKED_EMPLOYER_ORIGIN_FAMILIES:
+        return False
+
+    raw_data = _mapping(raw_job.get("raw_data"))
+    job_data = _mapping(raw_data.get("job"))
+
+    provider_job_id = flatten_value(raw_job.get("external_job_id") or job_data.get("id"))
+    provider_url = flatten_value(
+        job_data.get("absolute_url")
+        or job_data.get("source_url")
+        or raw_job.get("source_url")
+    )
+    provider_context = flatten_value(
+        job_data.get("location")
+        or job_data.get("offices")
+        or job_data.get("first_published")
+        or job_data.get("updated_at")
+    )
+
+    return bool(provider_job_id and provider_url and provider_context)
+
+
+def get_employer_origin_minimum_evidence_reason(raw_job: dict) -> str | None:
+    if not is_employer_origin_source(raw_job):
+        return None
+
+    if is_generated_employer_origin_gate_evidence(raw_job):
+        return None
+
+    raw_data = _mapping(raw_job.get("raw_data"))
+    job_data = _mapping(raw_data.get("job")) or raw_data
+    result_card = _mapping(raw_data.get("result_card"))
+
+    title = flatten_value(
+        job_data.get("title") or job_data.get("titel") or result_card.get("title")
+    )
+    company = flatten_value(
+        job_data.get("company_name")
+        or job_data.get("arbeitgeber")
+        or result_card.get("company_name")
+        or _company_from_employer_origin_source_name(raw_job)
+    )
+
+    if not title or not company:
+        return None
+
+    if get_strong_employer_origin_description(raw_job):
+        return "employer_origin_strong_canonical_evidence"
+
+    if has_ats_backed_provider_identity(raw_job):
+        return "employer_origin_ats_provider_identity_evidence"
+
+    return None
+
+
+def has_employer_origin_minimum_evidence(raw_job: dict) -> bool:
+    return get_employer_origin_minimum_evidence_reason(raw_job) is not None
+
+
 def get_role_matches(raw_job: dict) -> list[str]:
     return matching_phrases(build_relevance_text(raw_job), ROLE_PHRASES)
 
@@ -273,6 +404,9 @@ def is_relevant_for_silver(raw_job: dict) -> bool:
     if len(skill_matches) >= 2 and accessibility_matches:
         return True
 
+    if has_employer_origin_minimum_evidence(raw_job):
+        return True
+
     return False
 
 
@@ -286,6 +420,10 @@ def get_silver_decision_reason(raw_job: dict) -> str:
 
     if len(skill_matches) >= 2 and accessibility_matches:
         return "relevant_skills_and_accessibility"
+
+    employer_origin_reason = get_employer_origin_minimum_evidence_reason(raw_job)
+    if employer_origin_reason:
+        return employer_origin_reason
 
     if not role_matches and len(skill_matches) < 2:
         return "missing_role_or_skill_signal"

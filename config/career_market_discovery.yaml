@@ -1,0 +1,166 @@
+schema_version: career_intelligence.market_discovery.v1
+owner: lingjia_gardner
+description: Broad discovery profiles for Lingjia Gardner's Career Intelligence radar.
+source_policy:
+  sources:
+    - display_name: LinkedIn Jobs
+      source_name: linkedin_jobs
+      source_role: discovery
+      strategy_tier: C
+      career_priority: 1
+      implementation_status: BLOCKED_NO_SUPPORTED_CONNECTOR
+      active: false
+      blocker: no canonical connector or supported API contract in this repository
+    - source_name: stepstone
+      display_name: StepStone
+      source_role: discovery
+      strategy_tier: C
+      career_priority: 2
+      implementation_status: SUPPORTED_UNCONFIGURED
+      active: true
+      profile_prefix: lingjia_market_stepstone
+      blocker: null
+    - display_name: Indeed Germany
+      source_name: indeed_germany
+      source_role: discovery
+      strategy_tier: C
+      career_priority: 3
+      implementation_status: CONNECTOR_GAP
+      active: false
+      blocker: no repository connector or stable feed contract implemented
+    - display_name: XING Jobs
+      source_name: xing_jobs
+      source_role: discovery
+      strategy_tier: C
+      career_priority: 4
+      implementation_status: CONNECTOR_GAP
+      active: false
+      blocker: no repository connector or stable feed contract implemented
+    - display_name: Wellfound
+      source_name: wellfound
+      source_role: discovery
+      strategy_tier: C
+      career_priority: 5
+      implementation_status: NOT_EVALUATED
+      active: false
+      blocker: not evaluated for a stable API/feed-backed connector
+    - display_name: Welcome to the Jungle
+      source_name: welcome_to_the_jungle
+      source_role: discovery
+      strategy_tier: C
+      career_priority: 6
+      implementation_status: NOT_EVALUATED
+      active: false
+      blocker: not evaluated for a stable API/feed-backed connector
+    - source_name: bundesagentur_fuer_arbeit
+      display_name: Bundesagentur fuer Arbeit
+      source_role: discovery
+      strategy_tier: C
+      career_priority: 7
+      implementation_status: SUPPORTED_UNCONFIGURED
+      active: true
+      profile_prefix: lingjia_market_ba
+      blocker: null
+    - display_name: Niche robotics / autonomy / mobility / AI boards
+      source_name: niche_robotics_autonomy_ai_boards
+      source_role: discovery
+      strategy_tier: C
+      career_priority: 8
+      implementation_status: CONNECTOR_GAP
+      active: false
+      blocker: no curated stable board/feed connector configured yet
+location_policy:
+  preferred:
+    - Berlin
+    - Potsdam
+  acceptable:
+    - Remote Germany
+    - Germany-wide with limited travel
+  excluded:
+    - relocation to Munich
+    - relocation to China
+  broad_profiles_do_not_hard_filter_location: true
+seniority_policy:
+  preferred:
+    - Senior
+    - Lead
+    - Principal
+    - Program Manager
+    - Product Manager
+    - Strategy
+    - Operations
+  avoid:
+    - Junior
+    - Graduate
+    - Intern
+profiles:
+  - key: autonomy_robotics
+    label: Autonomous mobility deployment and execution
+    career_lanes:
+      - autonomous_mobility
+      - robotics
+      - mobility_ecosystems
+    preferred_evidence_type: discovery_signal
+    search_terms:
+      - autonomous mobility deployment
+      - autonomous driving program manager
+      - AV deployment Germany
+      - robotaxi launch readiness
+      - autonomous vehicle technical program manager
+      - autonomous mobility operations
+  - key: technical_program_product
+    label: ADAS and vehicle software delivery
+    career_lanes:
+      - technical_program_leadership
+      - technical_product_leadership
+      - strategy_operations
+    preferred_evidence_type: discovery_signal
+    search_terms:
+      - ADAS program manager
+      - vehicle software delivery lead
+      - vehicle integration program manager
+      - automated driving release manager
+      - mobility solution delivery lead
+  - key: ai_data_transformation
+    label: Selective AI-enabled transformation leadership
+    career_lanes:
+      - ai_data_transformation
+      - technical_product_leadership
+      - strategy_operations
+    preferred_evidence_type: discovery_signal
+    search_terms:
+      - AI transformation lead
+      - AI adoption program manager
+      - automotive AI transformation
+      - business process transformation lead
+  - key: strategy_operations
+    label: Mobility launch and ecosystem operations
+    career_lanes:
+      - strategy_operations
+      - technical_program_leadership
+      - mobility_ecosystems
+    preferred_evidence_type: discovery_signal
+    search_terms:
+      - autonomous mobility strategy operations
+      - mobility launch readiness
+      - autonomous driving operations lead
+      - mobility partner integration
+  - key: mobility_platform_deployment
+    label: Mobility platforms and deployment ecosystems
+    career_lanes:
+      - mobility_ecosystems
+      - autonomous_mobility
+      - technical_program_leadership
+    preferred_evidence_type: discovery_signal
+    search_terms:
+      - fleet launch manager
+      - autonomous fleet operations
+      - mobility ecosystem integration
+      - mobility deployment program manager
+      - robotaxi operations Germany
+      - autonomes Fahren Projektleiter
+
+search_allocation_percent:
+  autonomy_robotics: 55
+  vehicle_software_mobility_delivery: 25
+  selective_ai_data_bridge: 20

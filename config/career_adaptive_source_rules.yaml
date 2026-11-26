@@ -1,0 +1,49 @@
+schema_version: career_intelligence.adaptive_source_rules.v1
+owner: lingjia_gardner
+lookback_days: 60
+thresholds:
+  promote_tier_a:
+    min_observed_opportunities: 2
+    min_assessed_opportunities: 2
+    min_highest_score: 85
+    min_average_score: 78
+    min_primary_lane_hits: 1
+    require_location_compatible: true
+  promote_tier_b:
+    min_observed_opportunities: 1
+    min_assessed_opportunities: 1
+    min_highest_score: 72
+    min_average_score: 65
+    min_relevant_lane_hits: 1
+    require_location_compatible: true
+  ignore:
+    max_highest_score: 45
+    min_observed_opportunities: 2
+    location_conflict_is_ignore: true
+career_lanes:
+  primary:
+    - autonomy_robotics
+    - autonomous_mobility
+    - robotics
+    - technical_program_leadership
+    - technical_product_leadership
+    - mobility_ecosystems
+  adjacent:
+    - ai_data_transformation
+    - strategy_operations
+location_terms:
+  berlin_compatible:
+    - berlin
+    - potsdam
+  remote_germany:
+    - remote germany
+    - remote deutschland
+    - germany remote
+    - deutschlandweit
+    - deutschland
+  conflicts:
+    - munich
+    - münchen
+    - china
+    - relocation to munich
+    - relocation to china

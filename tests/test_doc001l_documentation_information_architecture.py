@@ -17,6 +17,7 @@ def test_doc001l_current_repository_uses_target_docs_top_level_structure() -> No
     assert report.status == "pass"
     assert report.top_level_dirs == [
         "archive",
+        "career-intelligence",
         "current",
         "decisions",
         "guides",
@@ -25,6 +26,16 @@ def test_doc001l_current_repository_uses_target_docs_top_level_structure() -> No
         "reference",
     ]
     assert report.issue_count == 0
+
+
+def test_doc001l_ignores_macos_finder_metadata(tmp_path: Path) -> None:
+    docs = tmp_path / "docs"
+    docs.mkdir()
+    (docs / ".DS_Store").write_bytes(b"finder metadata")
+
+    report = build_documentation_architecture_report(tmp_path)
+
+    assert ".DS_Store" not in report.unexpected_top_level_files
 
 
 def test_doc001l_readme_explains_artifact_level_rule() -> None:

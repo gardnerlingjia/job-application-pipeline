@@ -1,0 +1,578 @@
+{
+  "schema_version": 1,
+  "description": "V3.3 reviewed-case paraphrases and separately labelled synthetic controls. Expectations are qualification judgments on provisional evidence, not manual Pursue labels or production suitability.",
+  "cases": [
+    {
+      "id": "energy_core",
+      "company_name": "Siemens Energy",
+      "title": "Senior Technical Program Manager",
+      "description": "Your tasks: Lead complex technology programs across engineering and business teams. Own delivery milestones, the software roadmap, dependencies and risk governance. Coordinate cross-functional stakeholders and suppliers through integration and release. Requirements: Proven technical program management and stakeholder leadership. Location: Berlin. No travel required.",
+      "locations": [
+        "Berlin, Germany"
+      ],
+      "fixture_kind": "synthetic_control",
+      "source_url": "fixture://v34/energy_core",
+      "expected_status": "STRONG_TRANSFERABLE_FIT",
+      "expected_plausible": true
+    },
+    {
+      "id": "industrial_core",
+      "company_name": "Festo",
+      "title": "Engineering Program Manager",
+      "description": "Your tasks: Lead complex technology programs across engineering and business teams. Own delivery milestones, the software roadmap, dependencies and risk governance. Coordinate cross-functional stakeholders and suppliers through integration and release. Requirements: Proven technical program management and stakeholder leadership. Location: Berlin. No travel required.",
+      "locations": [
+        "Berlin, Germany"
+      ],
+      "fixture_kind": "synthetic_control",
+      "source_url": "fixture://v34/industrial_core",
+      "expected_status": "STRONG_TRANSFERABLE_FIT",
+      "expected_plausible": true
+    },
+    {
+      "id": "enterprise_core",
+      "company_name": "Microsoft",
+      "title": "Technology Implementation Lead",
+      "description": "Your tasks: Lead complex technology programs across engineering and business teams. Own delivery milestones, the software roadmap, dependencies and risk governance. Coordinate cross-functional stakeholders and suppliers through integration and release. Requirements: Proven technical program management and stakeholder leadership. Location: Berlin. No travel required.",
+      "locations": [
+        "Berlin, Germany"
+      ],
+      "fixture_kind": "synthetic_control",
+      "source_url": "fixture://v34/enterprise_core",
+      "expected_status": "STRONG_TRANSFERABLE_FIT",
+      "expected_plausible": true
+    },
+    {
+      "id": "unconventional",
+      "company_name": "50Hertz",
+      "title": "Technology Integration Orchestrator",
+      "description": "Your tasks: Lead complex technology programs across engineering and business teams. Own delivery milestones, the software roadmap, dependencies and risk governance. Coordinate cross-functional stakeholders and suppliers through integration and release. Requirements: Proven technical program management and stakeholder leadership. Location: Berlin. No travel required.",
+      "locations": [
+        "Berlin, Germany"
+      ],
+      "fixture_kind": "synthetic_control",
+      "source_url": "fixture://v34/unconventional",
+      "expected_status": "STRONG_TRANSFERABLE_FIT",
+      "expected_plausible": true
+    },
+    {
+      "id": "china_core",
+      "company_name": "Siemens Energy",
+      "title": "International Technical Program Manager",
+      "description": "Your tasks: Lead complex technology programs across engineering and business teams. Own delivery milestones, the software roadmap, dependencies and risk governance. Coordinate cross-functional stakeholders and suppliers through integration and release. Requirements: Proven technical program management and stakeholder leadership. Location: Berlin. No travel required.\nRequirements: Professional experience coordinating programs between Chinese and European engineering teams is required.",
+      "locations": [
+        "Berlin, Germany"
+      ],
+      "fixture_kind": "synthetic_control",
+      "source_url": "fixture://v34/china_core",
+      "expected_status": "POSSIBLE_FIT",
+      "expected_plausible": true
+    },
+    {
+      "id": "china_preferred",
+      "company_name": "ABB",
+      "title": "Global Engineering Program Manager",
+      "description": "Your tasks: Lead complex technology programs across engineering and business teams. Own delivery milestones, the software roadmap, dependencies and risk governance. Coordinate cross-functional stakeholders and suppliers through integration and release. Requirements: Proven technical program management and stakeholder leadership. Location: Berlin. No travel required.\nPreferred qualifications: China-Europe supplier coordination and cross-cultural stakeholder management experience.",
+      "locations": [
+        "Berlin, Germany"
+      ],
+      "fixture_kind": "synthetic_control",
+      "source_url": "fixture://v34/china_preferred",
+      "expected_status": "STRONG_TRANSFERABLE_FIT",
+      "expected_plausible": true
+    },
+    {
+      "id": "china_language_only",
+      "company_name": "ServiceNow",
+      "title": "Technology Program Lead",
+      "description": "Your tasks: Lead complex technology programs across engineering and business teams. Own delivery milestones, the software roadmap, dependencies and risk governance. Coordinate cross-functional stakeholders and suppliers through integration and release. Requirements: Proven technical program management and stakeholder leadership. Location: Berlin. No travel required.\nPreferred qualifications: Mandarin language skills.",
+      "locations": [
+        "Berlin, Germany"
+      ],
+      "fixture_kind": "synthetic_control",
+      "source_url": "fixture://v34/china_language_only",
+      "expected_status": "STRONG_TRANSFERABLE_FIT",
+      "expected_plausible": true
+    },
+    {
+      "id": "china_employer_only",
+      "company_name": "SAP",
+      "title": "Program Manager",
+      "description": "About us: Our company has offices in China and Europe.\nYour tasks: Lead complex technology programs across engineering and business teams. Own delivery milestones, the software roadmap, dependencies and risk governance. Coordinate cross-functional stakeholders and suppliers through integration and release. Requirements: Proven technical program management and stakeholder leadership. Location: Berlin. No travel required.",
+      "locations": [
+        "Berlin, Germany"
+      ],
+      "fixture_kind": "synthetic_control",
+      "source_url": "fixture://v34/china_employer_only",
+      "expected_status": "STRONG_TRANSFERABLE_FIT",
+      "expected_plausible": true
+    },
+    {
+      "id": "international_no_china",
+      "company_name": "Schneider Electric",
+      "title": "Cross Regional Program Manager",
+      "description": "Your tasks: Lead complex technology programs across engineering and business teams. Own delivery milestones, the software roadmap, dependencies and risk governance. Coordinate international cross-functional stakeholders and suppliers through integration and release. Requirements: Proven technical program management and stakeholder leadership. Location: Berlin. No travel required.",
+      "locations": [
+        "Berlin, Germany"
+      ],
+      "fixture_kind": "synthetic_control",
+      "source_url": "fixture://v34/international_no_china",
+      "expected_status": "STRONG_TRANSFERABLE_FIT",
+      "expected_plausible": true
+    },
+    {
+      "id": "china_title_only",
+      "company_name": "Siemens",
+      "title": "China Europe Program Manager",
+      "description": "Your tasks: Lead complex technology programs across engineering and business teams. Own delivery milestones, the software roadmap, dependencies and risk governance. Coordinate cross-functional stakeholders and suppliers through integration and release. Requirements: Proven technical program management and stakeholder leadership. Location: Berlin. No travel required.",
+      "locations": [
+        "Berlin, Germany"
+      ],
+      "fixture_kind": "synthetic_control",
+      "source_url": "fixture://v34/china_title_only",
+      "expected_status": "STRONG_TRANSFERABLE_FIT",
+      "expected_plausible": true
+    },
+    {
+      "id": "industry_preferred",
+      "company_name": "Hitachi Energy",
+      "title": "Technology Program Manager",
+      "description": "Your tasks: Lead complex technology programs across engineering and business teams. Own delivery milestones, the software roadmap, dependencies and risk governance. Coordinate cross-functional stakeholders and suppliers through integration and release. Requirements: Proven technical program management and stakeholder leadership. Location: Berlin. No travel required.\nPreferred qualifications: Energy industry experience.",
+      "locations": [
+        "Berlin, Germany"
+      ],
+      "fixture_kind": "synthetic_control",
+      "source_url": "fixture://v34/industry_preferred",
+      "expected_status": "STRONG_TRANSFERABLE_FIT",
+      "expected_plausible": true
+    },
+    {
+      "id": "industry_required",
+      "company_name": "Hitachi Energy",
+      "title": "Technology Program Manager",
+      "description": "Your tasks: Lead complex technology programs across engineering and business teams. Own delivery milestones, the software roadmap, dependencies and risk governance. Coordinate cross-functional stakeholders and suppliers through integration and release. Requirements: Proven technical program management and stakeholder leadership. Location: Berlin. No travel required.\nRequirements: Required experience in the energy sector.",
+      "locations": [
+        "Berlin, Germany"
+      ],
+      "fixture_kind": "synthetic_control",
+      "source_url": "fixture://v34/industry_required",
+      "expected_status": "POSSIBLE_FIT",
+      "expected_plausible": true
+    },
+    {
+      "id": "production_ai",
+      "company_name": "IBM",
+      "title": "Enterprise AI Program Manager",
+      "description": "Your tasks: Lead complex technology programs across engineering and business teams. Own delivery milestones, the software roadmap, dependencies and risk governance. Coordinate cross-functional stakeholders and suppliers through integration and release. Requirements: Proven technical program management and stakeholder leadership. Location: Berlin. No travel required.\nRequirements: Several years of hands-on production AI engineering experience are required.",
+      "locations": [
+        "Berlin, Germany"
+      ],
+      "fixture_kind": "synthetic_control",
+      "source_url": "fixture://v34/production_ai",
+      "expected_status": "POSSIBLE_FIT",
+      "expected_plausible": false
+    },
+    {
+      "id": "ai_optional",
+      "company_name": "IBM",
+      "title": "AI Adoption Lead",
+      "description": "Your tasks: Lead complex technology programs across engineering and business teams. Own delivery milestones, the software roadmap, dependencies and risk governance. Coordinate cross-functional stakeholders and suppliers through integration and release. Requirements: Proven technical program management and stakeholder leadership. Location: Berlin. No travel required.\nPreferred qualifications: Hands-on production AI engineering experience.",
+      "locations": [
+        "Berlin, Germany"
+      ],
+      "fixture_kind": "synthetic_control",
+      "source_url": "fixture://v34/ai_optional",
+      "expected_status": "STRONG_TRANSFERABLE_FIT",
+      "expected_plausible": true
+    },
+    {
+      "id": "ai_engineers_collaboration",
+      "company_name": "IBM",
+      "title": "AI Adoption Lead",
+      "description": "Your tasks: Lead complex technology programs across engineering and business teams. Own delivery milestones, the software roadmap, dependencies and risk governance. Coordinate AI engineers and cross-functional stakeholders and suppliers through integration and release. Requirements: Proven technical program management and stakeholder leadership. Location: Berlin. No travel required.",
+      "locations": [
+        "Berlin, Germany"
+      ],
+      "fixture_kind": "synthetic_control",
+      "source_url": "fixture://v34/ai_engineers_collaboration",
+      "expected_status": "STRONG_TRANSFERABLE_FIT",
+      "expected_plausible": true
+    },
+    {
+      "id": "missing_description",
+      "company_name": "Siemens Energy",
+      "title": "Senior Technical Program Manager",
+      "description": "",
+      "locations": [
+        "Berlin, Germany"
+      ],
+      "fixture_kind": "synthetic_control",
+      "source_url": "fixture://v34/missing_description",
+      "expected_status": "INSUFFICIENT_EVIDENCE",
+      "expected_plausible": false
+    },
+    {
+      "id": "boilerplate",
+      "company_name": "Microsoft",
+      "title": "Program Manager",
+      "description": "About us: We are a global technology company. Our engineering programs use AI and data. Our teams manage programs, stakeholders, milestones and governance across global products. Benefits: Work from Berlin.",
+      "locations": [
+        "Berlin, Germany"
+      ],
+      "fixture_kind": "synthetic_control",
+      "source_url": "fixture://v34/boilerplate",
+      "expected_status": "INSUFFICIENT_EVIDENCE",
+      "expected_plausible": false
+    },
+    {
+      "id": "travel_missing",
+      "company_name": "Festo",
+      "title": "Engineering Program Manager",
+      "description": "Your tasks: Lead complex technology programs across engineering and business teams. Own delivery milestones, the software roadmap, dependencies and risk governance. Coordinate cross-functional stakeholders and suppliers through integration and release. Requirements: Proven technical program management and stakeholder leadership. Location: Berlin.",
+      "locations": [
+        "Berlin, Germany"
+      ],
+      "fixture_kind": "synthetic_control",
+      "source_url": "fixture://v34/travel_missing",
+      "expected_status": "POSSIBLE_FIT",
+      "expected_plausible": true
+    },
+    {
+      "id": "frequent_travel",
+      "company_name": "Festo",
+      "title": "Engineering Program Manager",
+      "description": "Your tasks: Lead complex technology programs across engineering and business teams. Own delivery milestones, the software roadmap, dependencies and risk governance. Coordinate cross-functional stakeholders and suppliers through integration and release. Requirements: Proven technical program management and stakeholder leadership. Location: Berlin. Frequent international travel is required.",
+      "locations": [
+        "Berlin, Germany"
+      ],
+      "fixture_kind": "synthetic_control",
+      "source_url": "fixture://v34/frequent_travel",
+      "expected_status": "CONFIRMED_MISMATCH",
+      "expected_plausible": false
+    },
+    {
+      "id": "china_travel_mismatch",
+      "company_name": "Siemens Energy",
+      "title": "China Europe Program Manager",
+      "description": "Your tasks: Lead complex technology programs across engineering and business teams. Own delivery milestones, the software roadmap, dependencies and risk governance. Coordinate cross-functional stakeholders and suppliers through integration and release. Requirements: Proven technical program management and stakeholder leadership. Location: Berlin. Travel internationally at least 40% of the time.\nRequirements: Coordinate Chinese and European suppliers.",
+      "locations": [
+        "Berlin, Germany"
+      ],
+      "fixture_kind": "synthetic_control",
+      "source_url": "fixture://v34/china_travel_mismatch",
+      "expected_status": "CONFIRMED_MISMATCH",
+      "expected_plausible": false
+    },
+    {
+      "id": "relocation",
+      "company_name": "Siemens Energy",
+      "title": "Program Manager",
+      "description": "Your tasks: Lead complex technology programs across engineering and business teams. Own delivery milestones, the software roadmap, dependencies and risk governance. Coordinate cross-functional stakeholders and suppliers through integration and release. Requirements: Proven technical program management and stakeholder leadership. Location: Munich. Relocation is required. No travel required.",
+      "locations": [
+        "Munich, Germany"
+      ],
+      "fixture_kind": "synthetic_control",
+      "source_url": "fixture://v34/relocation",
+      "expected_status": "CONFIRMED_MISMATCH",
+      "expected_plausible": false
+    },
+    {
+      "id": "remote",
+      "company_name": "Microsoft",
+      "title": "Program Manager",
+      "description": "Your tasks: Lead complex technology programs across engineering and business teams. Own delivery milestones, the software roadmap, dependencies and risk governance. Coordinate cross-functional stakeholders and suppliers through integration and release. Requirements: Proven technical program management and stakeholder leadership. Remote Germany. No travel required.",
+      "locations": [
+        "Germany"
+      ],
+      "fixture_kind": "synthetic_control",
+      "source_url": "fixture://v34/remote",
+      "expected_status": "STRONG_TRANSFERABLE_FIT",
+      "expected_plausible": true
+    },
+    {
+      "id": "generic_hybrid",
+      "company_name": "Festo",
+      "title": "Program Manager",
+      "description": "Your tasks: Lead complex technology programs across engineering and business teams. Own delivery milestones, the software roadmap, dependencies and risk governance. Coordinate cross-functional stakeholders and suppliers through integration and release. Requirements: Proven technical program management and stakeholder leadership. Location: Stuttgart. Hybrid work is possible. No travel required.",
+      "locations": [
+        "Stuttgart, Germany"
+      ],
+      "fixture_kind": "synthetic_control",
+      "source_url": "fixture://v34/generic_hybrid",
+      "expected_status": "POSSIBLE_FIT",
+      "expected_plausible": true
+    },
+    {
+      "id": "on_site_munich",
+      "company_name": "ABB",
+      "title": "Engineering Program Manager",
+      "description": "Your tasks: Lead complex technology programs across engineering and business teams. Own delivery milestones, the software roadmap, dependencies and risk governance. Coordinate cross-functional stakeholders and suppliers through integration and release. Requirements: Proven technical program management and stakeholder leadership. Location: Munich. Daily presence in Munich is required. No travel required.",
+      "locations": [
+        "Munich, Germany"
+      ],
+      "fixture_kind": "synthetic_control",
+      "source_url": "fixture://v34/on_site_munich",
+      "expected_status": "CONFIRMED_MISMATCH",
+      "expected_plausible": false
+    },
+    {
+      "id": "reviewed_832",
+      "company_name": "Delivery Hero",
+      "title": "Technical Program Manager, People Systems",
+      "description": "Your tasks: Own and deliver the People Systems technology roadmap with engineering and data scientists. Coordinate cross-functional stakeholders and track success metrics. Identify opportunities for automation and transformation. Requirements: Four years of technical project or program delivery and previous technology roadmap ownership. Nice to have: HR platforms. Location: Berlin.",
+      "locations": [
+        "Berlin, Germany"
+      ],
+      "fixture_kind": "reviewed_paraphrase",
+      "source_url": "https://www.arbeitsagentur.de/jobsuche/jobdetail/20390-JR0086411-S",
+      "expected_status": "POSSIBLE_FIT",
+      "expected_plausible": true
+    },
+    {
+      "id": "reviewed_640",
+      "company_name": "Bosch",
+      "title": "Global Operations Manager",
+      "description": "Your tasks: Lead global service delivery programs for eCall and roadside assistance. Own customer governance, service performance and cross-functional stakeholder coordination. Manage risks, budget and workforce allocation across international service hubs. Requirements: International service delivery and operational KPI experience. Location: Berlin. Occasional international business travel.",
+      "locations": [
+        "Berlin, Germany"
+      ],
+      "fixture_kind": "reviewed_paraphrase",
+      "source_url": "https://www.arbeitsagentur.de/jobsuche/jobdetail/15986-REF293420F-e6242d2-S",
+      "expected_status": "POSSIBLE_FIT",
+      "expected_plausible": false
+    },
+    {
+      "id": "reviewed_829",
+      "company_name": "Delivery Hero",
+      "title": "Senior Outside Counsel Program Manager",
+      "description": "Your tasks: Own the outside counsel program, law firm billing rules and external counsel budgets. Lead cross-functional governance and integration with ERP. Requirements: At least five years of experience in legal operations and law firm financial management. Location: Berlin.",
+      "locations": [
+        "Berlin, Germany"
+      ],
+      "fixture_kind": "reviewed_paraphrase",
+      "source_url": "https://www.arbeitsagentur.de/jobsuche/jobdetail/20390-JR0086410-S",
+      "expected_status": "CONFIRMED_MISMATCH",
+      "expected_plausible": false
+    },
+    {
+      "id": "reviewed_778",
+      "company_name": "NTT DATA",
+      "title": "Senior AI Client Delivery Manager",
+      "description": "Your tasks: Lead enterprise AI programs, deployment and cross-functional stakeholder alignment. Own governance, delivery plans, technical architecture reviews and production delivery risks. Requirements: Several years of hands-on AI and GenAI solutions successfully delivered into production enterprise environments. Location: Berlin. Remote work available.",
+      "locations": [
+        "Berlin, Germany"
+      ],
+      "fixture_kind": "reviewed_paraphrase",
+      "source_url": "https://www.arbeitsagentur.de/jobsuche/jobdetail/19913-3074991793919601-S",
+      "expected_status": "POSSIBLE_FIT",
+      "expected_plausible": false
+    },
+    {
+      "id": "reviewed_582",
+      "company_name": "Tesla",
+      "title": "Program Manager Global Mobility and Relocation",
+      "description": "Your tasks: Own employee relocation cases and the regional relocation services program. Coordinate HR, payroll and vendors across EMEA and APAC. Manage case deadlines, process improvements and employee escalations. Requirements: Case management and global HR operations experience. Location: Berlin.",
+      "locations": [
+        "Berlin, Germany"
+      ],
+      "fixture_kind": "reviewed_paraphrase",
+      "source_url": "https://www.arbeitsagentur.de/jobsuche/jobdetail/15158-2026288622-S",
+      "expected_status": "CONFIRMED_MISMATCH",
+      "expected_plausible": false
+    },
+    {
+      "id": "reviewed_616",
+      "company_name": "REWE",
+      "title": "Data Domain Manager",
+      "description": "Your tasks: Lead data product delivery, roadmap priorities, governance and cross-functional stakeholder alignment across data domains. Coordinate dependencies, data quality and Data Mesh implementation. Requirements: At least four years of professional data experience and deep data governance knowledge. Location: Cologne. Home office available.",
+      "locations": [
+        "Cologne, Germany"
+      ],
+      "fixture_kind": "reviewed_paraphrase",
+      "source_url": "https://www.arbeitsagentur.de/jobsuche/jobdetail/12608-1288442-28033-1-S",
+      "expected_status": "POSSIBLE_FIT",
+      "expected_plausible": false
+    },
+    {
+      "id": "reviewed_545",
+      "company_name": "DEHOGA",
+      "title": "Leitung Digitale Services",
+      "description": "Your tasks: Lead transformation projects and cross-functional digital portfolio governance. Own budgets, the IT estate and Microsoft infrastructure operations. Coordinate external providers and AI use cases. Requirements: Several years of IT architecture experience and disciplinary management experience. Location: Stuttgart. Hybrid working.",
+      "locations": [
+        "Stuttgart, Germany"
+      ],
+      "fixture_kind": "reviewed_paraphrase",
+      "source_url": "https://www.arbeitsagentur.de/jobsuche/jobdetail/10000-1207724610-S",
+      "expected_status": "POSSIBLE_FIT",
+      "expected_plausible": false
+    },
+    {
+      "id": "reviewed_463",
+      "company_name": "NTT DATA",
+      "title": "AI Go-to-Market Banking DACH Lead",
+      "description": "Your tasks: Drive revenue targets and sales pipeline growth for banking AI programs. Lead cross-functional stakeholder coordination, technology partnerships and transformation proposals. Requirements: Five years of banking industry experience and commercial AI growth leadership. Location: Berlin. Remote work possible.",
+      "locations": [
+        "Berlin, Germany"
+      ],
+      "fixture_kind": "reviewed_paraphrase",
+      "source_url": "https://www.arbeitsagentur.de/jobsuche/jobdetail/19913-3079741793833201-S",
+      "expected_status": "CONFIRMED_MISMATCH",
+      "expected_plausible": false
+    },
+    {
+      "id": "reviewed_820",
+      "company_name": "Airbus",
+      "title": "PSL Lead Architect E2E Planning and Logistics",
+      "description": "Your tasks: Lead SAP modernization projects and cross-functional integration roadmap governance. Coordinate engineering and business stakeholders, architecture reviews and dependencies. Requirements: Proven senior enterprise integration architecture experience and deep SAP cloud architecture expertise. Location: Hamburg. Mobile working possible.",
+      "locations": [
+        "Hamburg, Germany"
+      ],
+      "fixture_kind": "reviewed_paraphrase",
+      "source_url": "https://www.arbeitsagentur.de/jobsuche/jobdetail/16947-977746321-S",
+      "expected_status": "POSSIBLE_FIT",
+      "expected_plausible": false
+    },
+    {
+      "id": "reviewed_753",
+      "company_name": "Fresenius",
+      "title": "Global Salesforce Business Analyst and Admin Field Service",
+      "description": "Your tasks: Lead requirements workshops, software delivery and cross-functional roadmap coordination. Manage test readiness, stakeholder alignment and deployment dependencies. Requirements: At least three years of hands-on Salesforce Field Service experience. Location: Bad Homburg. International travel at least 30% is required.",
+      "locations": [
+        "Bad Homburg, Germany"
+      ],
+      "fixture_kind": "reviewed_paraphrase",
+      "source_url": "https://www.arbeitsagentur.de/jobsuche/jobdetail/15412-108661X353692-S",
+      "expected_status": "CONFIRMED_MISMATCH",
+      "expected_plausible": false
+    },
+    {
+      "id": "reviewed_450",
+      "company_name": "Da Vinci Engineering",
+      "title": "Smart Cockpit Voice Assistant Product and Engineering Specialist",
+      "description": "Your tasks: Coordinate vehicle program requirements, cross-functional supplier stakeholders, integration and validation readiness. Own European voice use cases and technical issue management. Requirements: Demonstrated automotive voice assistant experience and hands-on multilingual speech system evaluation. Location: Raunheim.",
+      "locations": [
+        "Raunheim, Germany"
+      ],
+      "fixture_kind": "reviewed_paraphrase",
+      "source_url": "https://www.arbeitsagentur.de/jobsuche/jobdetail/13433-J1RYDODW0UL5JRMQ-S",
+      "expected_status": "POSSIBLE_FIT",
+      "expected_plausible": false
+    },
+    {
+      "id": "reviewed_793",
+      "company_name": "Airbus",
+      "title": "Procurement Manager Aerostructures Development and NPI Integration",
+      "description": "Your tasks: Lead integration programs across engineering, procurement and industrial teams. Own supplier milestone governance, dependencies, risks and program schedule coordination. Requirements: Proven track record in aerospace project procurement. Location: Manching. Mobile working possible.",
+      "locations": [
+        "Manching, Germany"
+      ],
+      "fixture_kind": "reviewed_paraphrase",
+      "source_url": "https://www.arbeitsagentur.de/jobsuche/jobdetail/16947-973945275-S",
+      "expected_status": "POSSIBLE_FIT",
+      "expected_plausible": true
+    },
+    {
+      "id": "reviewed_722",
+      "company_name": "Mitel",
+      "title": "Director Sales Operations DACH",
+      "description": "Your tasks: Lead sales operations programs, cross-functional stakeholder coordination, CRM reporting and governance. Own quota design and territory modelling across regional sales teams. Requirements: Five years of sales operations experience and deep CRM expertise. Location: Munich. Home office possible.",
+      "locations": [
+        "Munich, Germany"
+      ],
+      "fixture_kind": "reviewed_paraphrase",
+      "source_url": "https://www.arbeitsagentur.de/jobsuche/jobdetail/10001-1003642465-S",
+      "expected_status": "CONFIRMED_MISMATCH",
+      "expected_plausible": false
+    },
+    {
+      "id": "live_presales_grc",
+      "company_name": "ServiceNow",
+      "title": "Advisory Presales Solution Consultant - GRC Solutions",
+      "description": "Your tasks: Guide revenue for risk products with Sales, Product Management and executive stakeholders. Own customer solution demonstrations and integration presentations. Support sales cycles, product marketing events and risk management briefings. Requirements: Technical fluency in product demonstrations and presales. Location: Frankfurt, Germany.",
+      "locations": [
+        "Munich, Germany"
+      ],
+      "fixture_kind": "controlled_retrieval_paraphrase",
+      "expected_status": "CONFIRMED_MISMATCH",
+      "expected_plausible": false,
+      "source_url": "https://api.smartrecruiters.com/v1/companies/ServiceNow/postings"
+    },
+    {
+      "id": "live_sales_ai",
+      "company_name": "ServiceNow",
+      "title": "Sales Specialist - AI Data and Analytics",
+      "description": "Your tasks: Own executive customer conversations and solution roadmaps for AI adoption. Coordinate cross-functional stakeholders and solution consultants to sell analytics products. Develop business transformation value propositions and data governance presentations. Requirements: Demonstrated solution sales success. Location: Munich, Germany.",
+      "locations": [
+        "Munich, Germany"
+      ],
+      "fixture_kind": "controlled_retrieval_paraphrase",
+      "expected_status": "CONFIRMED_MISMATCH",
+      "expected_plausible": false,
+      "source_url": "https://api.smartrecruiters.com/v1/companies/ServiceNow/postings"
+    },
+    {
+      "id": "live_senior_sales_ai",
+      "company_name": "ServiceNow",
+      "title": "Senior Sales Specialist - AI Data and Analytics",
+      "description": "Your tasks: Own executive customer conversations and solution roadmaps for AI adoption. Coordinate cross-functional stakeholders and solution consultants to sell analytics products. Develop business transformation value propositions and data governance presentations. Requirements: Demonstrated solution sales success. Location: Munich, Germany.",
+      "locations": [
+        "Munich, Germany"
+      ],
+      "fixture_kind": "controlled_retrieval_paraphrase",
+      "expected_status": "CONFIRMED_MISMATCH",
+      "expected_plausible": false,
+      "source_url": "https://api.smartrecruiters.com/v1/companies/ServiceNow/postings"
+    },
+    {
+      "id": "live_labour_relations",
+      "company_name": "ServiceNow",
+      "title": "Senior Labour Relations Manager Germany and Austria",
+      "description": "Your tasks: Own labour relations governance and cross-functional stakeholder coordination. Work with Legal to mitigate employment law risks and support works council negotiations. Coordinate global HR business partners through complex organisational change. Requirements: Expertise in complex labour regulation. Location: Munich, Germany.",
+      "locations": [
+        "Munich, Germany"
+      ],
+      "fixture_kind": "controlled_retrieval_paraphrase",
+      "expected_status": "CONFIRMED_MISMATCH",
+      "expected_plausible": false,
+      "source_url": "https://api.smartrecruiters.com/v1/companies/ServiceNow/postings"
+    },
+    {
+      "id": "live_bosch_energy",
+      "company_name": "Bosch Group",
+      "title": "Projektleiter für Dampf- und Heißwasserkessel - befristet für 2 Jahre",
+      "description": "Your tasks: Du koordinierst und steuerst funktionsübergreifend alle erforderlichen Maßnahmen für einen erfolgreichen Kundenauftrag. Du klärst technische Aufgabenstellungen mit dem Vertrieb und prüfst Anforderungen auf ihre Realisierbarkeit. Du führst Projektmeetings und stellst die Projekttransparenz sicher, bis zur erfolgreichen Übergabe an die Kundschaft. Requirements: Berufserfahrung als Projektleiter im Bereich Anlagen-, Energie-, Kraftwerkstechnik mit Kenntnissen der Regelungstechnik und Elektrotechnik. Location: Gunzenhausen, Germany. Gelegentliche Reisetätigkeit.",
+      "locations": [
+        "Gunzenhausen, Germany"
+      ],
+      "fixture_kind": "controlled_retrieval_paraphrase",
+      "expected_status": "POSSIBLE_FIT",
+      "expected_plausible": true,
+      "source_url": "https://api.smartrecruiters.com/v1/companies/BoschGroup/postings"
+    },
+    {
+      "id": "live_bosch_intern",
+      "company_name": "Bosch Group",
+      "title": "Praktikum im Bereich IT-Projektmanagement",
+      "description": "Your tasks: Während deines Praktikums übernimmst du Aufgaben in Software-Projekten und unserer Transformation. Du arbeitest mit erfahrenen Projektleitern, Product Ownern und Scrum Mastern. Requirements: Studium im Bereich Informatik. Immatrikulation während des Praktikums erforderlich. Location: Stuttgart. Präsenz vor Ort erforderlich.",
+      "locations": [
+        "Berlin, Germany"
+      ],
+      "fixture_kind": "controlled_retrieval_paraphrase",
+      "expected_status": "CONFIRMED_MISMATCH",
+      "expected_plausible": false,
+      "source_url": "https://api.smartrecruiters.com/v1/companies/BoschGroup/postings"
+    },
+    {
+      "id": "live_bosch_technician",
+      "company_name": "Bosch Group",
+      "title": "MSR-Techniker Gebäudeautomation",
+      "description": "Your tasks: Du realisierst die eigenständige Inbetriebnahme von MSR- und Gebäudeautomationssystemen. Du parametrierst Managementsysteme und unterstützt Projektleiter und Kunden. Requirements: Mehrjährige Erfahrung in der Inbetriebnahme und elektrotechnische Ausbildung. Location: Berlin. Projektbezogene Reisebereitschaft.",
+      "locations": [
+        "Berlin, Germany"
+      ],
+      "fixture_kind": "controlled_retrieval_paraphrase",
+      "expected_status": "CONFIRMED_MISMATCH",
+      "expected_plausible": false,
+      "source_url": "https://api.smartrecruiters.com/v1/companies/BoschGroup/postings"
+    }
+  ]
+}

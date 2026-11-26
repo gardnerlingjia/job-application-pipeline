@@ -7,6 +7,8 @@ from scripts.run_employer_origin_connector_validation_agent import (
     SourceCandidate,
     ValidationRepository,
     ValidationResult,
+    bounded_connector_preview,
+    canonical_validation_test_paths,
     evaluate_connector_validation,
 )
 
@@ -88,6 +90,124 @@ def test_validation_records_s4b_agent_name_for_active_controlled_source() -> Non
     result = evaluate_connector_validation(active, run_pytest=False)
 
     assert result.evidence["agent"] == "s4b_connector_validation_agent"
+
+
+def test_validation_preview_instantiates_greenhouse_from_source_target() -> None:
+    result = bounded_connector_preview(
+        "src.connectors.greenhouse",
+        "GreenhouseConnector",
+        source_name_candidate="greenhouse:moia",
+    )
+
+    assert result["class_found"] is True
+    assert result["instantiated"] is True
+    assert result["error"] is None
+
+
+def test_greenhouse_validation_uses_canonical_relevant_test_manifest() -> None:
+    greenhouse = SourceCandidate(
+        id=1,
+        company_key="moia",
+        company_name="MOIA",
+        source_name_candidate="greenhouse:moia",
+        source_family_candidate="greenhouse",
+        source_type_candidate="employer_origin_career_site",
+        status="manual_review_required",
+    )
+
+    assert canonical_validation_test_paths(greenhouse) == [
+        "tests/test_greenhouse_connector.py",
+        "tests/test_connector_registry.py",
+        "tests/test_ingest_jobs_cli.py",
+        "tests/test_greenhouse_board_candidate_validation.py",
+        "tests/test_silver_transformer_canonicalization.py",
+        "tests/career_intelligence/test_moia_live_source.py",
+    ]
+
+
+def test_validation_runs_relevant_tests_not_full_repository_pytest(monkeypatch) -> None:
+    commands = []
+
+    def fake_run_command(command):
+        commands.append(command)
+        return {
+            "command": command,
+            "returncode": 0,
+            "stdout_tail": "",
+            "stderr_tail": "",
+        }
+
+    monkeypatch.setattr(
+        "scripts.run_employer_origin_connector_validation_agent.run_command",
+        fake_run_command,
+    )
+    greenhouse = SourceCandidate(
+        id=1,
+        company_key="moia",
+        company_name="MOIA",
+        source_name_candidate="greenhouse:moia",
+        source_family_candidate="greenhouse",
+        source_type_candidate="employer_origin_career_site",
+        status="manual_review_required",
+    )
+
+    result = evaluate_connector_validation(greenhouse, run_pytest=True)
+
+    assert result.gate_status == "passed"
+    assert result.decision == "ready_for_final_approval"
+    assert [command[2:] for command in commands] == [
+        ["compileall", "src", "scripts", "tests"],
+        [
+            "pytest",
+            "-q",
+            "tests/test_greenhouse_connector.py",
+            "tests/test_connector_registry.py",
+            "tests/test_ingest_jobs_cli.py",
+            "tests/test_greenhouse_board_candidate_validation.py",
+            "tests/test_silver_transformer_canonicalization.py",
+            "tests/career_intelligence/test_moia_live_source.py",
+        ],
+    ]
+    assert [command for command in commands if command == [commands[0][0], "-m", "pytest", "-q"]] == []
+    assert result.evidence["validation_tests"] == [
+        "tests/test_greenhouse_connector.py",
+        "tests/test_connector_registry.py",
+        "tests/test_ingest_jobs_cli.py",
+        "tests/test_greenhouse_board_candidate_validation.py",
+        "tests/test_silver_transformer_canonicalization.py",
+        "tests/career_intelligence/test_moia_live_source.py",
+    ]
+
+
+def test_validation_fails_closed_when_relevant_connector_test_fails(monkeypatch) -> None:
+    def fake_run_command(command):
+        return {
+            "command": command,
+            "returncode": 1 if "pytest" in command else 0,
+            "stdout_tail": "failed relevant connector test",
+            "stderr_tail": "",
+        }
+
+    monkeypatch.setattr(
+        "scripts.run_employer_origin_connector_validation_agent.run_command",
+        fake_run_command,
+    )
+    greenhouse = SourceCandidate(
+        id=1,
+        company_key="moia",
+        company_name="MOIA",
+        source_name_candidate="greenhouse:moia",
+        source_family_candidate="greenhouse",
+        source_type_candidate="employer_origin_career_site",
+        status="manual_review_required",
+    )
+
+    result = evaluate_connector_validation(greenhouse, run_pytest=True)
+
+    assert result.gate_status == "manual_review_required"
+    assert result.decision == "connector_validation_failed"
+    assert result.stop_reason == "validation command failed"
+    assert result.evidence["commands"][1]["returncode"] == 1
 
 
 def test_validation_gate_persistence_binds_official_order_and_name() -> None:

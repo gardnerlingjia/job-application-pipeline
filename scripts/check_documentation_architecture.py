@@ -15,6 +15,7 @@ from pathlib import Path
 
 ALLOWED_TOP_LEVEL_DIRS = {
     "archive",
+    "career-intelligence",
     "current",
     "decisions",
     "guides",
@@ -98,7 +99,11 @@ class DocumentationArchitectureReport:
 def build_documentation_architecture_report(root: Path) -> DocumentationArchitectureReport:
     docs_dir = root / "docs"
     top_level_dirs = sorted(path.name for path in docs_dir.iterdir() if path.is_dir()) if docs_dir.exists() else []
-    top_level_files = sorted(path.name for path in docs_dir.iterdir() if path.is_file()) if docs_dir.exists() else []
+    top_level_files = (
+        sorted(path.name for path in docs_dir.iterdir() if path.is_file() and path.name != ".DS_Store")
+        if docs_dir.exists()
+        else []
+    )
 
     unexpected_dirs = sorted(set(top_level_dirs) - ALLOWED_TOP_LEVEL_DIRS)
     unexpected_files = sorted(set(top_level_files) - ALLOWED_TOP_LEVEL_FILES)

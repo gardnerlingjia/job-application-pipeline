@@ -76,7 +76,10 @@ def build_canonical_key_candidate(
 
 
 def canonical_source_type(source_name: object) -> str:
-    if isinstance(source_name, str) and source_name.startswith("successfactors:"):
+    if isinstance(source_name, str) and (
+        source_name.startswith("greenhouse:")
+        or source_name.startswith("successfactors:")
+    ):
         return "employer_origin_ats_backed_career_site"
 
     if isinstance(source_name, str) and (
@@ -125,6 +128,23 @@ def employer_origin_location(
         return None
 
     return job_data.get("location") or result_card.get("location")
+
+
+def greenhouse_company_name(raw_job: dict, job_data: dict) -> str | None:
+    company_name = job_data.get("company_name")
+    if isinstance(company_name, str) and company_name.strip():
+        return company_name
+
+    source_name = raw_job.get("source_name")
+    if source_name == "greenhouse:moia":
+        return "MOIA"
+
+    if isinstance(source_name, str) and source_name.startswith("greenhouse:"):
+        token = source_name.split(":", 1)[1]
+        fallback = token.replace("-", " ").replace("_", " ").strip()
+        return fallback.title() if fallback else None
+
+    return None
 
 
 def add_canonicalization_fields(
@@ -201,7 +221,7 @@ def transform_greenhouse_raw_job(raw_job: dict) -> dict:
             "external_job_id": raw_job["external_job_id"],
             "source_url": job_data.get("absolute_url") or raw_job["source_url"],
             "title": job_data.get("title"),
-            "company_name": job_data.get("company_name"),
+            "company_name": greenhouse_company_name(raw_job, job_data),
             "city": location.get("name"),
             "postal_code": None,
             "country": None,

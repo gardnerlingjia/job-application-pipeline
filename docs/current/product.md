@@ -44,3 +44,6 @@ learning.
 The high-level intent above is stable repository truth, but exact target-profile, geography, Top-5, ranking, freshness, queue and review semantics still require operator approval under PRD-001.
 
 Until the relevant decisions are approved, implementation must not silently choose product defaults. Safety work, defect repair, read-only evidence and operational stabilization may continue.
+
+
+Career Intelligence V3.4 operations: [handover](career-intelligence-v34-operations.md).

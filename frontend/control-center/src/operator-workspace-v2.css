@@ -159,14 +159,38 @@ button, input { font: inherit; }
 .ow-source-list button > span { display: flex; flex-direction: column; gap: 2px; }
 .ow-source-list b { font-size: 10px; }
 .ow-source-list small { font-size: 8px; color: var(--ow-muted); }
+.ow-source-mini { align-items: flex-end; min-width: 118px; }
+.ow-source-mini small { text-transform: uppercase; letter-spacing: .06em; }
 .ow-source-detail code { color: #86cbe4; font-size: 9px; }
 .ow-source-facts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 14px 0; }
 .ow-source-facts > div { padding: 9px; border: 1px solid var(--ow-line-soft); border-radius: 7px; display: flex; flex-direction: column; gap: 4px; }
 .ow-source-facts span { color: var(--ow-muted); font-size: 8px; }
 .ow-source-facts b { font-size: 9px; }
+.ow-strategy-band { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; margin: 12px 0; }
+.ow-strategy-band > div { border: 1px solid var(--ow-line-soft); border-radius: 7px; padding: 8px; display: flex; flex-direction: column; gap: 4px; }
+.ow-strategy-band span { color: var(--ow-muted); font-size: 8px; }
+.ow-strategy-band b { font-size: 9px; }
 .ow-callout { padding: 10px; border-radius: 7px; display: flex; flex-direction: column; gap: 4px; font-size: 9px; }
 .ow-callout.warn { border: 1px solid #6b5524; background: #2c2513; }
 .ow-callout.good { border: 1px solid #286957; background: #0e2d29; }
+.ow-callout.neutral { border: 1px solid var(--ow-line-soft); background: #0a2232; }
+.ow-adaptive-candidates {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 10px;
+}
+.ow-adaptive-candidates > .ow-source-group-title {
+  grid-column: 1 / -1;
+}
+.ow-adaptive-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ow-adaptive-card code {
+  color: #86cbe4;
+  font-size: 9px;
+}
 .ow-approval-row { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--ow-line-soft); }
 .ow-approval-row > span { display: flex; flex-direction: column; gap: 3px; }
 .ow-approval-row small { color: var(--ow-muted); font-size: 9px; }
@@ -209,6 +233,12 @@ button, input { font: inherit; }
 
 
 /* DEMO-001 job review sorting/read-model hardening */
+.ow-career-intelligence .ow-sort {
+  display: flex;
+}
+.ow-market-inventory .ow-toolbar-controls {
+  flex-wrap: wrap;
+}
 .ow-toolbar-controls {
   display: flex;
   align-items: center;
@@ -234,11 +264,70 @@ button, input { font: inherit; }
   font-size: 9px;
   cursor: pointer;
 }
+.ow-score-filter,
+.ow-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 31px;
+  padding: 5px 8px;
+  background: #071824;
+  border: 1px solid var(--ow-line-soft);
+  border-radius: 7px;
+  color: var(--ow-muted);
+  font-size: 8px;
+}
+.ow-score-filter input {
+  width: 52px;
+  border: 0;
+  outline: none;
+  background: #081c29;
+  color: #d9edf7;
+  padding: 4px 5px;
+  border-radius: 5px;
+  font-size: 9px;
+}
+.ow-checkbox input { accent-color: var(--ow-cyan); }
 .ow-job-list-head,
 .ow-job-list > button {
   grid-template-columns:
     64px 100px minmax(250px, 1fr) 135px 92px 150px;
 }
+.ow-career-list {
+  overflow: hidden;
+  background: rgba(12, 34, 50, .92);
+  border: 1px solid var(--ow-line);
+  border-radius: 10px;
+}
+.ow-career-list-head,
+.ow-career-list > button {
+  display: grid;
+  grid-template-columns: 64px 92px 116px minmax(260px, 1fr) 126px 138px;
+  gap: 8px;
+  align-items: center;
+}
+.ow-career-list-head {
+  padding: 8px 10px;
+  color: var(--ow-muted);
+  border-bottom: 1px solid var(--ow-line);
+  font-size: 9px;
+}
+.ow-career-list > button {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid #133347;
+  background: transparent;
+  color: white;
+  padding: 9px 10px;
+  text-align: left;
+  cursor: pointer;
+}
+.ow-career-list > button:hover { background: #0d293a; }
+.ow-career-list > button.selected {
+  background: #11364a;
+  box-shadow: inset 2px 0 0 var(--ow-cyan);
+}
+.ow-career-list > button > strong { color: var(--ow-cyan); }
 .ow-published {
   color: #b5cbd8;
   font-size: 9px;
@@ -251,9 +340,15 @@ button, input { font: inherit; }
     grid-template-columns:
       54px 90px minmax(230px, 1fr) 120px 88px;
   }
+  .ow-career-list-head,
+  .ow-career-list > button {
+    grid-template-columns: 54px 82px minmax(230px, 1fr) 126px 120px;
+  }
 
   .ow-job-list-head span:last-child,
-  .ow-job-list > button > .ow-status:last-child {
+  .ow-job-list > button > .ow-status:last-child,
+  .ow-career-list-head span:nth-child(3),
+  .ow-career-list > button > .ow-status:nth-child(3) {
     display: none;
   }
 }
@@ -264,7 +359,9 @@ button, input { font: inherit; }
     flex-wrap: wrap;
   }
 
-  .ow-sort {
+  .ow-sort,
+  .ow-score-filter,
+  .ow-checkbox {
     margin-left: auto;
   }
 }

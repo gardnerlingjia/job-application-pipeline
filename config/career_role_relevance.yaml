@@ -1,0 +1,23 @@
+schema_version: career_intelligence.role_relevance.v1
+# Rules are evaluated on normalized titles only, never descriptions or source names.
+# Junior and technician exclusions precede leadership exceptions.
+junior:
+  - '\b(intern|internship|working student|werkstudent\w*|praktikant\w*|praktikum|junior|graduate|trainee)\b'
+technician:
+  - '\b(technician|techniker\w*|test driver|testfahrer\w*)\b'
+leadership:
+  - '\b(?:technical |senior |principal )?(?:program|programme) (?:manager|lead|director)\b'
+  - '\b(?:delivery|deployment|launch|release|implementation) (?:manager|lead|director)\b'
+  - '\blaunch readiness\b'
+  - '\bvehicle integration (?:manager|lead|director)\b'
+  - '\b(?:operations (?:lead|manager|director)|(?:head|director|vp) of operations)\b'
+  - '\b(?:market|business|fleet|service|ecosystem|partner) operations\b'
+  - '\b(?:programmleiter|programmmanager|projektleiter)\b'
+engineering:
+  - '\b(?:software|ml|ai|data|backend|back end|frontend|front end|research|computer vision|robotics|embedded|machine learning) (?:\w+ )?engineer\w*\b'
+  - '\b(developer|programmer|entwickler\w*|data scientist)\b'
+product_leadership:
+  - '\b(?:product (?:manager|lead|director|owner)|(?:head|director|vp) of product)\b'
+  - '\b(?:ai|data|digital) (?:transformation|adoption) (?:lead|manager|director)\b'
+relevant_context:
+  - '\b(autonom\w*|mobility|automotive|vehicle|fleet|adas|sdv|robotics|deployment|data platform|data product|ai adoption|ai transformation)\b'

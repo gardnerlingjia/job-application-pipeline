@@ -1,0 +1,366 @@
+{
+  "migration": "db/migrations/109_create_lingjia_broad_market_discovery_profiles.sql",
+  "migration_sha256": "b8d506d038fb0ab085589a7057fdbd076657e146551e9c1e126f6d06def4fbb7",
+  "profiles": {
+    "lingjia_market_stepstone_autonomy_robotics": {
+      "source_name": "stepstone",
+      "search_term": null,
+      "search_location": null,
+      "search_radius_km": null,
+      "offer_type": 1,
+      "page_size": 15,
+      "is_active": true,
+      "recurring_ingestion_enabled": true,
+      "terms": [
+        {
+          "search_term": "ADAS strategy",
+          "is_active": true
+        },
+        {
+          "search_term": "autonomous driving",
+          "is_active": true
+        },
+        {
+          "search_term": "autonomous mobility",
+          "is_active": true
+        },
+        {
+          "search_term": "intelligent mobility systems",
+          "is_active": true
+        },
+        {
+          "search_term": "robotics product manager",
+          "is_active": true
+        },
+        {
+          "search_term": "robotics program manager",
+          "is_active": true
+        }
+      ]
+    },
+    "lingjia_market_stepstone_technical_program_product": {
+      "source_name": "stepstone",
+      "search_term": null,
+      "search_location": null,
+      "search_radius_km": null,
+      "offer_type": 1,
+      "page_size": 15,
+      "is_active": true,
+      "recurring_ingestion_enabled": true,
+      "terms": [
+        {
+          "search_term": "delivery lead technology",
+          "is_active": true
+        },
+        {
+          "search_term": "principal product manager AI",
+          "is_active": true
+        },
+        {
+          "search_term": "product operations manager",
+          "is_active": true
+        },
+        {
+          "search_term": "program manager data platform",
+          "is_active": true
+        },
+        {
+          "search_term": "senior product manager platform",
+          "is_active": true
+        },
+        {
+          "search_term": "technical program manager",
+          "is_active": true
+        }
+      ]
+    },
+    "lingjia_market_stepstone_ai_data_transformation": {
+      "source_name": "stepstone",
+      "search_term": null,
+      "search_location": null,
+      "search_radius_km": null,
+      "offer_type": 1,
+      "page_size": 15,
+      "is_active": true,
+      "recurring_ingestion_enabled": true,
+      "terms": [
+        {
+          "search_term": "AI product manager",
+          "is_active": true
+        },
+        {
+          "search_term": "AI transformation lead",
+          "is_active": true
+        },
+        {
+          "search_term": "analytics platform manager",
+          "is_active": true
+        },
+        {
+          "search_term": "data strategy lead",
+          "is_active": true
+        },
+        {
+          "search_term": "data transformation manager",
+          "is_active": true
+        },
+        {
+          "search_term": "machine learning platform lead",
+          "is_active": true
+        }
+      ]
+    },
+    "lingjia_market_stepstone_strategy_operations": {
+      "source_name": "stepstone",
+      "search_term": null,
+      "search_location": null,
+      "search_radius_km": null,
+      "offer_type": 1,
+      "page_size": 15,
+      "is_active": true,
+      "recurring_ingestion_enabled": true,
+      "terms": [
+        {
+          "search_term": "business operations AI",
+          "is_active": true
+        },
+        {
+          "search_term": "chief of staff technology",
+          "is_active": true
+        },
+        {
+          "search_term": "executive operations mobility",
+          "is_active": true
+        },
+        {
+          "search_term": "strategic projects manager",
+          "is_active": true
+        },
+        {
+          "search_term": "strategy operations technology",
+          "is_active": true
+        },
+        {
+          "search_term": "transformation program lead",
+          "is_active": true
+        }
+      ]
+    },
+    "lingjia_market_stepstone_mobility_platform_deployment": {
+      "source_name": "stepstone",
+      "search_term": null,
+      "search_location": null,
+      "search_radius_km": null,
+      "offer_type": 1,
+      "page_size": 15,
+      "is_active": true,
+      "recurring_ingestion_enabled": true,
+      "terms": [
+        {
+          "search_term": "charging infrastructure product",
+          "is_active": true
+        },
+        {
+          "search_term": "deployment program manager",
+          "is_active": true
+        },
+        {
+          "search_term": "fleet operations technology",
+          "is_active": true
+        },
+        {
+          "search_term": "mobility ecosystem strategy",
+          "is_active": true
+        },
+        {
+          "search_term": "mobility platform manager",
+          "is_active": true
+        },
+        {
+          "search_term": "transport data platform",
+          "is_active": true
+        }
+      ]
+    },
+    "lingjia_market_ba_autonomy_robotics": {
+      "source_name": "bundesagentur_fuer_arbeit",
+      "search_term": null,
+      "search_location": null,
+      "search_radius_km": null,
+      "offer_type": 1,
+      "page_size": 15,
+      "is_active": true,
+      "recurring_ingestion_enabled": true,
+      "terms": [
+        {
+          "search_term": "ADAS strategy",
+          "is_active": true
+        },
+        {
+          "search_term": "autonomous driving",
+          "is_active": true
+        },
+        {
+          "search_term": "autonomous mobility",
+          "is_active": true
+        },
+        {
+          "search_term": "intelligent mobility systems",
+          "is_active": true
+        },
+        {
+          "search_term": "robotics product manager",
+          "is_active": true
+        },
+        {
+          "search_term": "robotics program manager",
+          "is_active": true
+        }
+      ]
+    },
+    "lingjia_market_ba_technical_program_product": {
+      "source_name": "bundesagentur_fuer_arbeit",
+      "search_term": null,
+      "search_location": null,
+      "search_radius_km": null,
+      "offer_type": 1,
+      "page_size": 15,
+      "is_active": true,
+      "recurring_ingestion_enabled": true,
+      "terms": [
+        {
+          "search_term": "delivery lead technology",
+          "is_active": true
+        },
+        {
+          "search_term": "principal product manager AI",
+          "is_active": true
+        },
+        {
+          "search_term": "product operations manager",
+          "is_active": true
+        },
+        {
+          "search_term": "program manager data platform",
+          "is_active": true
+        },
+        {
+          "search_term": "senior product manager platform",
+          "is_active": true
+        },
+        {
+          "search_term": "technical program manager",
+          "is_active": true
+        }
+      ]
+    },
+    "lingjia_market_ba_ai_data_transformation": {
+      "source_name": "bundesagentur_fuer_arbeit",
+      "search_term": null,
+      "search_location": null,
+      "search_radius_km": null,
+      "offer_type": 1,
+      "page_size": 15,
+      "is_active": true,
+      "recurring_ingestion_enabled": true,
+      "terms": [
+        {
+          "search_term": "AI product manager",
+          "is_active": true
+        },
+        {
+          "search_term": "AI transformation lead",
+          "is_active": true
+        },
+        {
+          "search_term": "analytics platform manager",
+          "is_active": true
+        },
+        {
+          "search_term": "data strategy lead",
+          "is_active": true
+        },
+        {
+          "search_term": "data transformation manager",
+          "is_active": true
+        },
+        {
+          "search_term": "machine learning platform lead",
+          "is_active": true
+        }
+      ]
+    },
+    "lingjia_market_ba_strategy_operations": {
+      "source_name": "bundesagentur_fuer_arbeit",
+      "search_term": null,
+      "search_location": null,
+      "search_radius_km": null,
+      "offer_type": 1,
+      "page_size": 15,
+      "is_active": true,
+      "recurring_ingestion_enabled": true,
+      "terms": [
+        {
+          "search_term": "business operations AI",
+          "is_active": true
+        },
+        {
+          "search_term": "chief of staff technology",
+          "is_active": true
+        },
+        {
+          "search_term": "executive operations mobility",
+          "is_active": true
+        },
+        {
+          "search_term": "strategic projects manager",
+          "is_active": true
+        },
+        {
+          "search_term": "strategy operations technology",
+          "is_active": true
+        },
+        {
+          "search_term": "transformation program lead",
+          "is_active": true
+        }
+      ]
+    },
+    "lingjia_market_ba_mobility_platform_deployment": {
+      "source_name": "bundesagentur_fuer_arbeit",
+      "search_term": null,
+      "search_location": null,
+      "search_radius_km": null,
+      "offer_type": 1,
+      "page_size": 15,
+      "is_active": true,
+      "recurring_ingestion_enabled": true,
+      "terms": [
+        {
+          "search_term": "charging infrastructure product",
+          "is_active": true
+        },
+        {
+          "search_term": "deployment program manager",
+          "is_active": true
+        },
+        {
+          "search_term": "fleet operations technology",
+          "is_active": true
+        },
+        {
+          "search_term": "mobility ecosystem strategy",
+          "is_active": true
+        },
+        {
+          "search_term": "mobility platform manager",
+          "is_active": true
+        },
+        {
+          "search_term": "transport data platform",
+          "is_active": true
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,48 @@
+schema_version: career_intelligence.discovery_v3.v1
+request_budget:
+  max_requests_per_run: 150
+  max_pages_per_query: 2
+  page_size: 25
+  max_retries: 2
+  retry_backoff_seconds: 0.5
+  minimum_interval_seconds: 0.25
+geographic_scopes:
+  bundesagentur_fuer_arbeit:
+    - Berlin
+    - Deutschland
+  employer_boards:
+    - DE
+    - AT
+    - BE
+    - CH
+    - DK
+    - FR
+    - NL
+    - SE
+# Retrieval scope only. Berlin compatibility remains exclusively in assessment.
+profiles:
+  autonomy_robotics:
+    - autonomous driving
+    - autonomes Fahren
+    - autonomous mobility
+    - Robotik Programmleitung
+  vehicle_software_delivery:
+    - ADAS program manager
+    - Fahrzeugsoftware Programmmanager
+    - vehicle integration lead
+    - Software Defined Vehicle Projektleiter
+  ai_data_transformation:
+    - AI transformation lead
+    - KI Transformation Leitung
+    - data platform product manager
+    - Datenstrategie Programmleitung
+  strategy_operations:
+    - mobility operations manager
+    - Mobilität Betriebsleitung
+    - strategy operations technology
+    - Unternehmensentwicklung Mobilität
+  mobility_platform_deployment:
+    - fleet operations manager
+    - Flottenbetrieb Leitung
+    - mobility deployment program manager
+    - Verkehrsplanung Datenplattform

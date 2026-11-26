@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Protocol
-from urllib.parse import urlparse
+from urllib.parse import parse_qsl, urlparse
 
 import psycopg
 from psycopg.conninfo import make_conninfo
@@ -131,6 +131,43 @@ def trusted_query_detail_labels(record: RawJobRecord) -> tuple[str, ...]:
     return tuple(labels)
 
 
+def is_greenhouse_query_detail_record(record: RawJobRecord, origin_url: str | None) -> bool:
+    """Trust provider-bound query URLs, not arbitrary cross-domain discovery links."""
+    from src.search_intelligence.connector_feasibility import (
+        is_public_https_origin_url, KNOWN_AGGREGATOR_DOMAINS, SOCIAL_OR_EXTERNAL_NOISE_DOMAINS,
+    )
+    from src.search_intelligence.connector_feasibility_query_runtime import GENERIC_DETAIL_LABELS
+
+    raw = record.raw_data or {}
+    job = raw.get('job')
+    token = raw.get('board_token')
+    if not isinstance(job, dict) or not isinstance(token, str) or not token:
+        return False
+    origin = urlparse(origin_url or '')
+    if (record.source_name != f'greenhouse:{token}' or origin.scheme != 'https'
+            or origin.netloc != 'boards-api.greenhouse.io'
+            or origin.path != f'/v1/boards/{token}/jobs'):
+        return False
+    url = record.source_url
+    parsed = urlparse(url)
+    if (not is_public_https_origin_url(url) or parsed.username or parsed.password
+            or parsed.hostname in KNOWN_AGGREGATOR_DOMAINS | SOCIAL_OR_EXTERNAL_NOISE_DOMAINS
+            or parsed.path.rstrip('/') != '/jobs' or parsed.fragment
+            or job.get('absolute_url') != url):
+        return False
+    pairs = parse_qsl(parsed.query, keep_blank_values=True)
+    identifier = str(job.get('id', ''))
+    title = job.get('title')
+    description = job.get('description') or job.get('content')
+    return bool(
+        identifier.isascii() and identifier.isdigit() and int(identifier) > 0
+        and record.external_job_id == identifier and pairs == [('gh_jid', identifier)]
+        and isinstance(title, str) and title.strip()
+        and title.strip().casefold() not in GENERIC_DETAIL_LABELS
+        and isinstance(description, str) and description.strip()
+    )
+
+
 def is_probable_job_detail_record(
     record: RawJobRecord,
     *,
@@ -142,6 +179,9 @@ def is_probable_job_detail_record(
         return False
 
     if any(marker in path for marker in JOB_DETAIL_URL_PATH_MARKERS):
+        return True
+
+    if is_greenhouse_query_detail_record(record, origin_url):
         return True
 
     if not origin_url:
@@ -382,6 +422,7 @@ def preview_connector_records(
     connector: ConnectorLike | None = None,
     *,
     page_size: int = DEFAULT_PAGE_SIZE,
+    profile_config: dict | None = None,
 ) -> tuple[list[RawJobRecord], str]:
     active_connector = connector or create_connector(candidate.source_name_candidate)
 
@@ -389,13 +430,18 @@ def preview_connector_records(
         id=0,
         profile_name=f"s7u_{candidate.company_key}_activation_readiness_preview",
         source_name=candidate.source_name_candidate,
-        search_location=DEFAULT_LOCATION,
+        search_location=profile_config["search_location"] if profile_config else DEFAULT_LOCATION,
         search_radius_km=DEFAULT_RADIUS_KM,
         offer_type=DEFAULT_OFFER_TYPE,
         page_size=page_size,
     )
 
-    return active_connector.fetch_jobs(profile, SearchTerm(search_term="*"))
+    records, url = active_connector.fetch_jobs(profile, SearchTerm(search_term="*"))
+    if profile_config:
+        from src.ingestion.post_fetch_filter import apply_multi_term_keyword_filter
+        records = apply_multi_term_keyword_filter(records=records, search_terms=[
+            SearchTerm(search_term=t) for t in profile_config['search_terms']])
+    return records, url
 
 
 def write_review(
@@ -509,12 +555,16 @@ def run_activation_readiness(
     evidence_override: list[EvidenceRecord] | None = None,
     db_error_override: str | None = None,
     page_size: int = DEFAULT_PAGE_SIZE,
+    profile_config: dict | None = None,
 ) -> dict[str, Any]:
     candidate = load_candidate(conn, candidate_id=candidate_id, company_key=company_key)
     approved = final_approval_passed(conn, candidate.candidate_id)
     active_profiles = load_active_profiles(conn, candidate.source_name_candidate)
 
-    records, requested_url = preview_connector_records(candidate, connector=connector, page_size=page_size)
+    if profile_config and candidate.source_name_candidate != profile_config['source_name']:
+        raise ValueError('Controlled profile source does not match candidate')
+    records, requested_url = preview_connector_records(
+        candidate, connector=connector, page_size=page_size, profile_config=profile_config)
     non_job_records = non_job_preview_records(records, origin_url=requested_url)
     evaluable_records = [record for record in records if record not in non_job_records]
     candidates = [candidate_from_raw_record(record) for record in evaluable_records]

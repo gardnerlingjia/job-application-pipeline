@@ -1,10 +1,11 @@
 """Serve the canonical Product V1 Control Center.
 
 The canonical launcher preserves the reviewed read models and deterministic
-downstream evidence-preview GET endpoint. Two narrowly allowlisted POST actions
-are exposed: the existing employer-origin final-approval gate and append-only
-operator review relevance labels. Neither action can perform connector
-registration, activation, ingestion, provider, ranking or application behavior.
+downstream evidence-preview GET endpoint. Three narrowly allowlisted POST actions
+are exposed: the existing employer-origin final-approval gate, append-only
+operator review relevance labels, and local Career Intelligence operator state.
+None can perform connector registration, activation, ingestion, provider,
+ranking or application behavior.
 """
 
 from __future__ import annotations
@@ -40,7 +41,22 @@ from scripts.product_v1_job_review_actions import (
     apply_job_review_label_action,
     parse_job_review_label_action_payload,
 )
-from scripts.run_employer_origin_candidate_queue_agent import DatabaseConfig
+from src.config import get_database_config
+from src.career_intelligence.adaptive_sources import (
+    set_adaptive_source_decision,
+    validate_decision,
+)
+from src.career_intelligence.control_center import (
+    load_career_intelligence_control_center,
+    merge_career_intelligence_payload,
+)
+from src.career_intelligence.market_intelligence import load_market_intelligence, production_strategy
+from src.career_intelligence.discovery_store import load_monitoring_summary
+from src.career_intelligence.operator_state import (
+    load_state_payload, set_operator_state, validate_state,
+)
+from src.career_intelligence.source_strategy import enrich_source_overview_with_strategy
+from src.connectors.registry import build_default_connector_registry
 from src.search_intelligence.product_v1_demo_origin_projection import (
     project_demo_origin_truth,
 )
@@ -48,11 +64,32 @@ from src.search_intelligence.product_v1_downstream_preview import DownstreamPrev
 
 
 build_parser = _base.build_parser
-load_source_connector_overview_payload = _base.load_source_connector_overview_payload
 build_source_connector_overview = _base.build_source_connector_overview
 rank_product_jobs = _base.rank_product_jobs
 _HARD_FILTER_POLICY_RELATION = "product_v1_hard_filter_policy"
 _MAX_ACTION_BODY_BYTES = 4096
+CAREER_OPERATOR_STATE_ACTION_PATH = "/api/v1/career-intelligence/operator-state"
+CAREER_ADAPTIVE_SOURCE_ACTION_PATH = "/api/v1/career-intelligence/adaptive-sources"
+
+
+def record_operator_transition(*, vacancy_key: str, previous_state: str | None,
+                               new_state: str, reason: str | None = None) -> None:
+    """Persist a transition without reconstructing or resetting legacy state."""
+    with psycopg.connect(**get_database_config()) as conn:
+        with conn.cursor() as cur:
+            cur.execute("""INSERT INTO career_operator_state_transitions
+                (vacancy_key,previous_state,new_state,reason)
+                VALUES (%s,%s,%s,%s)""",
+                (vacancy_key, previous_state, new_state, reason))
+
+
+def load_source_connector_overview_payload() -> dict[str, object]:
+    """Load source lifecycle truth decorated with Lingjia's Career strategy."""
+
+    return enrich_source_overview_with_strategy(
+        _base.load_source_connector_overview_payload(),
+        registry=build_default_connector_registry(),
+    )
 
 
 def _merge_structured_job_locations(
@@ -275,9 +312,26 @@ def load_product_v1_payload() -> dict[str, object]:
     opportunity_rows: list[dict[str, object]] = []
     label_rows: list[dict[str, object]] = []
     label_capture_available = False
-    with psycopg.connect(
-        DatabaseConfig.from_environment().dsn(), row_factory=dict_row
-    ) as conn:
+    market_intelligence: dict[str, object]
+    current_source_health = None
+    with psycopg.connect(**get_database_config(), row_factory=dict_row) as conn:
+        try:
+            with conn.transaction():
+                current_source_health = load_monitoring_summary(conn)
+        except Exception:
+            # Older schemas retain their existing file-based monitoring fallback.
+            current_source_health = None
+        try:
+            market_intelligence = load_market_intelligence(conn)
+        except Exception as exc:
+            # Keep the product payload available if the V3 discovery schema is absent.
+            market_intelligence = {
+                "status": "unavailable",
+                "reason": f"{type(exc).__name__}: {exc}",
+                "summary": {"vacancy_count": 0, "relevance_screened_count": 0,
+                            "ambiguous_review_count": 0, "full_assessment_count": 0},
+                "geography": [], "employers": [], "role_families": [], "vacancies": [],
+            }
         if silver_job_ids and _base._relation_exists(conn, "silver_job_locations"):
             with conn.cursor() as cur:
                 cur.execute(
@@ -363,6 +417,10 @@ def load_product_v1_payload() -> dict[str, object]:
                 )
                 label_rows = [dict(row) for row in cur.fetchall()]
 
+    payload["source_connector_overview"] = enrich_source_overview_with_strategy(
+        dict(payload.get("source_connector_overview") or {}),
+        registry=build_default_connector_registry(),
+    )
     enriched = _merge_structured_job_locations(payload, location_rows)
     enriched = _merge_observed_opportunities(enriched, opportunity_rows)
     enriched = _merge_job_review_labels(
@@ -370,16 +428,36 @@ def load_product_v1_payload() -> dict[str, object]:
         label_rows,
         capture_available=label_capture_available,
     )
-    return _merge_demo_origin_projection(enriched)
+    enriched = _merge_demo_origin_projection(enriched)
+    career_payload = load_career_intelligence_control_center(enriched)
+    career_payload["market_intelligence"] = market_intelligence
+    if current_source_health is not None:
+        career_payload["source_health"] = current_source_health
+    return merge_career_intelligence_payload(enriched, career_payload)
 
 
 class ProductV1Handler(_base.ProductV1Handler):
-    """Canonical read-mostly handler with two reviewed low-authority POST actions."""
+    """Canonical read-mostly handler with reviewed low-authority POST actions."""
 
     server_version = "DeepOceanProductV1/0.6"
 
     def do_GET(self) -> None:  # noqa: N802 - http.server API
         parsed = urlparse(self.path)
+        if parsed.path == "/api/v1/career-intelligence/market":
+            query = parse_qs(parsed.query)
+            strategy = query.get("strategy", [production_strategy()])[0]
+            if strategy not in {"v3.3", "v3.4"} or set(query) - {"strategy"}:
+                self._send_json({"status": "error", "message": "Unknown career strategy"},
+                                status=HTTPStatus.BAD_REQUEST)
+                return
+            try:
+                with psycopg.connect(**get_database_config(), row_factory=dict_row,
+                                     options="-c default_transaction_read_only=on") as conn:
+                    self._send_json(load_market_intelligence(conn, strategy_version=strategy))
+            except Exception as exc:
+                self._send_json({"status": "unavailable", "reason": f"{type(exc).__name__}: {exc}"},
+                                status=HTTPStatus.SERVICE_UNAVAILABLE)
+            return
         if parsed.path == "/api/v1/product-v1":
             try:
                 self._send_json(load_product_v1_payload())
@@ -394,7 +472,7 @@ class ProductV1Handler(_base.ProductV1Handler):
                 )
             return
         if parsed.path == "/api/v1/source-connectors":
-            super().do_GET()
+            self._send_json(load_source_connector_overview_payload())
             return
         if parsed.path != "/api/v1/product-v1/evidence-preview":
             super().do_GET()
@@ -520,8 +598,146 @@ class ProductV1Handler(_base.ProductV1Handler):
         )
         self._send_json(result, status=status)
 
+    def _post_career_operator_state(self) -> None:
+        try:
+            payload = self._read_action_payload()
+            if not isinstance(payload, dict):
+                raise ControlCenterActionStop("action payload must be a JSON object")
+            if not {"source_file", "state"}.issubset(payload) or set(payload) - {"source_file", "state", "reason"}:
+                raise ControlCenterActionStop("action payload contains unexpected fields")
+            source_file = str(payload.get("source_file") or "").strip()
+            state = validate_state(str(payload.get("state") or ""))
+            previous = load_state_payload().get("states", {}).get(source_file)
+            previous_state = previous.get("state") if isinstance(previous, dict) else None
+            reason = str(payload.get("reason") or "").strip() or None
+            updated = set_operator_state(source_file=source_file, state=state, reason=reason)
+            record_operator_transition(vacancy_key=source_file,
+                previous_state=previous_state, new_state=state, reason=reason)
+        except ControlCenterActionStop as exc:
+            self._send_json(
+                {
+                    "status": "blocked",
+                    "reason": str(exc),
+                    "database_writes": 0,
+                    "provider_requests": 0,
+                    "product_authority": False,
+                },
+                status=HTTPStatus.BAD_REQUEST,
+            )
+            return
+        except ValueError as exc:
+            self._send_json(
+                {
+                    "status": "blocked",
+                    "reason": str(exc),
+                    "database_writes": 0,
+                    "provider_requests": 0,
+                    "product_authority": False,
+                },
+                status=HTTPStatus.BAD_REQUEST,
+            )
+            return
+        except Exception as exc:
+            self._send_json(
+                {
+                    "status": "review_required",
+                    "reason": str(exc),
+                    "database_writes": 0,
+                    "provider_requests": 0,
+                    "product_authority": False,
+                },
+                status=HTTPStatus.CONFLICT,
+            )
+            return
+
+        self._send_json(
+            {
+                "status": "applied",
+                "source_file": source_file,
+                "state": state,
+                "operator_state_count": len(updated["states"]),
+                "local_runtime_writes": 1,
+                "database_writes": 1,
+                "provider_requests": 0,
+                "product_authority": False,
+            }
+        )
+
+    def _post_career_adaptive_source_decision(self) -> None:
+        try:
+            payload = self._read_action_payload()
+            if not isinstance(payload, dict):
+                raise ControlCenterActionStop("action payload must be a JSON object")
+            if set(payload) - {"normalized_company_key", "decision", "company_name"}:
+                raise ControlCenterActionStop("action payload contains unexpected fields")
+            company_key = str(payload.get("normalized_company_key") or "").strip()
+            company_name = str(payload.get("company_name") or "").strip() or None
+            decision = validate_decision(str(payload.get("decision") or ""))
+            updated = set_adaptive_source_decision(
+                normalized_company_key=company_key,
+                decision=decision,
+                company_name=company_name,
+            )
+        except ControlCenterActionStop as exc:
+            self._send_json(
+                {
+                    "status": "blocked",
+                    "reason": str(exc),
+                    "database_writes": 0,
+                    "provider_requests": 0,
+                    "product_authority": False,
+                },
+                status=HTTPStatus.BAD_REQUEST,
+            )
+            return
+        except ValueError as exc:
+            self._send_json(
+                {
+                    "status": "blocked",
+                    "reason": str(exc),
+                    "database_writes": 0,
+                    "provider_requests": 0,
+                    "product_authority": False,
+                },
+                status=HTTPStatus.BAD_REQUEST,
+            )
+            return
+        except Exception as exc:
+            self._send_json(
+                {
+                    "status": "review_required",
+                    "reason": str(exc),
+                    "database_writes": 0,
+                    "provider_requests": 0,
+                    "product_authority": False,
+                },
+                status=HTTPStatus.CONFLICT,
+            )
+            return
+
+        self._send_json(
+            {
+                "status": "applied",
+                "normalized_company_key": company_key,
+                "decision": decision,
+                "adaptive_source_decision_count": len(updated["decisions"]),
+                "local_runtime_writes": 1,
+                "database_writes": 0,
+                "provider_requests": 0,
+                "product_authority": False,
+                "connector_activation": False,
+                "connector_registration": False,
+            }
+        )
+
     def do_POST(self) -> None:  # noqa: N802 - exact reviewed action allowlist
         parsed = urlparse(self.path)
+        if parsed.path == CAREER_ADAPTIVE_SOURCE_ACTION_PATH:
+            self._post_career_adaptive_source_decision()
+            return
+        if parsed.path == CAREER_OPERATOR_STATE_ACTION_PATH:
+            self._post_career_operator_state()
+            return
         if parsed.path == JOB_REVIEW_LABEL_ACTION_PATH:
             self._post_job_review_label()
             return
@@ -581,8 +797,10 @@ def run_server(args: argparse.Namespace) -> None:
     server.frontend_dist = args.frontend_dist  # type: ignore[attr-defined]
     print(f"Deep Ocean Product V1 Control Center: http://{args.host}:{args.port}/")
     print(
-        "Boundary: read models + observed opportunities + deterministic evidence preview + reviewed final-approval and append-only review-label actions; "
-        "no provider call, connector registration, source activation, ingestion, ranking mutation, model training or application submission."
+        "Boundary: read models + observed opportunities + deterministic evidence preview "
+        "+ reviewed final-approval and append-only review-label actions; no provider call, "
+        "connector registration, source activation, ingestion, ranking mutation, model "
+        "training or application submission."
     )
     try:
         server.serve_forever()

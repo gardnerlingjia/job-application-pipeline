@@ -3,7 +3,7 @@ import ApplicationSourceUpload from "./ApplicationSourceUpload";
 import JobReviewLabelControls, {
   type JobReviewLabelState,
 } from "./JobReviewLabelControls";
-import { readProductTruth } from "./productPayloadRuntimeAdapter";
+import { clearProductTruthCache, readProductTruth } from "./productPayloadRuntimeAdapter";
 import "./operator-workspace-v2.css";
 import "./operator-demo-hardening.css";
 
@@ -33,6 +33,222 @@ type Job = {
   explanations?: string[];
   uncertainties?: string[];
   review_label?: JobReviewLabelState | null;
+  career_intelligence?: CareerIntelligenceRecord | null;
+};
+
+type CareerOperatorState = "NEW" | "REVIEWED" | "INTERESTED" | "DISMISSED";
+type CareerRecommendation = "APPLY_NOW" | "NETWORK_FIRST" | "EXPLORE" | "WATCH" | "SKIP";
+
+type CareerIntelligenceRecord = {
+  source_file: string;
+  silver_job_id?: number | null;
+  job_join_status?: string;
+  company?: string | null;
+  title?: string | null;
+  opportunity_score?: number | null;
+  recommendation?: CareerRecommendation | string | null;
+  career_lane?: string | null;
+  career_lane_label?: string | null;
+  constraint_action?: string | null;
+  risks?: unknown[];
+  key_matched_capabilities?: unknown[];
+  assessment_evidence?: {
+    gates?: unknown;
+    scores?: unknown;
+    supporting_capabilities?: unknown[];
+    blocking_gaps?: unknown[];
+    location?: Record<string, unknown>;
+  };
+  network_access?: number | null;
+  relationship_level?: string | null;
+  network_status?: string | null;
+  publication_date?: string | null;
+  first_seen_at?: string | null;
+  last_seen_at?: string | null;
+  job_age_days?: number | null;
+  freshness_bucket?: string | null;
+  job_age_date_source?: string | null;
+  freshness_ranking_penalty?: number | null;
+  operator_state: CareerOperatorState;
+  workspace_available?: boolean;
+  provenance?: {
+    source_file?: string;
+    silver_job_id?: number | null;
+    raw_job_id?: number | null;
+    source_name?: string | null;
+    external_job_id?: string | null;
+    source_url?: string | null;
+    stable_identity_type?: string | null;
+    stable_identity_sha256?: string | null;
+    description_source?: string | null;
+    description_quality?: string | null;
+    ingestion_status?: string | null;
+    publication_date?: string | null;
+    first_seen_at?: string | null;
+    last_seen_at?: string | null;
+    freshness_bucket?: string | null;
+    job_age_days?: number | null;
+    job_age_date_source?: string | null;
+    freshness_ranking_penalty?: number | null;
+  };
+};
+
+type RetrievalRecord = {
+  identity: string; company: string; title: string; source_name: string;
+  source_file: string; source_url?: string; employer_origin: boolean;
+  role_gate: { reason: string }; is_new: boolean;
+};
+
+type CompetencyQualification = {
+  status: string; competency_status: string; strategy_version: string;
+  opportunity_review?: {
+    strategy_revision: string; search_category: string; judgment: string; reasons: string[];
+    posting_activity: string; discovery_eligible: boolean;
+    dimensions: Record<string, {
+      status: string; uncertainties?: string[]; risks?: string[];
+      evidence?: unknown;
+    }>;
+  };
+  candidate_verification_status: string; description_source?: string | null;
+  source_observation_id?: number | null; missing_requirements: string[];
+  assessment_eligible: boolean; assessment_reason: string;
+  location: { status: string; travel_status: string; missing: string[] };
+  employment_conditions: { status: string; evidence: Array<{ type: string; text: string }> };
+  competency_evidence: Array<{
+    competency: string; evidence_status: string; candidate_source: string;
+    candidate_evidence: string[]; job_evidence: Array<{ section: string; text: string }>;
+  }>;
+  supplementary_competency_evidence?: Array<{
+    competency: string; label: string; job_evidence: Array<{section: string; text: string}>;
+    candidate_evidence: Array<{fact_key: string; statement: string; maturity: string;
+      evidence_class: string; evidence_status: string; limitations: string[];
+      additional_verification_needed?: string}>;
+  }>;
+  china_europe: {
+    relevance: string; candidate_support: string; candidate_evidence_status?: string; missing: string[];
+    job_evidence: Array<{ section: string; text: string; basis: string }>;
+    candidate_evidence: Array<{ fact_key: string; statement: string }>;
+    score_contribution: number; pending_dimensions?: string[];
+    reviewed_professional_evidence?: Array<{fact_key: string; statement: string}>;
+  };
+};
+
+type CareerIntelligencePayload = {
+  market_intelligence?: {
+    status: string;
+    strategy_version?: string;
+    candidate_verification_status?: string;
+    screening_method?: string;
+    summary?: {
+      vacancy_count?: number;
+      gate_counts?: Record<string, number>;
+      relevance_screened_count?: number;
+      ambiguous_review_count?: number;
+      full_assessment_count?: number;
+      qualification_counts?: Record<string, number>;
+      china_europe_counts?: Record<string, number>;
+      assessment_eligible_count?: number;
+      plausible_cross_industry_count?: number;
+      review_judgments?: Record<string, number>; excluded_internal_count?: number;
+    };
+    industries?: Array<{ name: string; label: string; vacancy_count: number }>;
+    geography?: Array<{ name: string; vacancy_count: number }>;
+    employers?: Array<{ name: string; total: number; by_gate: Record<string, number> }>;
+    role_families?: Array<{ name: string; total: number; by_gate: Record<string, number> }>;
+    vacancies?: Array<{
+      vacancy_id: string; company: string; title: string; locations: string[];
+      geographies: string[]; gate_reason: string; matched_rule?: string | null;
+      role_family: string; why: string; source_key?: string | null;
+      source_job_id?: string | null; source_url?: string | null;
+      publication_at?: string | null; source_updated_at?: string | null;
+      career_compatibility: string;
+      industry?: string; industries?: string[]; qualification?: CompetencyQualification;
+    }>;
+    boundaries?: Record<string, unknown>;
+    reason?: string;
+  };
+  source_health?: {
+    last_run_at?: string;
+    http_requests?: number;
+    sources?: Array<{
+      source_key: string;
+      employer_name?: string | null;
+      provider: string;
+      board_id?: string | null;
+      configured: boolean;
+      authorized: boolean;
+      active: boolean;
+      access_status?: string;
+      health_status: string;
+      last_retrieval_at?: string | null;
+      last_success_at?: string | null;
+      queries_attempted: number;
+      pages_requested: number;
+      pages_retrieved: number;
+      raw_results: number;
+      unique_vacancies: number;
+      cross_source_duplicates: number;
+      parse_failures: number;
+      retrieval_errors?: unknown[];
+    }>;
+    events?: Array<{
+      event_type: string;
+      company_name: string;
+      title: string;
+      source_key?: string;
+      publication_at?: string | null;
+      source_updated_at?: string | null;
+      first_seen_at?: string | null;
+      last_seen_at?: string | null;
+      occurred_at?: string | null;
+    }>;
+    history?: Array<{
+      source_key: string;
+      query_text?: string | null;
+      geographic_scope?: string | null;
+      status: string;
+      queries_attempted: number;
+      pages_requested: number;
+      pages_retrieved: number;
+      raw_results: number;
+      unique_vacancies: number;
+      cross_source_duplicates: number;
+      parse_failures: number;
+      snapshot_complete?: boolean;
+      started_at?: string | null;
+      completed_at?: string | null;
+      retrieval_errors?: unknown[];
+    }>;
+    geographic_distribution?: {
+      overall_vacancy_count: number;
+      location_count: number;
+      categories: Record<string, { vacancy_count: number; location_count: number; berlin_vacancy_count?: number }>;
+      note?: string;
+    };
+    employer_board_entries?: Array<{ company_name: string; title: string; vacancy_type: string; source_key?: string; source_job_id?: string; source_url?: string }>;
+  };
+  operator_transitions?: Array<{ vacancy_key: string; previous_state?: string | null; new_state: string; transitioned_at: string; reason?: string | null }>;
+  retrieval?: {
+    completed_at?: string;
+    metrics?: Record<string, number>;
+    new_relevant?: RetrievalRecord[];
+    new_ambiguous?: RetrievalRecord[];
+    needs_employer_enrichment?: RetrievalRecord[];
+    target_company_signals?: { company_name: string }[];
+    target_companies?: { company_name: string; status: string; reason: string }[];
+  };
+  available: boolean;
+  status: string;
+  reason?: string | null;
+  records: CareerIntelligenceRecord[];
+  state_action_path?: string;
+  summary?: {
+    opportunity_count?: number;
+    joined_job_count?: number;
+    unmatched_opportunity_count?: number;
+    recommendation_counts?: Record<string, number>;
+    operator_state_counts?: Record<string, number>;
+  };
 };
 
 type SourceConnector = {
@@ -55,6 +271,51 @@ type SourceConnector = {
   };
   last_ingestion: { status: string; total_loaded: number; inserted_count: number };
   layers: { bronze_count: number; silver_count: number };
+  career_source_strategy?: {
+    configured: boolean;
+    company_name?: string;
+    tier?: string;
+    tier_label?: string;
+    strategic_priority?: number;
+    relevant_career_lanes?: string[];
+    preferred_evidence_type?: string;
+    source_role?: string;
+    is_employer_origin?: boolean;
+    is_discovery?: boolean;
+    location_relevance?: string[];
+    status?: string;
+    source_status?: string;
+    strategy_group?: string;
+    career_relevance?: string;
+  };
+  career_source_advisory?: {
+    status?: string;
+    observed_opportunity_count?: number;
+    best_score?: number | null;
+    reasons?: string[];
+    automatic_downgrade?: boolean;
+  };
+};
+
+type AdaptiveSourceCandidate = {
+  company_name: string;
+  normalized_company_key: string;
+  observed_opportunity_count: number;
+  assessed_opportunity_count: number;
+  highest_opportunity_score: number;
+  average_opportunity_score: number;
+  recommendations_distribution?: Record<string, number>;
+  career_lanes: string[];
+  berlin_relevance: boolean;
+  remote_germany_relevance: boolean;
+  location_constraint_conflicts: boolean;
+  evidence_quality: string;
+  employer_origin_evidence_available: boolean;
+  discovery_source_evidence_available: boolean;
+  source_strategy_status: string;
+  suggested_action: string;
+  operator_decision: string;
+  promotion_reasons: string[];
 };
 
 type ProductPayload = {
@@ -70,6 +331,7 @@ type ProductPayload = {
     application_ready_count: number;
   };
   job_readiness: Job[];
+  discovery_job_readiness?: Job[];
   top_jobs: Job[];
   application_sources_ready: {
     base_cv: boolean;
@@ -87,15 +349,31 @@ type ProductPayload = {
       attention_count: number;
     };
     sources: SourceConnector[];
+    adaptive_source_discovery?: {
+      available: boolean;
+      status: string;
+      reason?: string | null;
+      state_action_path?: string;
+      candidates?: AdaptiveSourceCandidate[];
+      summary?: {
+        candidate_count?: number;
+        promotion_candidate_count?: number;
+        watch_candidate_count?: number;
+        ignored_candidate_count?: number;
+      };
+    };
   };
   operator_blockers: Array<{ code: string; title: string; detail: string }>;
   review_label_capture?: {
     available: boolean;
   };
+  career_intelligence?: CareerIntelligencePayload;
 };
 
-type View = "overview" | "jobs" | "top5" | "application" | "applications" | "sources" | "approvals" | "operations";
+type View = "overview" | "jobs" | "career" | "top5" | "application" | "applications" | "sources" | "approvals" | "operations";
 type JobFilter = "current" | "unreviewed" | "interesting" | "not_relevant" | "rankable" | "all";
+type CareerStateFilter = CareerOperatorState | "ALL";
+type CareerRecommendationFilter = CareerRecommendation | "ALL";
 type JobSort =
   | "newest"
   | "oldest"
@@ -110,11 +388,21 @@ type JobSort =
   | "gate_asc"
   | "gate_desc";
 type SortColumn = "fit" | "review" | "job" | "location" | "published" | "gate";
-type SourceGroup = "Needs attention" | "Active" | "Pending" | "Not implemented";
+type SourceGroup = "Strategic employers" | "Adjacent employers" | "Discovery sources" | "Adaptive candidates" | "Existing generic/demo sources";
 
 const normalize = (value: string | undefined | null) => (value || "").trim().toLocaleLowerCase();
 const label = (value: string | undefined | null) => (value || "unknown").replaceAll("_", " ");
 const scoreText = (value: number | null | undefined) => value == null ? "—" : `${Math.round(value)}%`;
+const compactItemText = (value: unknown) => {
+  if (value == null) return "";
+  if (typeof value === "string") return value.trim();
+  if (typeof value === "number" || typeof value === "boolean") return String(value);
+  if (typeof value === "object") {
+    const record = value as Record<string, unknown>;
+    return String(record.name || record.capability || record.constraint || record.reason || JSON.stringify(record));
+  }
+  return String(value);
+};
 const isCurrent = (job: Job) => ["active confirmed", "active_confirmed"].includes(normalize(job.lifecycle_status));
 const isRankable = (job: Job) => normalize(job.product_readiness_status) === "rankable";
 const employerName = (job: Job) => job.display_company_name || job.company_name || "Employer not resolved";
@@ -153,6 +441,14 @@ const displayDate = (value: string | null | undefined) => {
 };
 
 const compareText = (left: string, right: string) => left.localeCompare(right, "de", { sensitivity: "base" });
+
+function jobAgeText(record: CareerIntelligenceRecord) {
+  const bucket = record.freshness_bucket || record.provenance?.freshness_bucket || "UNKNOWN";
+  const age = record.job_age_days ?? record.provenance?.job_age_days;
+  const source = record.job_age_date_source || record.provenance?.job_age_date_source;
+  if (typeof age !== "number") return `${bucket} · date unknown`;
+  return `${bucket} · ${age}d · ${label(source)}`;
+}
 
 function compareJobs(a: Job, b: Job, sort: JobSort) {
   if (sort === "fit_desc" || sort === "fit_asc") {
@@ -212,12 +508,12 @@ function Metric({ labelText, value, helper }: { labelText: string; value: number
   return <article className="ow-metric"><span>{labelText}</span><strong>{value}</strong><small>{helper}</small></article>;
 }
 
-function OpenApplicationButton({ disabled = false }: { disabled?: boolean }) {
+function OpenApplicationButton({ disabled = false, silverJobId }: { disabled?: boolean; silverJobId?: number | null }) {
   return <button
     type="button"
     className="ow-primary"
     disabled={disabled}
-    onClick={() => window.dispatchEvent(new CustomEvent("product-v1:open-application-workspace"))}
+    onClick={() => window.dispatchEvent(new CustomEvent("product-v1:open-application-workspace", { detail: { silverJobId } }))}
   >Prepare application</button>;
 }
 
@@ -289,7 +585,7 @@ function JobDetail({ job, payload, refresh }: { job: Job; payload: ProductPayloa
 
   return <aside className="ow-job-detail">
     <div className="ow-detail-head"><span>Silver #{job.silver_job_id}</span><h2>{job.title || "Untitled job"}</h2><p>{employerName(job)} · {locationText(job)}</p>{job.legal_entity_name && normalize(job.legal_entity_name) !== normalize(employerName(job)) && <small>Legal entity: {job.legal_entity_name}</small>}</div>
-    <div className="ow-actions">{sourceUrl && <a className="ow-primary-link" href={sourceUrl} target="_blank" rel="noreferrer">Open original ↗</a>}{rankable && <OpenApplicationButton />}</div>
+    <div className="ow-actions">{sourceUrl && <a className="ow-primary-link" href={sourceUrl} target="_blank" rel="noreferrer">Open original ↗</a>}{rankable && <OpenApplicationButton silverJobId={job.silver_job_id} />}</div>
     <JobReviewLabelControls silverJobId={job.silver_job_id} currentLabel={job.review_label} captureAvailable={payload.review_label_capture?.available === true} refreshProductTruth={refresh} />
     <section className="ow-score-card"><h3>{rankable ? "Profile fit" : "Role affinity · preliminary"}</h3>{scoreRows.map(([name, value]) => <div key={name}><span>{name}</span><i><b style={{ width: `${Math.max(0, Math.min(100, value || 0))}%` }} /></i><strong>{scoreText(value)}</strong></div>)}{!rankable && <p className="ow-score-note">Detail check required. This preliminary signal uses review-scope evidence and is not capability-fit or Product V1 ranking authority.</p>}</section>
     <section className="ow-facts"><div><span>Lifecycle</span><Status value={job.lifecycle_status} /></div><div><span>Product gate</span><Status value={job.product_readiness_status} /></div><div><span>Work model</span><b>{label(job.work_model)}</b></div><div><span>Commute</span><b>{job.commute_minutes == null ? "—" : `${job.commute_minutes} min`}</b></div></section>
@@ -481,6 +777,333 @@ function Jobs({ payload, refresh }: { payload: ProductPayload; refresh: () => Pr
   </div>;
 }
 
+function careerScore(record: CareerIntelligenceRecord) {
+  return typeof record.opportunity_score === "number" ? record.opportunity_score : -1;
+}
+
+function careerTitle(record: CareerIntelligenceRecord) {
+  return record.title || "Untitled opportunity";
+}
+
+function careerCompany(record: CareerIntelligenceRecord) {
+  return record.company || "Unknown employer";
+}
+
+function careerSort(a: CareerIntelligenceRecord, b: CareerIntelligenceRecord) {
+  const scoreDelta = careerScore(b) - careerScore(a);
+  if (scoreDelta !== 0) return scoreDelta;
+  const recommendationDelta = compareText(String(a.recommendation || ""), String(b.recommendation || ""));
+  if (recommendationDelta !== 0) return recommendationDelta;
+  const companyDelta = compareText(careerCompany(a), careerCompany(b));
+  if (companyDelta !== 0) return companyDelta;
+  const titleDelta = compareText(careerTitle(a), careerTitle(b));
+  if (titleDelta !== 0) return titleDelta;
+  return compareText(a.source_file, b.source_file);
+}
+
+function setApplicationWorkspaceJob(silverJobId: number | null | undefined) {
+  if (silverJobId == null) return;
+  window.dispatchEvent(new CustomEvent("product-v1:open-application-workspace", { detail: { silverJobId } }));
+}
+
+function CareerIntelligence({
+  payload,
+  refresh,
+}: {
+  payload: ProductPayload;
+  refresh: () => Promise<void>;
+}) {
+  const career = payload.career_intelligence;
+  const [recommendation, setRecommendation] = useState<CareerRecommendationFilter>("ALL");
+  const [operatorState, setOperatorState] = useState<CareerStateFilter>("ALL");
+  const [lane, setLane] = useState("ALL");
+  const [minimumScore, setMinimumScore] = useState(0);
+  const [includeDismissed, setIncludeDismissed] = useState(false);
+  const [selectedSource, setSelectedSource] = useState<string | null>(null);
+  const [saving, setSaving] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [marketGate, setMarketGate] = useState("ALL");
+  const [marketGeography, setMarketGeography] = useState("ALL");
+  const [marketEmployer, setMarketEmployer] = useState("ALL");
+  const [marketFamily, setMarketFamily] = useState("ALL");
+  const [marketLimit, setMarketLimit] = useState(50);
+  const [marketIndustry, setMarketIndustry] = useState("ALL");
+  const [marketQualification, setMarketQualification] = useState("ALL");
+  const [marketLocation, setMarketLocation] = useState("ALL");
+  const [marketChinaEurope, setMarketChinaEurope] = useState("ALL");
+  const [marketPreview, setMarketPreview] = useState<CareerIntelligencePayload["market_intelligence"]>(undefined);
+  const [marketLoading, setMarketLoading] = useState(false);
+  const [marketError, setMarketError] = useState<string | null>(null);
+
+  const records = career?.records || [];
+  const laneOptions = useMemo(() => {
+    const values = new Set(records.map((record) => record.career_lane).filter((value): value is string => Boolean(value)));
+    return Array.from(values).sort(compareText);
+  }, [records]);
+
+  const filtered = useMemo(() => records
+    .filter((record) => includeDismissed || record.operator_state !== "DISMISSED")
+    .filter((record) => recommendation === "ALL" || record.recommendation === recommendation)
+    .filter((record) => operatorState === "ALL" || record.operator_state === operatorState)
+    .filter((record) => lane === "ALL" || record.career_lane === lane)
+    .filter((record) => careerScore(record) >= minimumScore)
+    .sort(careerSort), [includeDismissed, lane, minimumScore, operatorState, recommendation, records]);
+
+  const selected = filtered.find((record) => record.source_file === selectedSource) || filtered[0] || null;
+  const summary = career?.summary;
+  const stateCounts = summary?.operator_state_counts || {};
+  const recommendationCounts = summary?.recommendation_counts || {};
+  const market = marketPreview || career?.market_intelligence;
+  const marketVacancies = market?.vacancies || [];
+  const marketFiltered = marketVacancies.filter((vacancy) =>
+    vacancy.qualification?.opportunity_review?.discovery_eligible !== false &&
+    (marketGate === "ALL" || vacancy.gate_reason === marketGate)
+    && (marketGeography === "ALL" || vacancy.geographies.includes(marketGeography))
+    && (marketEmployer === "ALL" || vacancy.company === marketEmployer)
+    && (marketFamily === "ALL" || vacancy.role_family === marketFamily)
+    && (marketIndustry === "ALL" || vacancy.industry === marketIndustry)
+    && (marketQualification === "ALL" || vacancy.qualification?.status === marketQualification)
+    && (marketLocation === "ALL" || vacancy.qualification?.location.status === marketLocation)
+    && (marketChinaEurope === "ALL" || vacancy.qualification?.china_europe.relevance === marketChinaEurope));
+
+  const selectMarketStrategy = async (strategy: "v3.3" | "v3.4") => {
+    setMarketGate("ALL"); setMarketFamily("ALL"); setMarketGeography("ALL");
+    setMarketEmployer("ALL"); setMarketIndustry("ALL"); setMarketQualification("ALL");
+    setMarketLocation("ALL"); setMarketChinaEurope("ALL"); setMarketLimit(50);
+    setMarketError(null);
+    if (strategy === career?.market_intelligence?.strategy_version) { setMarketPreview(undefined); return; }
+    setMarketLoading(true);
+    try {
+      const response = await fetch(`/api/v1/career-intelligence/market?strategy=${strategy}`,
+        { headers: { Accept: "application/json" } });
+      const payload = await response.json();
+      if (!response.ok || payload.status !== "ready") throw new Error(payload.reason || "Preview unavailable");
+      setMarketPreview(payload);
+    } catch (error) {
+      setMarketError(error instanceof Error ? error.message : "Preview unavailable");
+    } finally { setMarketLoading(false); }
+  };
+
+  const updateState = async (record: CareerIntelligenceRecord, nextState: CareerOperatorState) => {
+    if (!career?.state_action_path) return;
+    setSaving(record.source_file);
+    setActionError(null);
+    try {
+      const response = await fetch(career.state_action_path, {
+        method: "POST",
+        headers: { Accept: "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({ source_file: record.source_file, state: nextState }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(String(result.reason || `API returned ${response.status}`));
+      }
+      clearProductTruthCache();
+      await refresh();
+    } catch (reason) {
+      setActionError(String(reason));
+    } finally {
+      setSaving(null);
+    }
+  };
+
+  if (!career || career.available !== true) {
+    return <div className="ow-stack">
+      <header className="ow-page-header"><div><span>Career Intelligence</span><h1>Daily radar unavailable</h1><p>Run the daily Career Intelligence workflow to populate this lens.</p></div></header>
+      <section className="ow-card"><h2>{career?.status === "error" ? "Runtime data failed safely" : "No Career Intelligence run yet"}</h2><p>{career?.reason || "No local Career Intelligence opportunities were found. Product V1 remains available."}</p></section>
+    </div>;
+  }
+
+  return <div className="ow-stack ow-career-intelligence">
+    <header className="ow-page-header">
+      <div><span>Career Intelligence</span><h1>Opportunity radar</h1><p>Additional decision lens from local Career Intelligence outputs. Product V1 ranking is unchanged.</p></div>
+      <strong className="ow-big-count">{filtered.length}/{records.length}</strong>
+    </header>
+
+    <section className="ow-card">
+      <h2>Latest retrieval</h2>
+      <p>{career.retrieval?.completed_at ? `Completed ${displayDate(career.retrieval.completed_at)}` : "Run the V3 daily workflow to establish a retrieval baseline."}</p>
+      <div className="ow-metrics">{Object.entries(career.retrieval?.metrics || {}).map(([name, value]) => <Metric key={name} labelText={label(name)} value={value} helper="latest run" />)}</div>
+      {([
+        ["New relevant jobs", career.retrieval?.new_relevant],
+        ["New ambiguous jobs · review title", career.retrieval?.new_ambiguous],
+        ["Discovery only · employer evidence needed", career.retrieval?.needs_employer_enrichment],
+      ] as [string, RetrievalRecord[] | undefined][]).map(([heading, rows]) => <section key={heading}>
+        <h3>{heading}</h3>
+        {rows?.length ? <ul>{rows.map(row => <li key={row.identity}><b>{row.title}</b> · {row.company} · {row.role_gate.reason} · {row.employer_origin ? "Employer origin" : "Discovery signal"}{row.source_url && /^https?:\/\//i.test(row.source_url) && <> · <a href={row.source_url} target="_blank" rel="noreferrer">View source</a></>}</li>)}</ul> : <p>No new items in this run.</p>}
+      </section>)}
+      <h3>New target-company signals</h3>
+      <p>{career.retrieval?.target_company_signals?.map(c => c.company_name).join(", ") || "No new target-company vacancies in this run."}</p>
+      <details><summary>Target-company coverage</summary><ul>{career.retrieval?.target_companies?.map(c => <li key={c.company_name}><b>{c.company_name}</b> · {label(c.status)} · {c.reason}</li>)}</ul></details>
+    </section>
+
+    {career.source_health?.sources?.length ? <section className="ow-card">
+      <h2>Discovery source health</h2>
+      <p>Last run {career.source_health.last_run_at ? displayDate(career.source_health.last_run_at) : "unknown"} · {career.source_health.http_requests ?? "unknown"} HTTP requests</p>
+      <div className="ow-metrics">
+        <Metric labelText="Configured" value={career.source_health.sources.filter(source => source.configured).length} helper="registered sources" />
+        <Metric labelText="Authorized" value={career.source_health.sources.filter(source => source.authorized).length} helper="access approved" />
+        <Metric labelText="Active" value={career.source_health.sources.filter(source => source.active).length} helper="enabled sources" />
+        <Metric labelText="Healthy" value={career.source_health.sources.filter(source => source.health_status === "healthy").length} helper="latest run succeeded" />
+      </div>
+      <div className="ow-evidence"><div><span>Source coverage</span><ul>{career.source_health.sources.map(source => <li key={source.source_key}><b>{source.employer_name || source.provider}</b> · {label(source.access_status || "unverified")} · {label(source.health_status)} · {source.queries_attempted} queries · {source.pages_retrieved}/{source.pages_requested} pages · {source.raw_results} raw · {source.unique_vacancies} unique · {source.cross_source_duplicates} cross-source duplicates · {source.parse_failures} parse failures · {(source.retrieval_errors || []).length} retrieval errors{source.last_success_at ? ` · last success ${displayDate(source.last_success_at)}` : ""}</li>)}</ul></div></div>
+      {career.source_health.events?.length ? <div className="ow-evidence"><div><span>Vacancy changes · publication, source update, observation dates</span><ul>{career.source_health.events.map((event, index) => <li key={`${event.source_key}-${event.event_type}-${event.title}-${index}`}><b>{label(event.event_type)}</b> · {event.company_name} · {event.title} · published {displayDate(event.publication_at)} · source updated {displayDate(event.source_updated_at)} · first seen {displayDate(event.first_seen_at)} · last seen {displayDate(event.last_seen_at)}</li>)}</ul></div></div> : null}
+      {career.source_health.history?.length ? <details><summary>Recent source retrieval history ({career.source_health.history.length})</summary><ul>{career.source_health.history.map((run, index) => <li key={`${run.source_key}-${run.started_at}-${index}`}><b>{run.source_key}</b> · {label(run.status)}{run.snapshot_complete ? " · complete snapshot" : " · incomplete/non-snapshot"} · {displayDate(run.started_at)} · {run.query_text || "board inventory"} · {run.geographic_scope || "all configured scope"} · {run.pages_retrieved}/{run.pages_requested} pages · {run.raw_results} raw · {run.unique_vacancies} unique · {run.cross_source_duplicates} cross-source duplicates · {run.parse_failures} parse failures · {(run.retrieval_errors || []).length} retrieval errors</li>)}</ul></details> : null}
+      {career.source_health.geographic_distribution ? <div className="ow-evidence"><div><span>Vacancy geography</span><p>{career.source_health.geographic_distribution.overall_vacancy_count} distinct active vacancies · {career.source_health.geographic_distribution.location_count} location observations</p><ul>{Object.entries(career.source_health.geographic_distribution.categories).map(([name, counts]) => <li key={name}><b>{name}</b> · {counts.vacancy_count} vacancies · {counts.location_count} locations{counts.berlin_vacancy_count !== undefined ? ` · ${counts.berlin_vacancy_count} Berlin` : ""}</li>)}</ul><small>{career.source_health.geographic_distribution.note}</small></div></div> : null}
+      {career.source_health.employer_board_entries?.length ? <details><summary>Employer board entries excluded from vacancy assessment ({career.source_health.employer_board_entries.length})</summary><ul>{career.source_health.employer_board_entries.map((entry) => <li key={`${entry.source_key}-${entry.source_job_id}`}><b>{entry.company_name}</b> · {entry.title} · {label(entry.vacancy_type)}{entry.source_url && /^https?:\/\//i.test(entry.source_url) && <> · <a href={entry.source_url} target="_blank" rel="noreferrer">View source</a></>}</li>)}</ul></details> : null}
+      {career.operator_transitions?.length ? <details><summary>Operator transition history ({career.operator_transitions.length})</summary><ul>{career.operator_transitions.map((transition, index) => <li key={`${transition.vacancy_key}-${transition.transitioned_at}-${index}`}><b>{transition.vacancy_key}</b> · {transition.previous_state || "(initial)"} → {transition.new_state} · {displayDate(transition.transitioned_at)}{transition.reason ? ` · ${transition.reason}` : ""}</li>)}</ul></details> : null}
+    </section> : null}
+
+    <section className="ow-metrics">
+      <Metric labelText="Career records" value={summary?.opportunity_count ?? records.length} helper="local V1.1 results" />
+      <Metric labelText="Joined jobs" value={summary?.joined_job_count ?? 0} helper="matched by Silver provenance" />
+      <Metric labelText="NEW" value={stateCounts.NEW ?? 0} helper="unreviewed radar items" />
+      <Metric labelText="INTERESTED" value={stateCounts.INTERESTED ?? 0} helper="kept prominent" />
+    </section>
+
+    {market ? <section className="ow-card ow-market-inventory">
+      <h2>Market visibility · {market.summary?.vacancy_count ?? marketVacancies.length} active actual vacancies</h2>
+      <div className="ow-toolbar-controls">
+        <button type="button" className="ow-secondary" disabled={marketLoading} onClick={() => void selectMarketStrategy(market.strategy_version === "v3.4" ? "v3.3" : "v3.4")}>{marketLoading ? "Loading qualification…" : market.strategy_version === "v3.4" ? "View V3.3 rollback strategy" : "View V3.4 competency qualification"}</button>
+        <span>Strategy: {market.strategy_version || "v3.3"}{marketPreview ? " · comparison" : " · default"}</span>
+      </div>
+      {marketError && <p role="alert">{marketError}</p>}
+      <p>{market.status === "ready"
+        ? `${market.screening_method || "Existing title relevance gate only."} Full career assessments remain separate.`
+        : `Market inventory unavailable: ${market.reason || "discovery data is unavailable"}`}</p>
+      {market.status === "ready" ? <>
+        <div className="ow-metrics">
+          <Metric labelText="Relevant title matches" value={market.summary?.relevance_screened_count ?? 0} helper="existing gate" />
+          <Metric labelText="Ambiguous review" value={market.summary?.ambiguous_review_count ?? 0} helper="title needs review" />
+          <Metric labelText="Full career assessment" value={market.summary?.full_assessment_count ?? 0} helper="separate workflow" />
+          {marketPreview && <Metric labelText="Plausible cross-industry" value={market.summary?.plausible_cross_industry_count ?? 0} helper="provisional evidence; needs review" />}
+          {Object.entries(market.summary?.review_judgments || {}).map(([outcome, count]) => <Metric key={`review-${outcome}`} labelText={`Review: ${outcome}`} value={count} helper="preview judgment; legacy recommendations unchanged" />)}
+          {Object.entries(market.summary?.qualification_counts || {}).map(([outcome, count]) => <Metric key={outcome} labelText={label(outcome)} value={count} helper="description qualification" />)}
+          {(market.geography || []).map((item) => <Metric key={item.name} labelText={item.name} value={item.vacancy_count} helper="vacancies; buckets may overlap" />)}
+        </div>
+        <details><summary>Employer coverage ({market.employers?.length || 0})</summary><ul>{market.employers?.map((item) => <li key={item.name}><b>{item.name}</b> · {item.total} vacancies · {Object.entries(item.by_gate).map(([reason, count]) => `${label(reason)} ${count}`).join(" · ")}</li>)}</ul></details>
+        <details><summary>Role family coverage ({market.role_families?.length || 0})</summary><ul>{market.role_families?.map((item) => <li key={item.name}><b>{item.name}</b> · {item.total} vacancies · {Object.entries(item.by_gate).map(([reason, count]) => `${label(reason)} ${count}`).join(" · ")}</li>)}</ul></details>
+        <div className="ow-toolbar-controls">
+          <label className="ow-sort"><span>Title gate</span><select value={marketGate} onChange={(event) => { setMarketGate(event.target.value); setMarketLimit(50); }}><option value="ALL">All outcomes</option>{Object.keys(market.summary?.gate_counts || {}).map((reason) => <option key={reason} value={reason}>{label(reason)}</option>)}</select></label>
+          {marketPreview && <>
+            <label className="ow-sort"><span>Industry</span><select value={marketIndustry} onChange={(event) => { setMarketIndustry(event.target.value); setMarketLimit(50); }}><option value="ALL">All industries</option>{market.industries?.map((item) => <option key={item.name} value={item.name}>{item.label}</option>)}</select></label>
+            <label className="ow-sort"><span>Qualification</span><select value={marketQualification} onChange={(event) => { setMarketQualification(event.target.value); setMarketLimit(50); }}><option value="ALL">All qualifications</option>{Object.keys(market.summary?.qualification_counts || {}).map((item) => <option key={item} value={item}>{label(item)}</option>)}</select></label>
+            <label className="ow-sort"><span>Location compatibility</span><select value={marketLocation} onChange={(event) => { setMarketLocation(event.target.value); setMarketLimit(50); }}><option value="ALL">All location evidence</option>{["confirmed_compatible", "confirmed_incompatible", "unknown_requires_clarification"].map((item) => <option key={item} value={item}>{label(item)}</option>)}</select></label>
+            <label className="ow-sort"><span>China–Europe relevance</span><select value={marketChinaEurope} onChange={(event) => { setMarketChinaEurope(event.target.value); setMarketLimit(50); }}><option value="ALL">All relevance</option>{["Core requirement", "Strong advantage", "Additional advantage", "Not relevant"].map((item) => <option key={item} value={item}>{item}</option>)}</select></label>
+          </>}
+          <label className="ow-sort"><span>Geography</span><select value={marketGeography} onChange={(event) => { setMarketGeography(event.target.value); setMarketLimit(50); }}><option value="ALL">All geographies</option>{market.geography?.map((item) => <option key={item.name} value={item.name}>{item.name}</option>)}</select></label>
+          <label className="ow-sort"><span>Employer</span><select value={marketEmployer} onChange={(event) => { setMarketEmployer(event.target.value); setMarketLimit(50); }}><option value="ALL">All employers</option>{market.employers?.map((item) => <option key={item.name} value={item.name}>{item.name}</option>)}</select></label>
+          <label className="ow-sort"><span>Role family</span><select value={marketFamily} onChange={(event) => { setMarketFamily(event.target.value); setMarketLimit(50); }}><option value="ALL">All role families</option>{market.role_families?.map((item) => <option key={item.name} value={item.name}>{item.name}</option>)}</select></label>
+        </div>
+        <p>Showing {Math.min(marketFiltered.length, marketLimit)} of {marketFiltered.length} filtered records.</p>
+        <ul>{marketFiltered.slice(0, marketLimit).map((vacancy) => <li key={vacancy.vacancy_id}>
+          <b>{vacancy.title}</b> · {vacancy.company} · {label(vacancy.gate_reason)} · {vacancy.role_family}
+          <br /><small>{vacancy.why} · {vacancy.locations.length ? vacancy.locations.join("; ") : "Location unknown"} · {vacancy.geographies.join(", ")} · career compatibility: not assessed</small>
+          {vacancy.source_url && /^https?:\/\//i.test(vacancy.source_url) && <> · <a href={vacancy.source_url} target="_blank" rel="noreferrer">Source</a></>}
+          {vacancy.qualification && <details>
+            <summary>{label(vacancy.qualification.status)} · {label(vacancy.industry || "unknown")} · competency evidence</summary>
+            <p>Role evidence: {label(vacancy.qualification.competency_status)} · Strategy {vacancy.qualification.strategy_version} · Candidate evidence: {label(vacancy.qualification.candidate_verification_status)}</p>
+            <p>Location: {label(vacancy.qualification.location.status)} · Travel: {label(vacancy.qualification.location.travel_status)}</p>
+            <p>Employment conditions: {vacancy.qualification.employment_conditions.evidence.map((item) => item.text).join(" · ") || "Unknown; confirm contract and working hours."}</p>
+            <p>Assessment eligibility: {vacancy.qualification.assessment_eligible ? "eligible for separate assessment" : vacancy.qualification.assessment_reason}</p>
+            <ul>{vacancy.qualification.competency_evidence.map((item) => <li key={item.competency}>
+              <b>{label(item.competency)}</b> · transferable experience · {label(item.evidence_status)}
+              <ul>{item.job_evidence.map((hit, index) => <li key={index}>{hit.section}: {hit.text}</li>)}</ul>
+              <small>Candidate basis: {item.candidate_evidence.join("; ")} ({item.candidate_source})</small>
+            </li>)}</ul>
+            <p>Missing requirements / clarification: {vacancy.qualification.missing_requirements.join(" · ") || "None detected by preview rules; review the source description."}</p>
+            {!!vacancy.qualification.supplementary_competency_evidence?.length && <section aria-label="Supplementary AI project and training evidence">
+              <p><b>Supplementary AI evidence</b> · Candidate-declared projects and training; not professional production experience.</p>
+              {vacancy.qualification.supplementary_competency_evidence.map((match) => <details key={match.competency}>
+                <summary>{match.label}</summary>
+                <ul>{match.job_evidence.map((hit, index) => <li key={index}>{hit.section}: {hit.text}</li>)}</ul>
+                {match.candidate_evidence.map((fact) => <div key={fact.fact_key}>
+                  <p><b>{fact.fact_key}</b> · {label(fact.maturity)} · {label(fact.evidence_status)}</p>
+                  <p>{fact.statement}</p><p>{fact.limitations.join(" ")}</p>
+                  {fact.additional_verification_needed && <p>Verification needed: {fact.additional_verification_needed}</p>}
+                </div>)}
+              </details>)}
+            </section>}
+            {vacancy.qualification.opportunity_review && <section aria-label="Opportunity review dimensions">
+              <p><b>Review judgment: {vacancy.qualification.opportunity_review.judgment}</b> · Category {vacancy.qualification.opportunity_review.search_category} · {vacancy.qualification.opportunity_review.strategy_revision}</p>
+              <p>{vacancy.qualification.opportunity_review.reasons.join(" ")}</p>
+              {!vacancy.qualification.opportunity_review.discovery_eligible && <p>Excluded from active external opportunities; historical record retained.</p>}
+              <ul>{Object.entries(vacancy.qualification.opportunity_review.dimensions).map(([name, dimension]) => <li key={name}>
+                <b>{label(name)}: {label(dimension.status)}</b>
+                {Array.isArray(dimension.evidence) && dimension.evidence.filter((item): item is string => typeof item === "string").map((item, index) => <p key={index}>{item}</p>)}
+                <p>{dimension.uncertainties?.join(" ")} {dimension.risks?.join(" ")}</p>
+              </li>)}</ul>
+              <p>Independent work preference: at least 50% as a flexible orientation. Actual percentage unknown unless explicitly established; no numerical exclusion rule.</p>
+            </section>}
+            <p><b>China–Europe: {vacancy.qualification.china_europe.relevance}</b> · Candidate support: {label(vacancy.qualification.china_europe.candidate_evidence_status ?? vacancy.qualification.china_europe.candidate_support)} · no score contribution</p>
+            <ul>{vacancy.qualification.china_europe.job_evidence.map((hit, index) => <li key={index}>{hit.section}: {hit.text} <small>({label(hit.basis)})</small></li>)}</ul>
+            {vacancy.qualification.china_europe.candidate_evidence.map((fact) => <p key={fact.fact_key}>{fact.statement}</p>)}
+            {vacancy.qualification.china_europe.relevance !== "Not relevant" && vacancy.qualification.china_europe.reviewed_professional_evidence?.map((fact) => <p key={`review-${fact.fact_key}`}>CV-supported professional evidence · mapping awaiting approval: {fact.statement}</p>)}
+            <p>{vacancy.qualification.china_europe.missing.join(" ")} {vacancy.qualification.china_europe.pending_dimensions?.map(label).join(", ")}</p>
+            <small>Source: {vacancy.source_key} · posting {vacancy.source_job_id} · observation {vacancy.qualification.source_observation_id ?? "not provided"} · description {vacancy.qualification.description_source || "not captured"}</small>
+          </details>}
+        </li>)}</ul>
+        {marketFiltered.length > marketLimit && <button type="button" className="ow-secondary" onClick={() => setMarketLimit((current) => current + 50)}>Show 50 more</button>}
+        <small>Geography counts describe discovery coverage. A vacancy with multiple locations appears in each applicable bucket; Berlin is included in Germany. They do not represent career eligibility.</small>
+      </> : null}
+    </section> : null}
+
+    <section className="ow-job-toolbar">
+      <div className="ow-filter-row">
+        {(["ALL", "APPLY_NOW", "NETWORK_FIRST", "EXPLORE", "WATCH", "SKIP"] as CareerRecommendationFilter[]).map((item) =>
+          <button type="button" key={item} className={recommendation === item ? "active" : ""} onClick={() => setRecommendation(item)}>
+            {item === "ALL" ? "All recommendations" : item}<b>{item === "ALL" ? records.length : recommendationCounts[item] ?? 0}</b>
+          </button>
+        )}
+      </div>
+      <div className="ow-toolbar-controls">
+        <label className="ow-sort"><span>State</span><select value={operatorState} onChange={(event) => setOperatorState(event.target.value as CareerStateFilter)}>{(["ALL", "NEW", "INTERESTED", "REVIEWED", "DISMISSED"] as CareerStateFilter[]).map((state) => <option key={state} value={state}>{state === "ALL" ? "All states" : state}</option>)}</select></label>
+        <label className="ow-sort"><span>Lane</span><select value={lane} onChange={(event) => setLane(event.target.value)}><option value="ALL">All lanes</option>{laneOptions.map((value) => <option key={value} value={value}>{label(value)}</option>)}</select></label>
+        <label className="ow-score-filter"><span>Min score</span><input type="number" min="0" max="100" value={minimumScore} onChange={(event) => setMinimumScore(Number(event.target.value) || 0)} /></label>
+        <label className="ow-checkbox"><input type="checkbox" checked={includeDismissed} onChange={(event) => setIncludeDismissed(event.target.checked)} />Dismissed</label>
+      </div>
+    </section>
+
+    {actionError && <section className="ow-callout warn"><b>State update failed</b><span>{actionError}</span></section>}
+
+    <section className="ow-job-workspace ow-career-workspace">
+      <div className="ow-career-list">
+        <div className="ow-career-list-head"><span>Score</span><span>State</span><span>Recommendation</span><span>Opportunity</span><span>Freshness</span><span>Lane</span></div>
+        {filtered.map((record) =>
+          <button type="button" key={record.source_file} className={selected?.source_file === record.source_file ? "selected" : ""} onClick={() => setSelectedSource(record.source_file)}>
+            <strong>{scoreText(record.opportunity_score)}</strong>
+            <Status value={record.operator_state} />
+            <Status value={record.recommendation || "unknown"} />
+            <span className="ow-job-name"><b>{careerTitle(record)}</b><small>{careerCompany(record)} · {record.job_join_status === "joined" ? `Silver #${record.silver_job_id}` : "not joined to Product V1 job"}</small></span>
+            <Status value={jobAgeText(record)} />
+            <span>{record.career_lane_label || label(record.career_lane)}</span>
+          </button>
+        )}
+        {filtered.length === 0 && <p className="ow-empty">No Career Intelligence opportunities match this filter.</p>}
+      </div>
+
+      {selected ? <aside className="ow-job-detail">
+        <div className="ow-detail-head"><span>{selected.source_file}</span><h2>{careerTitle(selected)}</h2><p>{careerCompany(selected)} · {selected.job_join_status === "joined" ? `Silver #${selected.silver_job_id}` : "No Product V1 join"}</p></div>
+        <div className="ow-actions">
+          {(["NEW", "REVIEWED", "INTERESTED", "DISMISSED"] as CareerOperatorState[]).map((state) => <button type="button" key={state} className={selected.operator_state === state ? "ow-primary" : "ow-secondary"} disabled={saving === selected.source_file || selected.operator_state === state} onClick={() => void updateState(selected, state)}>{state}</button>)}
+        </div>
+        <section className="ow-score-card"><h3>Career Intelligence</h3><div><span>Opportunity</span><i><b style={{ width: `${Math.max(0, Math.min(100, selected.opportunity_score || 0))}%` }} /></i><strong>{scoreText(selected.opportunity_score)}</strong></div><div><span>Network</span><i><b style={{ width: `${Math.max(0, Math.min(100, selected.network_access || 0))}%` }} /></i><strong>{scoreText(selected.network_access)}</strong></div>{selected.network_status && <p className="ow-score-note">Network detail: {label(selected.network_status)}</p>}</section>
+        <section className="ow-facts"><div><span>Recommendation</span><Status value={selected.recommendation || "unknown"} /></div><div><span>Constraint</span><Status value={selected.constraint_action || "unknown"} /></div><div><span>Career lane</span><b>{selected.career_lane_label || label(selected.career_lane)}</b></div><div><span>Relationship</span><b>{label(selected.relationship_level)}</b></div></section>
+        <section className="ow-facts"><div><span>Freshness</span><Status value={jobAgeText(selected)} /></div><div><span>Published</span><b>{displayDate(selected.publication_date || selected.provenance?.publication_date)}</b></div><div><span>First seen</span><b>{displayDate(selected.first_seen_at || selected.provenance?.first_seen_at)}</b></div><div><span>Last seen</span><b>{displayDate(selected.last_seen_at || selected.provenance?.last_seen_at)}</b></div></section>
+        <section className="ow-evidence"><div><span>Matched capabilities</span>{selected.key_matched_capabilities?.length ? <ul>{selected.key_matched_capabilities.slice(0, 6).map((item, index) => <li key={`${compactItemText(item)}-${index}`}>{compactItemText(item)}</li>)}</ul> : <p>No matched capabilities projected.</p>}</div><div><span>Key risks</span>{selected.risks?.length ? <ul>{selected.risks.slice(0, 6).map((item, index) => <li key={`${compactItemText(item)}-${index}`}>{compactItemText(item)}</li>)}</ul> : <p>No key risks projected.</p>}</div></section>
+        <details><summary>Assessment evidence and location compatibility</summary>
+          {selected.assessment_evidence?.gates !== undefined && <p><b>Recorded gates:</b> <code>{JSON.stringify(selected.assessment_evidence.gates)}</code></p>}
+          {selected.assessment_evidence?.scores !== undefined && <p><b>Recorded score components:</b> <code>{JSON.stringify(selected.assessment_evidence.scores)}</code></p>}
+          {selected.assessment_evidence?.blocking_gaps?.length ? <p><b>Blocking gaps:</b> {selected.assessment_evidence.blocking_gaps.map(compactItemText).join(" · ")}</p> : null}
+          {selected.assessment_evidence?.location ? <div className="ow-facts"><div><span>Compatibility</span><b>{label(String(selected.assessment_evidence.location.compatibility ?? "unknown"))}</b></div><div><span>Hard conflict</span><b>{label(String(selected.assessment_evidence.location.hard_conflict ?? "unknown"))}</b></div><div><span>Presence evidence</span><b>{label(String(selected.assessment_evidence.location.presence_reason ?? "unknown"))}</b></div><div><span>Recorded location evidence</span><code>{JSON.stringify(selected.assessment_evidence.location)}</code></div></div> : <p>No persisted location compatibility evidence.</p>}
+        </details>
+        <section className="ow-facts"><div><span>Source</span><b>{selected.provenance?.source_name || "unknown"}</b></div><div><span>External id</span><b>{selected.provenance?.external_job_id || "unknown"}</b></div><div><span>Description</span><b>{label(selected.provenance?.description_quality)} · {label(selected.provenance?.description_source)}</b></div><div><span>Join</span><b>{label(selected.job_join_status)}</b></div></section>
+        {selected.workspace_available ? <div className="ow-actions"><button type="button" className="ow-primary" onClick={() => setApplicationWorkspaceJob(selected.silver_job_id)}>Open Application Workspace</button>{selected.provenance?.source_url && <a className="ow-primary-link" href={selected.provenance.source_url} target="_blank" rel="noreferrer">Original job ↗</a>}</div> : <p className="ow-muted">Application Workspace opens only for joined INTERESTED, APPLY_NOW, or NETWORK_FIRST opportunities and still enforces its own gates.</p>}
+      </aside> : <aside className="ow-job-detail"><p className="ow-empty">Select a Career Intelligence opportunity.</p></aside>}
+    </section>
+  </div>;
+}
+
 function TopFive({ payload, refresh }: { payload: ProductPayload; refresh: () => Promise<void> }) {
   const [selectedId, setSelectedId] = useState<number | null>(payload.top_jobs[0]?.silver_job_id ?? null);
   const jobs = payload.top_jobs.slice(0, 5);
@@ -496,7 +1119,7 @@ function Application({ payload, refresh }: { payload: ProductPayload; refresh: (
   return <div className="ow-stack">
     <header className="ow-page-header"><div><span>Final preparation step</span><h1>Application</h1><p>Verified vacancy + Candidate Facts + approved local base documents → complete review package. Never auto-submit.</p></div></header>
     <section className="ow-application-grid">
-      <article className="ow-card"><span className="ow-kicker">Selected target</span><h2>{top?.title || "No authoritative Top-5 job"}</h2>{top && <p>{employerName(top)} · {locationText(top)} · {scoreText(top.overall_quality_score)} authoritative fit</p>}<div className="ow-readiness"><div className={top ? "ready" : "blocked"}><i /><span>Top-5 target</span><b>{top ? "Ready" : "Required"}</b></div><div className={payload.application_sources_ready.base_cv ? "ready" : "blocked"}><i /><span>Base CV</span><b>{payload.application_sources_ready.base_cv ? "Approved" : "Required"}</b></div><div className={payload.application_sources_ready.base_application_letter ? "ready" : "blocked"}><i /><span>Base letter</span><b>{payload.application_sources_ready.base_application_letter ? "Approved" : "Required"}</b></div></div><OpenApplicationButton disabled={!top || !docsReady} /></article>
+      <article className="ow-card"><span className="ow-kicker">Selected target</span><h2>{top?.title || "No authoritative Top-5 job"}</h2>{top && <p>{employerName(top)} · {locationText(top)} · {scoreText(top.overall_quality_score)} authoritative fit</p>}<div className="ow-readiness"><div className={top ? "ready" : "blocked"}><i /><span>Top-5 target</span><b>{top ? "Ready" : "Required"}</b></div><div className={payload.application_sources_ready.base_cv ? "ready" : "blocked"}><i /><span>Base CV</span><b>{payload.application_sources_ready.base_cv ? "Approved" : "Required"}</b></div><div className={payload.application_sources_ready.base_application_letter ? "ready" : "blocked"}><i /><span>Base letter</span><b>{payload.application_sources_ready.base_application_letter ? "Approved" : "Required"}</b></div></div><OpenApplicationButton disabled={!top || !docsReady} silverJobId={top?.silver_job_id} /></article>
       <article className="ow-card ow-boundary-card"><span className="ow-kicker">Private source model</span><h2>{docsReady ? "Base documents are ready" : "Choose your two local base PDFs"}</h2><p>File bytes stay local. On your explicit Generate action, extracted text from the two approved base documents may be sent to the configured drafting provider as style/structure context. Candidate Facts remain authority for new candidate claims.</p><ul><li>Approved file bytes stay on this machine</li><li>Extracted base text is shared only on explicit Generate</li><li>Local PDF text extraction validates the approved source</li><li>No hidden auto-apply, submit or send</li></ul></article>
     </section>
     <article className="ow-card">
@@ -541,38 +1164,85 @@ function Applications({ payload, onPrepare }: { payload: ProductPayload; onPrepa
 }
 
 function sourceGroup(source: SourceConnector): SourceGroup {
-  if (source.current_blocker) return "Needs attention";
-  if (source.activation.active === true) return "Active";
-  if (normalize(source.connector.implementation_status).includes("not implemented")) return "Not implemented";
-  return "Pending";
+  const strategy = source.career_source_strategy;
+  if (strategy?.tier === "A") return "Strategic employers";
+  if (strategy?.tier === "B") return "Adjacent employers";
+  if (strategy?.source_role === "discovery" || strategy?.tier === "C") return "Discovery sources";
+  return "Existing generic/demo sources";
 }
 
-function Sources({ payload }: { payload: ProductPayload }) {
+function adaptiveDecisionForSuggestion(suggestedAction: string): string {
+  if (suggestedAction === "PROMOTE_TO_TIER_A") return "PROMOTED_A";
+  if (suggestedAction === "PROMOTE_TO_TIER_B") return "PROMOTED_B";
+  if (suggestedAction === "IGNORE") return "IGNORED";
+  return "WATCH";
+}
+
+function Sources({ payload, refresh }: { payload: ProductPayload; refresh: () => Promise<void> }) {
   const sources = payload.source_connector_overview.sources;
-  const [selectedName, setSelectedName] = useState(sources.find((source) => source.current_blocker)?.source_name || sources.find((source) => source.activation.active === true)?.source_name || sources[0]?.source_name || "");
+  const [selectedName, setSelectedName] = useState(sources.find((source) => source.career_source_strategy?.tier === "A")?.source_name || sources.find((source) => source.current_blocker)?.source_name || sources.find((source) => source.activation.active === true)?.source_name || sources[0]?.source_name || "");
   const [showAll, setShowAll] = useState(false);
-  const groups: SourceGroup[] = ["Needs attention", "Active", "Pending", "Not implemented"];
+  const [adaptiveBusyKey, setAdaptiveBusyKey] = useState<string | null>(null);
+  const lifecycleGroups = ["Needs attention", "Active", "Pending", "Not implemented"];
+  const adaptive = payload.source_connector_overview.adaptive_source_discovery;
+  const adaptiveCandidates = adaptive?.candidates || [];
+  const groups: SourceGroup[] = ["Strategic employers", "Adjacent employers", "Discovery sources", "Adaptive candidates", "Existing generic/demo sources"];
   const groupCounts = Object.fromEntries(groups.map((group) => [group, sources.filter((source) => sourceGroup(source) === group).length])) as Record<SourceGroup, number>;
+  groupCounts["Adaptive candidates"] = adaptiveCandidates.length;
   const visibleGroups = groups
     .map((group) => ({
       group,
       sources: sources
         .filter((source) => sourceGroup(source) === group)
-        .filter((source) => showAll || group === "Needs attention" || group === "Active")
-        .sort((left, right) => compareText(left.source_label, right.source_label)),
+        .filter((source) => showAll || group !== "Existing generic/demo sources")
+        .sort((left, right) => {
+          const priorityDelta = (right.career_source_strategy?.strategic_priority || 0) - (left.career_source_strategy?.strategic_priority || 0);
+          if (priorityDelta !== 0) return priorityDelta;
+          return compareText(left.source_label, right.source_label);
+        }),
     }))
     .filter((entry) => entry.sources.length > 0);
   const visible = visibleGroups.flatMap((entry) => entry.sources);
   const selected = sources.find((source) => source.source_name === selectedName) || visible[0] || null;
+  const strategy = selected?.career_source_strategy;
+  const setAdaptiveDecision = async (candidate: AdaptiveSourceCandidate, decision: string) => {
+    const path = adaptive?.state_action_path || "/api/v1/career-intelligence/adaptive-sources";
+    setAdaptiveBusyKey(candidate.normalized_company_key);
+    try {
+      const response = await fetch(path, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          normalized_company_key: candidate.normalized_company_key,
+          company_name: candidate.company_name,
+          decision,
+        }),
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.reason || `Adaptive source update failed (${response.status})`);
+      }
+      clearProductTruthCache();
+      await refresh();
+    } finally {
+      setAdaptiveBusyKey(null);
+    }
+  };
 
   return <div className="ow-stack">
-    <header className="ow-page-header"><div><span>Source control</span><h1>Sources</h1><p>Status-clustered connector truth. Active and attention sources stay prominent; the long tail remains available on demand.</p></div><button type="button" className="ow-secondary" onClick={() => setShowAll((value) => !value)}>{showAll ? "Show active/attention" : `Show all ${sources.length}`}</button></header>
+    <header className="ow-page-header"><div><span>Source control</span><h1>Sources</h1><p>Lingjia strategy sources are grouped above existing generic/demo sources. Lifecycle gates still own activation truth.</p></div><button type="button" className="ow-secondary" title={`Lifecycle vocabulary: ${lifecycleGroups.join(", ")}`} onClick={() => setShowAll((value) => !value)}>{showAll ? "Hide generic/demo" : `Show all ${sources.length}`}</button></header>
     <section className="ow-source-summary-strip">
       {groups.map((group) => <div key={group}><span>{group}</span><b>{groupCounts[group]}</b></div>)}
     </section>
+    {adaptive?.available === false && <div className="ow-callout warn"><b>Adaptive discovery unavailable</b><span>{adaptive.reason || "Runtime source evidence is not ready."}</span></div>}
+    {adaptiveCandidates.length > 0 && <section className="ow-adaptive-candidates"><div className="ow-source-group-title"><span>Adaptive candidates</span><b>{adaptiveCandidates.length}</b></div>{adaptiveCandidates.map((candidate) => {
+      const recommendedDecision = adaptiveDecisionForSuggestion(candidate.suggested_action);
+      const busy = adaptiveBusyKey === candidate.normalized_company_key;
+      return <article className="ow-card ow-adaptive-card" key={candidate.normalized_company_key}><div><span className="ow-kicker">{label(candidate.suggested_action)} · {label(candidate.operator_decision)}</span><h2>{candidate.company_name}</h2><code>{candidate.normalized_company_key}</code></div><div className="ow-strategy-band"><div><span>Opportunities</span><b>{candidate.observed_opportunity_count}</b></div><div><span>Best score</span><b>{candidate.highest_opportunity_score}</b></div><div><span>Average</span><b>{candidate.average_opportunity_score}</b></div><div><span>Evidence</span><b>{label(candidate.evidence_quality)}</b></div></div><div className="ow-source-facts"><div><span>Employer origin</span><b>{candidate.employer_origin_evidence_available ? "available" : "not observed"}</b></div><div><span>Discovery</span><b>{candidate.discovery_source_evidence_available ? "available" : "not observed"}</b></div><div><span>Berlin</span><b>{candidate.berlin_relevance ? "yes" : "not observed"}</b></div><div><span>Remote Germany</span><b>{candidate.remote_germany_relevance ? "yes" : "not observed"}</b></div><div><span>Location conflict</span><b>{candidate.location_constraint_conflicts ? "yes" : "no"}</b></div><div><span>Lanes</span><b>{candidate.career_lanes.map(label).join(", ") || "unknown"}</b></div></div><section className="ow-evidence"><div><span>Promotion reasons</span><ul>{candidate.promotion_reasons.map((reason) => <li key={reason}>{reason}</li>)}</ul></div></section><div className="ow-actions"><button type="button" onClick={() => void setAdaptiveDecision(candidate, "PROMOTED_A")} disabled={busy}>Promote to Tier A</button><button type="button" onClick={() => void setAdaptiveDecision(candidate, "PROMOTED_B")} disabled={busy}>Promote to Tier B</button><button type="button" onClick={() => void setAdaptiveDecision(candidate, "WATCH")} disabled={busy || recommendedDecision === "WATCH"}>Watch</button><button type="button" onClick={() => void setAdaptiveDecision(candidate, "IGNORED")} disabled={busy}>Ignore</button></div></article>;
+    })}</section>}
     <section className="ow-source-workspace">
-      <div className="ow-source-list">{visibleGroups.map(({ group, sources: groupedSources }) => <div key={group}><div className="ow-source-group-title"><span>{group}</span><b>{groupedSources.length}</b></div>{groupedSources.map((source) => <button type="button" key={source.source_name} className={selected?.source_name === source.source_name ? "selected" : ""} onClick={() => setSelectedName(source.source_name)}><span><b>{source.source_label}</b><small>{source.source_name}</small></span><Status value={source.current_blocker || source.activation.status} /></button>)}</div>)}</div>
-      {selected && <article className="ow-card ow-source-detail"><span className="ow-kicker">{sourceGroup(selected)} · {selected.source_type}</span><h2>{selected.source_label}</h2><code>{selected.source_name}</code><div className="ow-source-facts"><div><span>Implementation</span><b>{label(selected.connector.implementation_status)}</b></div><div><span>Validation</span><b>{label(selected.gates.connector_validation_gate.status)}</b></div><div><span>Approval</span><b>{label(selected.gates.final_approval_gate.status)}</b></div><div><span>Activation</span><b>{label(selected.activation.status)}</b></div><div><span>Profiles</span><b>{selected.search_profiles.active_profile_count}/{selected.search_profiles.profile_count} active</b></div><div><span>Layers</span><b>Bronze {selected.layers.bronze_count} · Silver {selected.layers.silver_count}</b></div></div>{selected.current_blocker ? <div className="ow-callout warn"><b>{label(selected.current_blocker)}</b><span>{selected.next_action}</span></div> : <div className="ow-callout good"><b>No current blocker</b><span>{selected.next_action}</span></div>}</article>}
+      <div className="ow-source-list">{visibleGroups.map(({ group, sources: groupedSources }) => <div key={group}><div className="ow-source-group-title"><span>{group}</span><b>{groupedSources.length}</b></div>{groupedSources.map((source) => <button type="button" key={source.source_name} className={selected?.source_name === source.source_name ? "selected" : ""} onClick={() => setSelectedName(source.source_name)}><span><b>{source.source_label}</b><small>{source.source_name}</small></span><span className="ow-source-mini"><Status value={source.career_source_strategy?.source_status || source.current_blocker || source.activation.status} /><small>{source.career_source_strategy?.source_role || "generic"}</small></span></button>)}</div>)}</div>
+      {selected && <article className="ow-card ow-source-detail"><span className="ow-kicker">{sourceGroup(selected)} · {selected.source_type}</span><h2>{selected.source_label}</h2><code>{selected.source_name}</code>{strategy?.configured ? <div className="ow-strategy-band"><div><span>Tier</span><b>{strategy.tier} · {strategy.tier_label}</b></div><div><span>Priority</span><b>{strategy.strategic_priority}</b></div><div><span>Role</span><b>{label(strategy.source_role)}</b></div><div><span>Status</span><b>{label(strategy.source_status)}</b></div></div> : <div className="ow-callout warn"><b>Existing generic/demo source</b><span>This source remains available but is not part of Lingjia's target-source strategy.</span></div>}{selected.career_source_advisory && <div className="ow-callout neutral"><b>Source advisory: {label(selected.career_source_advisory.status)}</b><span>{selected.career_source_advisory.reasons?.join(" · ") || "No advisory detail."}</span></div>}<div className="ow-source-facts"><div><span>Implementation</span><b>{label(selected.connector.implementation_status)}</b></div><div><span>Validation</span><b>{label(selected.gates.connector_validation_gate.status)}</b></div><div><span>Approval</span><b>{label(selected.gates.final_approval_gate.status)}</b></div><div><span>Activation</span><b>{label(selected.activation.status)}</b></div><div><span>Profiles</span><b>{selected.search_profiles.active_profile_count}/{selected.search_profiles.profile_count} active</b></div><div><span>Layers</span><b>Bronze {selected.layers.bronze_count} · Silver {selected.layers.silver_count}</b></div></div>{strategy?.configured && <section className="ow-evidence"><div><span>Career lanes</span>{strategy.relevant_career_lanes?.length ? <ul>{strategy.relevant_career_lanes.map((lane) => <li key={lane}>{label(lane)}</li>)}</ul> : <p>No configured lanes.</p>}</div><div><span>Location relevance</span>{strategy.location_relevance?.length ? <ul>{strategy.location_relevance.map((item) => <li key={item}>{item}</li>)}</ul> : <p>No location relevance configured.</p>}</div></section>}{selected.current_blocker ? <div className="ow-callout warn"><b>{label(selected.current_blocker)}</b><span>{selected.next_action}</span></div> : <div className="ow-callout good"><b>No current blocker</b><span>{selected.next_action}</span></div>}</article>}
     </section>
   </div>;
 }
@@ -591,6 +1261,7 @@ function Operations({ payload }: { payload: ProductPayload }) {
 const navItems: Array<{ id: View; label: string; glyph: string }> = [
   { id: "overview", label: "Overall", glyph: "◉" },
   { id: "jobs", label: "All jobs", glyph: "≡" },
+  { id: "career", label: "Career Intel", glyph: "◇" },
   { id: "top5", label: "Top 5", glyph: "★" },
   { id: "application", label: "Application", glyph: "↗" },
   { id: "applications", label: "Applications", glyph: "◎" },
@@ -636,6 +1307,7 @@ export default function OperatorWorkspace() {
 
   const navBadges: Partial<Record<View, number>> = {
     jobs: payload.summary.review_scope_current_active_job_count ?? payload.job_readiness.filter(isCurrent).length,
+    career: payload.career_intelligence?.summary?.opportunity_count,
     top5: payload.summary.top_job_count,
     approvals: payload.source_connector_overview.sources.filter((source) => source.current_blocker === "final_approval_incomplete").length,
     sources: payload.source_connector_overview.summary.attention_count,
@@ -649,7 +1321,7 @@ export default function OperatorWorkspace() {
     </aside>
     <div className="ow-content-shell">
       <header className="ow-topline"><div><b>{navItems.find((item) => item.id === view)?.label}</b><span>DEMO-001 · Personio pilot</span></div><button type="button" disabled={refreshing} onClick={() => void refresh()}>{refreshing ? "Refreshing…" : "↻ Refresh"}</button></header>
-      <main className="ow-main">{view === "overview" && <Overview payload={payload} onNavigate={setView} />}{view === "jobs" && <Jobs payload={payload} refresh={refresh} />}{view === "top5" && <TopFive payload={payload} refresh={refresh} />}{view === "application" && <Application payload={payload} refresh={refresh} />}{view === "applications" && <Applications payload={payload} onPrepare={() => setView("application")} />}{view === "sources" && <Sources payload={payload} />}{view === "approvals" && <Approvals payload={payload} />}{view === "operations" && <Operations payload={payload} />}</main>
+      <main className="ow-main">{view === "overview" && <Overview payload={payload} onNavigate={setView} />}{view === "jobs" && <Jobs payload={payload} refresh={refresh} />}{view === "career" && <CareerIntelligence payload={payload} refresh={refresh} />}{view === "top5" && <TopFive payload={payload} refresh={refresh} />}{view === "application" && <Application payload={payload} refresh={refresh} />}{view === "applications" && <Applications payload={payload} onPrepare={() => setView("application")} />}{view === "sources" && <Sources payload={payload} refresh={refresh} />}{view === "approvals" && <Approvals payload={payload} />}{view === "operations" && <Operations payload={payload} />}</main>
     </div>
   </div>;
 }

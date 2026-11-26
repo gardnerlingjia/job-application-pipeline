@@ -14,6 +14,8 @@ type TopJob = {
 
 type ProductTruth = {
   top_jobs?: TopJob[];
+  discovery_job_readiness?: TopJob[];
+  job_readiness?: TopJob[];
   application_sources_ready?: {
     base_cv?: boolean;
     base_application_letter?: boolean;
@@ -179,6 +181,7 @@ function downloadLabel(file: DraftFile) {
 export default function DemoApplicationWorkspace() {
   const [open, setOpen] = useState(false);
   const [topJobs, setTopJobs] = useState<TopJob[]>([]);
+  const [allJobs, setAllJobs] = useState<TopJob[]>([]);
   const [sourceReadiness, setSourceReadiness] = useState<ProductTruth["application_sources_ready"]>({});
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [workspace, setWorkspace] = useState<ApplicationWorkspacePayload | null>(null);
@@ -193,7 +196,13 @@ export default function DemoApplicationWorkspace() {
       .then((payload) => {
         if (!active) return;
         const jobs = Array.isArray(payload.top_jobs) ? payload.top_jobs.slice(0, 5) : [];
+        const discoveryJobs = Array.isArray(payload.discovery_job_readiness)
+          ? payload.discovery_job_readiness
+          : Array.isArray(payload.job_readiness)
+            ? payload.job_readiness
+            : [];
         setTopJobs(jobs);
+        setAllJobs(discoveryJobs);
         setSourceReadiness(payload.application_sources_ready || {});
         setSelectedId(jobs[0]?.silver_job_id ?? null);
       })
@@ -201,6 +210,21 @@ export default function DemoApplicationWorkspace() {
         if (active) setError(String(reason));
       });
     return () => { active = false; };
+  }, []);
+
+  useEffect(() => {
+    const openSelectedWorkspace = (event: Event) => {
+      const detail = (event as CustomEvent<{ silverJobId?: number | null }>).detail;
+      if (detail?.silverJobId != null) {
+        setSelectedId(detail.silverJobId);
+      }
+      setOpen(true);
+    };
+    window.addEventListener("product-v1:open-application-workspace", openSelectedWorkspace);
+    return () => window.removeEventListener(
+      "product-v1:open-application-workspace",
+      openSelectedWorkspace,
+    );
   }, []);
 
   useEffect(() => {
@@ -217,8 +241,17 @@ export default function DemoApplicationWorkspace() {
   }, [open, selectedId]);
 
   const selectedJob = useMemo(
-    () => topJobs.find((job) => job.silver_job_id === selectedId) || topJobs[0] || null,
-    [selectedId, topJobs],
+    () => topJobs.find((job) => job.silver_job_id === selectedId)
+      || allJobs.find((job) => job.silver_job_id === selectedId)
+      || topJobs[0]
+      || null,
+    [allJobs, selectedId, topJobs],
+  );
+  const workspaceJobs = useMemo(
+    () => selectedJob && !topJobs.some((job) => job.silver_job_id === selectedJob.silver_job_id)
+      ? [selectedJob, ...topJobs]
+      : topJobs,
+    [selectedJob, topJobs],
   );
 
   const claimPlan = workspace?.workspace?.claim_plan || [];
@@ -297,10 +330,10 @@ export default function DemoApplicationWorkspace() {
           <div className="demo-sidebar-heading">
             <span className="demo-eyebrow">Authoritative shortlist</span>
             <h2>Top 5</h2>
-            <small>{topJobs.length}/5 current recommendations</small>
+            <small>{workspaceJobs.length}/5 current recommendations</small>
           </div>
           <nav className="demo-job-picker" aria-label="Top jobs">
-            {topJobs.map((job) => <button
+            {workspaceJobs.map((job) => <button
               type="button"
               key={job.silver_job_id}
               className={job.silver_job_id === selectedId ? "active" : ""}

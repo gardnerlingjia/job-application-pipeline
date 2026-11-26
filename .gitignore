@@ -10,7 +10,25 @@ exports/
 docs/project_state/
 .runtime/
 frontend/control-center/dist/
+frontend/control-center/node_modules/
 private_candidate_facts/
 private_application_sources/
 *.candidate-facts.private.json
 candidate_fact_profile.private.json
+jobs/inbox/
+jobs/processed/
+jobs/results/
+
+# Private complete generations retained only if reassessment publication is interrupted.
+jobs/.career-publication-*/
+
+# Deployment-only candidate inputs and local acceptance snapshots.
+config/capability_profile.yaml
+config/career_profile.yaml
+config/constraints.yaml
+config/network_profile.yaml
+tests/fixtures/career_intelligence/strategy_calibration*
+.DS_Store
+*.dump
+*.sqlite
+*.sqlite3
